@@ -88,7 +88,7 @@ namespace NetworkProgramming.Lab1
 
          if (bytesRead > 0)
          {
-            state.StreamBuffer.WriteAsync(state.Buffer, 0, bytesRead);
+            state.StreamBuffer.Write(state.Buffer, 0, bytesRead);
             if (state.Buffer.Any(byte_ => byte_ == '\0'))
             {
                ProcessMessage(state.StreamBuffer);
@@ -134,14 +134,14 @@ namespace NetworkProgramming.Lab1
          Send(_socket, msg);
       }
 
-      private void Send(Socket _socket, string data)
+      private void Send(Socket socket, string data)
       {
          var byteData = Encoding.ASCII.GetBytes(data);
 
          try
          {
-            _socket.BeginSend(byteData, 0, byteData.Length, 0,
-               SendCallback, _socket);
+            socket.BeginSend(byteData, 0, byteData.Length, 0,
+               SendCallback, socket);
          }
          catch (Exception exception)
          {
@@ -155,7 +155,7 @@ namespace NetworkProgramming.Lab1
          try
          {
             var socket = (Socket)ar.AsyncState;
-            var bytesSent = socket.EndSend(ar);
+            var _ = socket.EndSend(ar);
          }
          catch (Exception e)
          {

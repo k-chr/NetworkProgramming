@@ -25,7 +25,6 @@ namespace NetworkProgramming.Lab1
       private static readonly ManualResetEvent ClientEventDone = new ManualResetEvent(false);
       private static readonly ManualResetEvent Done = new ManualResetEvent(false);
       private static Client _client = null;
-      private static bool _connected = false;
 
       private static void ClearInputArea()
       {
@@ -54,10 +53,10 @@ namespace NetworkProgramming.Lab1
          Console.Write("__________________");
          ++begin;
 
-         foreach (var keyValuePair in Menu)
+         foreach (var (key, value) in Menu)
          {
             Console.SetCursorPosition(0, begin);
-            Console.Write($"| {keyValuePair.Key} | {keyValuePair.Value,10} |");
+            Console.Write($"| {key} | {value,10} |");
             ++begin;
          }
 
@@ -158,8 +157,8 @@ namespace NetworkProgramming.Lab1
          var SC_MINIMIZE = 0xF020;
          var SC_MAXIMIZE = 0xF030;
          var SC_SIZE = 0xF000;
-         IntPtr handle = GetConsoleWindow();
-         IntPtr sysMenu = GetSystemMenu(handle, false);
+         var handle = GetConsoleWindow(); 
+         var sysMenu = GetSystemMenu(handle, false);
 
          if (handle != IntPtr.Zero)
          {
@@ -200,7 +199,7 @@ namespace NetworkProgramming.Lab1
 
       private static void QuitProcedure()
       {
-         if (_connected)
+         if (_client.IsConnected())
          {
             _client?.Disconnect();
          }
@@ -213,7 +212,7 @@ namespace NetworkProgramming.Lab1
 
       private static void SendProcedure()
       {
-         if (!_connected)
+         if (!_client.IsConnected())
          {
             throw new InvalidOperationException("Can't send any data - client is currently not connected with remote host");
          }
@@ -225,18 +224,17 @@ namespace NetworkProgramming.Lab1
 
       private static void DisconnectProcedure()
       {
-         if (!_connected)
+         if (!_client.IsConnected())
          {
             throw new InvalidOperationException("Can't disconnect client due to not being currently connected");
          }
 
          _client.Disconnect();
-         _connected = _client.IsConnected();
       }
 
       private static void ConnectProcedure()
       {
-         if (_connected)
+         if (_client != null && _client.IsConnected())
          {
             throw new InvalidOperationException("Can't connect to server - client is currently connected with remote host");
          }
@@ -254,7 +252,6 @@ namespace NetworkProgramming.Lab1
          }
 
          ClientEventDone.WaitOne();
-         _connected = _client.IsConnected();
          ClientEventDone.Reset();
       }
    }
