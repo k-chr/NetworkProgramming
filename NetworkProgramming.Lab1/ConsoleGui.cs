@@ -10,7 +10,7 @@ namespace NetworkProgramming.Lab1
       private static readonly Dictionary<string, Tuple<int, int>> ConsoleLinePositions = new Dictionary<string, Tuple<int, int>>()
       {
          {"INPUT", Tuple.Create(1, 8)},
-         {"INFO", Tuple.Create(10, 11)},
+         {"Info", Tuple.Create(10, 11)},
          {"LOG", Tuple.Create(12, -1)},
       };
 
@@ -24,7 +24,7 @@ namespace NetworkProgramming.Lab1
       
       private static readonly ManualResetEvent ClientEventDone = new ManualResetEvent(false);
       private static readonly ManualResetEvent Done = new ManualResetEvent(false);
-      private static Client _client = null;
+      private static Client _client;
 
       private static void ClearInputArea()
       {
@@ -65,9 +65,9 @@ namespace NetworkProgramming.Lab1
          ++begin;
          Console.SetCursorPosition(0, begin);
          Console.ForegroundColor = ConsoleColor.White;
-         Console.SetCursorPosition(0, ConsoleLinePositions["INFO"].Item1 - 1);
+         Console.SetCursorPosition(0, ConsoleLinePositions["Info"].Item1 - 1);
          Console.Write(new string(' ', Console.WindowWidth));
-         Console.SetCursorPosition(0, ConsoleLinePositions["INFO"].Item1);
+         Console.SetCursorPosition(0, ConsoleLinePositions["Info"].Item1);
          Console.Write("Log: ");
          Console.SetCursorPosition(0, begin);
          Done.Set();
@@ -129,10 +129,9 @@ namespace NetworkProgramming.Lab1
          Logger.LoggerBeginLine = ConsoleLinePositions["LOG"].Item1;
          Logger.ReturnLine = ConsoleLinePositions["INPUT"].Item2;
          Logger.CanWrite = Done;
+         var numStr = DisplayMenuFeed();
          while (true)
          {
-            var numStr = DisplayMenuFeed();
-
             try
             {
                var num = int.Parse(numStr);
@@ -147,6 +146,7 @@ namespace NetworkProgramming.Lab1
             {
                Logger.LogError(e, "Wrong number of operation or operation is not permitted\n");
             }
+            finally{numStr = DisplayMenuFeed();}
          }
       }
 
@@ -167,6 +167,12 @@ namespace NetworkProgramming.Lab1
             DeleteMenu(sysMenu, SC_MAXIMIZE, MF_BYCOMMAND);
             DeleteMenu(sysMenu, SC_SIZE, MF_BYCOMMAND);
          }
+
+         Logger.QuitRequest += (sender, args) =>
+         {
+            Console.ReadKey();
+            Environment.Exit(1);
+         };
       }
 
       [DllImport("user32.dll")]
@@ -199,7 +205,7 @@ namespace NetworkProgramming.Lab1
 
       private static void QuitProcedure()
       {
-         if (_client.IsConnected())
+         if (_client != null && !_client.IsConnected())
          {
             _client?.Disconnect();
          }
@@ -212,7 +218,7 @@ namespace NetworkProgramming.Lab1
 
       private static void SendProcedure()
       {
-         if (!_client.IsConnected())
+         if (_client == null || !_client.IsConnected())
          {
             throw new InvalidOperationException("Can't send any data - client is currently not connected with remote host");
          }
@@ -224,7 +230,7 @@ namespace NetworkProgramming.Lab1
 
       private static void DisconnectProcedure()
       {
-         if (!_client.IsConnected())
+         if (_client == null || !_client.IsConnected())
          {
             throw new InvalidOperationException("Can't disconnect client due to not being currently connected");
          }
@@ -245,6 +251,7 @@ namespace NetworkProgramming.Lab1
          {
             var port = int.Parse(portStr);
             _client = new Client(address, port, ClientEventDone);
+            _client.OnLogEvent += (sender, objects) =>  Logger.Log(objects);
          }
          catch (Exception e)
          {

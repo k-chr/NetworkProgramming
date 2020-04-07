@@ -1,0 +1,35 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="NetworkProgramming.Lab2.Views.MainView"
+             xmlns:ctrls="clr-namespace:NetworkProgramming.Lab2.Views;assembly=NetworkProgramming.Lab2">
+   <StackPanel IsEnabled="{Binding !ShowPopup}" Margin="10">
+      <TextBlock FontSize="14">Accepted clients:</TextBlock>
+      <ctrls:ClientsGrid></ctrls:ClientsGrid>
+      <TextBlock FontSize="14">Logger:</TextBlock>
+      <ItemsControl Items="{Binding Logs}">
+         <ItemsControl.ItemTemplate>
+            <DataTemplate>
+               <TextBlock Text="{Binding}" Foreground="{Binding ColorBrush}">
+               </TextBlock>
+            </DataTemplate>
+         </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <Button Command="{Binding OnStopCommand}" Margin="0 80 0 0">STOP</Button>
+      <Popup IsOpen="{Binding ShowPopup}" HorizontalAlignment="Center" VerticalAlignment="Center" PlacementMode="AnchorAndGravity"  >
+         <StackPanel Background="Blue">
+            <StackPanel Orientation="Vertical" Margin="10" Spacing="10" Background="Blue">
+               <TextBlock FontSize="14" Foreground="AliceBlue" FontWeight="Bold">Do you want to accept next pending connections?</TextBlock>
+               <Line Stretch="Fill" Fill="AliceBlue" Stroke="AliceBlue" StrokeThickness="4"></Line>
+               <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="3" MinWidth="60">
+                  <Button FontSize="14" Background="DarkGreen" Foreground="AliceBlue" FontWeight="Bold" Command="{Binding OnAcceptCommand}">Yes</Button>
+                  <Button FontSize="14" Background="DarkBlue" Foreground="AliceBlue" FontWeight="Bold" Command="{Binding OnRejectCommand}">No</Button>
+               </StackPanel>
+            </StackPanel>
+         </StackPanel>
+      </Popup>
+   </StackPanel>
+   
+</UserControl>
