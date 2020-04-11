@@ -1,0 +1,46 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Task2.ViewModels;assembly=Task2"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+        xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+        mc:Ignorable="d" 
+        d:DesignWidth="500"
+        d:DesignHeight="500"
+        ShowInTaskbar="True"
+        Name="TheMainWindow"
+        x:Class="Task2.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Task2">
+   <i:Interaction.Behaviors>
+      <ia:EventTriggerBehavior EventName="Closing" SourceObject="{Binding #TheMainWindow}">
+         <ia:InvokeCommandAction Command="{Binding ClosingCommand}" />
+      </ia:EventTriggerBehavior>
+   </i:Interaction.Behaviors>
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+   <StackPanel Spacing="10" Margin="10">
+      <TextBlock Text="{Binding Greeting}" Width="200"  HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"/>
+      <Grid Margin="1" HorizontalAlignment="Center" VerticalAlignment="Center" ColumnDefinitions="Auto, Auto" RowDefinitions="Auto,Auto, Auto, Auto, Auto" >
+         <Button Margin="10" Grid.Column="0" Grid.Row="0" Content="{Binding Th1}" Command="{Binding OnClick}" CommandParameter="{Binding Th1}"></Button>
+         <Button Margin="10" Grid.Column="0" Grid.Row="1" Content="{Binding Th2}" Command="{Binding OnClick}" CommandParameter="{Binding Th2}"></Button>
+         <Button Margin="10" Grid.Column="0" Grid.Row="2" Content="{Binding Th3}" Command="{Binding OnClick}" CommandParameter="{Binding Th3}"></Button>
+         <Button Margin="10" Grid.Column="0" Grid.Row="3" Content="{Binding Th4}" Command="{Binding OnClick}" CommandParameter="{Binding Th4}"></Button>
+         <Button Margin="10" Grid.Column="0" Grid.Row="4" Content="{Binding Th5}" Command="{Binding OnClick}" CommandParameter="{Binding Th5}"></Button>
+         <Button Margin="10" Grid.Column="1" Grid.Row="0" Content="{Binding Th6}" Command="{Binding OnClick}" CommandParameter="{Binding Th6}"></Button>
+         <Button Margin="10" Grid.Column="1" Grid.Row="1" Content="{Binding Th7}" Command="{Binding OnClick}" CommandParameter="{Binding Th7}"></Button>
+         <Button Margin="10" Grid.Column="1" Grid.Row="2" Content="{Binding Th8}" Command="{Binding OnClick}" CommandParameter="{Binding Th8}"></Button>
+         <Button Margin="10" Grid.Column="1" Grid.Row="3" Content="{Binding Th9}" Command="{Binding OnClick}" CommandParameter="{Binding Th9}"></Button>
+         <Button Margin="10" Grid.Column="1" Grid.Row="4" Content="{Binding Th10}" Command="{Binding OnClick}" CommandParameter="{Binding Th10}"></Button>
+      </Grid>
+      <TabControl Margin="0 16" TabStripPlacement="Top">
+         <TabItem Header="Console">
+            <TextBox MinWidth="200" Height="100" Margin="5" TextWrapping="Wrap" AcceptsReturn="True" IsReadOnly="True"  Background="Black" FontSize="14" Foreground="White" Text="{Binding ConsoleOutput}"/>
+         </TabItem>
+      </TabControl>
+   </StackPanel>
+
+</Window>
