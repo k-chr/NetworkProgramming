@@ -1,0 +1,37 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Task4.ViewModels;assembly=Task4"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" Width="500" 
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        x:Class="Task4.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Task4"
+        Height="330">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+    <StackPanel Orientation="Vertical" Margin="10">   
+       <TextBox BorderThickness="0" Text="{Binding Greeting}" AcceptsReturn="True" IsReadOnly="True" TextWrapping="Wrap"  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+       
+       <TextBlock Margin="20" FontSize="14" Text="Choose task to cancel" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+       <Grid>
+          <Grid.ColumnDefinitions>
+             <ColumnDefinition Width="*"/>
+             <ColumnDefinition Width="auto"/>
+          </Grid.ColumnDefinitions>
+          <ComboBox MinHeight="30" Grid.Column="0" Items="{Binding TaskNames}" SelectedItem="{Binding SelectedTask}"></ComboBox>
+          <Button Grid.Column="1" Command="{Binding OnCancelTask}">Cancel Task</Button>
+       </Grid>
+       <TabControl Margin="0 16" TabStripPlacement="Top">
+          <TabItem Header="Console">
+             <TextBox MinWidth="200" Height="100" Margin="10" TextWrapping="Wrap" AcceptsReturn="True" IsReadOnly="True"  Background="Black" FontSize="14" Foreground="White" Text="{Binding ConsoleOutput}">
+             </TextBox>
+          </TabItem>
+       </TabControl>   
+    </StackPanel>
+    
+
+</Window>

@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="KamillimakThreading\CancellableTask.cs" />
     <Compile Include="KamillimakThreading\Helpers\StrRef.cs" />
     <Compile Include="KamillimakThreading\SpecialThread.cs" />
     <Compile Include="KamillimakThreading\SynchronizedThread.cs" />
