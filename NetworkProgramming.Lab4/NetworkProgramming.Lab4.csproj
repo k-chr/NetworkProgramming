@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -13,13 +13,11 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
-    <AvaloniaResource Remove="MainMenu.xaml" />
     <AvaloniaResource Remove="Views\ClientsGrid.xaml" />
     <AvaloniaResource Remove="Views\MainView.xaml" />
     <AvaloniaResource Remove="Views\MenuControl.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="MainMenu.xaml" />
     <None Remove="Views\ClientsGrid.xaml" />
     <None Remove="Views\MainView.xaml" />
     <None Remove="Views\MenuControl.xaml" />
@@ -29,6 +27,8 @@
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.9.7" />
     <PackageReference Include="Avalonia.Desktop" Version="0.9.7" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.7" />
+    <PackageReference Include="Avalonia.Xaml.Interactions" Version="0.9.7" />
+    <PackageReference Include="Avalonia.Xaml.Interactivity" Version="0.9.7" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\ClientsGrid.xaml">
@@ -44,8 +44,5 @@
     <EmbeddedResource Include="Views\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NetworkProgramming.Lab1\NetworkProgramming.Lab1.csproj" />
   </ItemGroup>
 </Project>

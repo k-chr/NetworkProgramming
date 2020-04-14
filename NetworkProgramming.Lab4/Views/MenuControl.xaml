@@ -1,0 +1,17 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="400"
+             x:Class="NetworkProgramming.Lab4.Views.MenuControl">
+
+   <StackPanel >
+      <TextBlock FontSize="20" Text="Hello in simple Server program"></TextBlock>
+      <TextBlock FontSize="20" Text="Select Interface"></TextBlock>
+      <ComboBox MinHeight="30" Items="{Binding AvailableInterfaces}" SelectedItem="{Binding SelectedInterface}"></ComboBox>
+      <TextBox Watermark="Port: Default 7" UseFloatingWatermark="True" Text="{Binding Port}"></TextBox>
+      <TextBox Watermark="Number of queued clients: Default 3" UseFloatingWatermark="True" Text="{Binding CountOfClients}"></TextBox>
+      <Button Command="{Binding OnStartCommand}">Start</Button>
+   </StackPanel>
+
+</UserControl>
