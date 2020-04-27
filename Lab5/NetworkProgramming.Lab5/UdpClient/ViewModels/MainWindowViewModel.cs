@@ -21,8 +21,7 @@ namespace UdpClient.ViewModels
       private readonly IBrush _darkThemeBrush;
       private readonly ClientModel _you = new ClientModel((0, "Any").ToTuple()){Id = "You"};
       private string _inputMessage;
-
-      public int Radius => 10;
+      private ClientModel _server;
 
       public MainWindowViewModel()
       {
@@ -37,7 +36,6 @@ namespace UdpClient.ViewModels
          _themeStrongAccentBrush = _lightThemeBrush;
          _clientService.NewLog += (sender, objects) => AddLog(objects);
          _clientService.NewMessage += (sender, objects) => AddMessage(objects);
-
       }
 
       private InternalMessageModel Parse(object[] args)
@@ -56,8 +54,9 @@ namespace UdpClient.ViewModels
                   _ => throw new ArgumentException("Unrecognized data received from client handler")
                };
             }
-
-            return builder.BuildMessage();
+            
+            
+            return builder.AttachClientData(_server??new ClientModel((0, "Any").ToTuple())).AttachTimeStamp(true).BuildMessage();
          }
          catch (Exception e)
          {
@@ -162,6 +161,7 @@ namespace UdpClient.ViewModels
       {
          CurrentPage = 1;
          var port = int.Parse(Port);
+         _server = new ClientModel((port, IpAddress).ToTuple()){Id = "Server"};
          _clientService.InitializeTransfer(port, IpAddress);
       }
 
