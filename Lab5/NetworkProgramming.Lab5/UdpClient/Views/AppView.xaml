@@ -1,0 +1,102 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="UdpClient.Views.AppView"
+             xmlns:ctrl="clr-namespace:UdpClient.CustomControl;assembly=UdpClient">
+   <UserControl.Resources>
+      <ctrl:InternalMessageTypeToAlignmentConverter x:Key="myAlignmentConverter"/>
+      <ctrl:ConvertToDynamicDock x:Key="myDockConverter"/>
+   </UserControl.Resources>
+   <UserControl.Styles>
+      <Style Selector="TabControl#AppView > TabItem">
+         <Setter Property="BorderThickness" Value="0"/>
+         <Setter Property="Foreground" Value="White"/>
+         <Setter Property="FontSize" Value="14"/>
+         <Setter Property="Margin" Value="0"/>
+         <Setter Property="Padding" Value="16"/>
+         <Setter Property="Opacity" Value="0.5"/>
+         <Setter Property="Transitions">
+            <Transitions>
+               <DoubleTransition Property="Opacity" Duration="0:0:0.150"/>
+            </Transitions>
+         </Setter>
+      </Style>
+      <Style Selector="TabControl#AppView > TabItem:selected">
+         <Setter Property="Opacity" Value="1"/>
+      </Style>
+      <Style Selector="TabControl#AppView > TabItem:pointerover">
+         <Setter Property="Opacity" Value="1"/>
+      </Style>
+      
+   </UserControl.Styles>
+   <TabControl Name="AppView" TabStripPlacement="Bottom">
+
+      <TabItem Header="Messages" Background="{DynamicResource ThemeAccentBrush}" ToolTip.Tip="Your conversation">
+         <Grid RowDefinitions="13*,4*" >
+            <ScrollViewer  VerticalScrollBarVisibility="Visible">
+               <ItemsControl Items="{Binding Messages}" MinHeight="240" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Margin="0 0 0 2">
+                  <ItemsControl.ItemTemplate >
+                     <DataTemplate>
+                        <ListBoxItem>
+                           <ctrl:MessageBubble Message="{Binding Data}"
+                                      Date="{Binding Date}"
+                                      HorizontalAlignment="{Binding Type, Converter={StaticResource myAlignmentConverter}}"
+                                      Client="{Binding ClientModelData}"
+                                      BubbleColor="{Binding ColorBrush}"
+                                      DynamicDock="{Binding $self.HorizontalAlignment, Converter={StaticResource myDockConverter}}">
+                           </ctrl:MessageBubble>
+                        </ListBoxItem>
+                     </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                  
+               </ItemsControl>
+            </ScrollViewer>
+            <DockPanel LastChildFill="True" VerticalAlignment="Bottom" Grid.Row="1" Grid.Column="0">
+               <ctrl:RoundedButton DockPanel.Dock="Right" Height="40"  Width="40" Radius="20" Background="{DynamicResource ThemeControlMidBrush}" BorderBrush="{DynamicResource ThemeAccentBrush4}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource ThemeForegroundBrush}" ToolTip.Tip="Send" Command="{Binding SendMessage}">
+                  <Path Data="M-10,6V6M-10,8H-3V15L10,7M-10,4H-3V-3L10,7" Height="10" Stretch="Uniform" StrokeLineCap="Round" StrokeJoin="Miter" Fill="{Binding $parent[ctrl:RoundedButton].Foreground}"  Stroke="{Binding $parent[ctrl:RoundedButton].Foreground}" StrokeThickness="5" ></Path>
+               </ctrl:RoundedButton>
+               <DockPanel.Styles>
+                  <Style Selector="Border.border">
+                     <Setter Property="BorderBrush" Value="White"></Setter>
+                  </Style>
+               </DockPanel.Styles>
+               <ctrl:RoundedButton DockPanel.Dock="Left" Radius="20" Width="40" Height="40" Foreground="{DynamicResource ThemeForegroundBrush}" BorderBrush="{DynamicResource ThemeBorderLowBrush}" Background="{Binding ThemeStrongAccentBrush}" ToolTip.Tip="Log Out" Command="{Binding OnLogOut}">
+                  <Path Stretch="Uniform" Height="15" HorizontalAlignment="Center" StrokeJoin="Round" StrokeLineCap="Round" VerticalAlignment="Center" Stroke="{Binding $parent[ctrl:RoundedButton].Foreground}" StrokeThickness="2" Data="M7,-5V2M7,-2A 5,5 90 1 0 7,10M7,-2A 5,5 90 1 1 7,10"/>
+               </ctrl:RoundedButton>
+               <Border DockPanel.Dock="Right" BorderBrush="{Binding #Inner.BorderBrush}" BorderThickness="2" CornerRadius="10" Margin="1" Background="{DynamicResource ThemeControlMidBrush}">
+                  <TextBox Background="Transparent" Name="Inner" BorderThickness="0" BorderBrush="{DynamicResource ThemeAccentBrush}"
+                           AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap"
+                           MaxHeight="40" Watermark="Write something..." Text="{Binding InputMessage}" />
+               </Border>
+            </DockPanel>
+         </Grid>
+      </TabItem>
+      <TabItem Header="Logs" Background="{DynamicResource ThemeAccentBrush}" ToolTip.Tip="Application log">
+         <ScrollViewer VerticalScrollBarVisibility="Visible">
+            <ItemsControl Items="{Binding Logs}" VerticalAlignment="Top">
+               <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+
+                     <ListBoxItem>
+
+                        <TextBox CaretBrush="Transparent"
+                        IsReadOnly="True" Background="Transparent"
+                        BorderThickness="0" AcceptsReturn="True"
+                        Text="{Binding}" Foreground="{Binding ColorBrush}"
+                        TextWrapping="Wrap" MaxWidth="275">
+                           <TextBox.Styles>
+                              <Style Selector="TextBox:pointerover">
+                                 <Setter Property="Background" Value="Transparent"/>
+                              </Style>
+                           </TextBox.Styles>
+                        </TextBox>
+                     </ListBoxItem>
+                  </DataTemplate>
+               </ItemsControl.ItemTemplate>
+            </ItemsControl>
+         </ScrollViewer>
+      </TabItem>
+   </TabControl>
+</UserControl>

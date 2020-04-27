@@ -1,0 +1,29 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="UdpClient.Views.MainMenu">
+   <DockPanel>
+      <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
+         <Button Margin="2,0,0,30" MinWidth="100" Command="{Binding OnLogIn}" ToolTip.Tip="Log in to start conversation">Log in</Button>
+      </StackPanel>
+      <TextBox DockPanel.Dock="Bottom"
+               Width="200"
+               Watermark="Port"
+               UseFloatingWatermark="True"
+               Margin="10"
+               Text="{Binding Port, Mode=TwoWay}"
+               ToolTip.Tip="Provide port of remote host"/>
+      <TextBox DockPanel.Dock="Bottom"
+               Width="200"
+               Watermark="Ip address"
+               UseFloatingWatermark="True"
+               Text="{Binding IpAddress, Mode=TwoWay}"             
+               ToolTip.Tip="Provide Ip address of remote host"/>
+      <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 40 0 0">
+         <Image HorizontalAlignment="Left" Source="avares://UdpClient/Assets/messages.png" Width="50" Margin="10"></Image>
+         <TextBlock FontFamily="Bauhaus 93" FontSize="30">QuickMsg</TextBlock>
+      </StackPanel>
+   </DockPanel>
+</UserControl>

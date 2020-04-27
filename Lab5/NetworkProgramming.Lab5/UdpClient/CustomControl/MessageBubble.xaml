@@ -1,0 +1,87 @@
+﻿<Styles xmlns:local="clr-namespace:UdpClient.CustomControl;assembly=UdpClient"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+   <Design.PreviewWith>
+      <ScrollViewer VerticalScrollBarVisibility="Visible" Height="200">
+         <StackPanel >
+            <local:MessageBubble BubbleColor="Cyan" Message="Lorem ipsum sdafdsf fsfsf jhsdfjsh kjsadfkjsf gsdfksgwfusudfgsuwefusdkf gjgjdkgdgkgldk gdfop goddfgpo" HorizontalAlignment="Left" Date="{Binding Source={x:Static sys:DateTime.Now}}" >
+
+            </local:MessageBubble>
+            <local:MessageBubble BubbleColor="Cyan" Message="Lorem ipsum sdafdsf fsfsf jhsdfjsh kjsadfkjsf gsdfksgwfusudfgsuwefusdkf gjgjdkgdgkgldk gdfop goddfgpo" HorizontalAlignment="Right" Date="{Binding Source={x:Static sys:DateTime.Now}}">
+
+            </local:MessageBubble>
+            <local:MessageBubble BubbleColor="Cyan" Message="Lorem ipsum sdafdsf fsfsf jhsdfjsh kjsadfkjsf gsdfksgwfusudfgsuwefusdkf gjgjdkgdgkgldk gdfop goddfgpo" Date="{Binding Source={x:Static sys:DateTime.Now}}">
+
+            </local:MessageBubble>
+            <local:MessageBubble BubbleColor="Cyan" Message="Lorem ipsum sdafdsf fsfsf jhsdfjsh kjsadfkjsf gsdfksgwfusudfgsuwefusdkf gjgjdkgdgkgldk gdfop goddfgpo" Date="{Binding Source={x:Static sys:DateTime.Now}}">
+               
+            </local:MessageBubble>
+         </StackPanel>
+      </ScrollViewer>
+
+   </Design.PreviewWith>
+
+   <Style Selector="local|MessageBubble">
+      <Setter Property="BubbleColor"
+              Value="{DynamicResource ThemeControlHighBrush}"/>
+      <Setter Property="Background"
+              Value="{DynamicResource ThemeControlHighlightHighBrush}"/>
+      <Setter Property="BorderBrush"
+              Value="{DynamicResource ThemeBorderLowBrush}" />
+      <Setter Property="BorderThickness"
+              Value="0" />
+      <Setter Property="Foreground"
+              Value="{DynamicResource ThemeForegroundBrush}" />
+      <Setter Property="Padding"
+              Value="0" />
+      <Setter Property="Message" Value="DEADBEEF"/>
+      <Setter Property="Template">
+         <ControlTemplate>
+            <DockPanel Margin="2" HorizontalAlignment="{TemplateBinding HorizontalAlignment}">
+               <StackPanel Orientation="Vertical" DockPanel.Dock="{TemplateBinding DynamicDock}">
+                  <TextBlock TextAlignment="Center" Text="{Binding $parent[local:MessageBubble].Date}"></TextBlock>
+                  <Border Opacity="100" Name="Bubble" Focusable="True"  CornerRadius="10" Background="{DynamicResource ThemeAccentBrush}" BorderThickness="0" ZIndex="1">
+                     <TextBlock Name="Message" Text="{TemplateBinding Message}" TextWrapping="Wrap" MaxWidth="100" Margin="5"></TextBlock>
+                  </Border>
+               </StackPanel>
+               <Grid DockPanel.Dock="Left" VerticalAlignment="Bottom">
+                  <Ellipse Grid.Column="0"
+                           Grid.Row="0"
+                           Name="PART_Thumb"
+                           Opacity="90"
+                           Fill="{TemplateBinding BubbleColor}"
+                           Width="40"
+                           Height="40">
+                  </Ellipse>
+                  <TextBlock Grid.Column="0"
+                             Grid.Row="0"
+                             Margin="0"
+                             HorizontalAlignment="Center"
+                             Text="{Binding Client.Shorten, RelativeSource={RelativeSource TemplatedParent}}"
+                             FontSize="32">
+                     <ToolTip.Tip>
+                        <StackPanel>
+                           <TextBlock Text="{Binding $parent[local:MessageBubble].Client}" TextWrapping="Wrap" FontSize="10"></TextBlock>
+                        </StackPanel>
+                     </ToolTip.Tip>
+                  </TextBlock>
+               </Grid>
+            </DockPanel>
+         </ControlTemplate>
+      </Setter>
+   </Style>
+   <Style Selector="Border.St:pointerover">
+      <Setter Property="Background"
+              Value="Black" />
+   </Style>
+   <Style Selector="local|MessageBubble:pointerover /template/ Ellipse">
+      <Setter Property="Fill"
+              Value="{DynamicResource HighlightBrush}" />
+   </Style>
+   <Style Selector="local|MessageBubble:disabled">
+      <Setter Property="Opacity"
+              Value="{DynamicResource ThemeDisabledOpacity}" />
+   </Style>
+</Styles>

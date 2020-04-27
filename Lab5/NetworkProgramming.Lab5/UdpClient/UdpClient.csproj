@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="**\*.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <AvaloniaResource Include="**\*.xaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Assets\**" />
+    <AvaloniaResource Include="CustomControl\SliderButton.xaml" />
+    <AvaloniaResource Include="CustomControl\MessageBubble.xaml" />
+    <AvaloniaResource Include="CustomControl\RoundedButton.xaml" />
+    <AvaloniaResource Remove="Views\AppView.xaml" />
+    <AvaloniaResource Remove="Views\MainMenu.xaml" />
+    <None Remove="CustomControl\MessageBubble.xaml" />
+    <None Remove="CustomControl\RoundedButton.xaml" />
+    <None Remove="CustomControl\SliderButton.xaml" />
+    <None Remove="Views\AppView.xaml" />
+    <None Remove="Views\MainMenu.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.9.9" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.9.9" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.9" />
+    <PackageReference Include="Avalonia.Xaml.Interactions" Version="0.9.9" />
+    <PackageReference Include="Avalonia.Xaml.Interactivity" Version="0.9.9" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\MainMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\AppView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomControl\SliderButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomControl\MessageBubble.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="CustomControl\RoundedButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+</Project>

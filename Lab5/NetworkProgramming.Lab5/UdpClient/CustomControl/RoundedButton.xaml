@@ -1,0 +1,72 @@
+﻿<Styles xmlns:local="clr-namespace:UdpClient.CustomControl;assembly=UdpClient" 
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+   <Design.PreviewWith>
+      <Border BorderBrush="Transparent" BorderThickness="10">
+         <StackPanel Orientation="Horizontal">
+            <local:RoundedButton DockPanel.Dock="Left"
+                                 Radius="20"
+                                 Width="40"
+                                 Height="40"
+                                 Foreground="{DynamicResource ThemeForegroundBrush}"
+                                 BorderBrush="{DynamicResource ThemeBorderLowBrush}"
+                                 Background="{DynamicResource ThemeBackgroundBrush}"
+                                 ToolTip.Tip="Log Out">
+               <Path HorizontalAlignment="Center" VerticalAlignment="Center" Stroke="{Binding $parent[local:RoundedButton].Foreground}" StrokeJoin="Round" StrokeLineCap="Round"  StrokeThickness="2" Data="M7,-5V2M7,-2A 5,5 90 1 0 7,10M7,-2A 5,5 90 1 1 7,10"/>
+            </local:RoundedButton>
+            <local:RoundedButton Height="50"  Width="50" Radius="25" Background="{DynamicResource ThemeControlMidBrush}" BorderBrush="{DynamicResource ThemeAccentBrush4}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource ThemeAccentBrush4} ">
+               <Path Height="12" Width="10" Data="M-10,6V10M-10,12H2V18L20,8M-10,3H2V-4L20,8" StrokeLineCap="Square" StrokeJoin="Round"  Stroke="{Binding $parent[local:RoundedButton].Foreground}" StrokeThickness="4" Fill="Transparent"></Path>
+            </local:RoundedButton>
+         </StackPanel>
+      </Border>
+   </Design.PreviewWith>
+   <Style Selector="local|RoundedButton">
+        <Setter Property="Background"
+                Value="{DynamicResource ThemeControlHighlightHighBrush}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource ThemeBorderLowBrush}" />
+        <Setter Property="BorderThickness"
+                Value="{DynamicResource ThemeBorderThickness}" />
+        <Setter Property="Foreground"
+                Value="{DynamicResource ThemeForegroundBrush}" />
+
+        <Setter Property="Padding"
+                Value="0" />
+        
+        <Setter Property="Radius" Value="10"/>
+        <Setter Property="Width" Value="50"/>
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+               <Border Margin="0" Padding="0" CornerRadius="{TemplateBinding Radius}" Background="{TemplateBinding Background}" BorderThickness="1" BorderBrush="{TemplateBinding BorderBrush}" >
+                  <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Content="{TemplateBinding Content}" Padding="0" Margin="0"></ContentPresenter>
+               </Border>
+               
+            </ControlTemplate>
+        </Setter>
+    </Style>
+   <Style Selector="local|RoundedButton /template/ Border">
+      <Setter Property="Opacity" Value="0.8"/>
+      <Setter Property="Transitions">
+         <Transitions>
+            <DoubleTransition Property="Opacity" Duration="0:0:0.350"/>
+         </Transitions>
+      </Setter>
+   </Style>
+   <Style Selector="local|RoundedButton /template/ Border:pointerover">
+      <Setter Property="Opacity" Value="1"/>
+   </Style>
+   
+    <Style Selector="local|RoundedButton:pointerover /template/ Border">
+        <Setter Property="Background"
+                Value="{Binding $parent[local:RoundedButton].BorderBrush}" />
+       <Setter Property="BorderBrush" Value="{Binding $parent[local:RoundedButton].Background}"/>
+    </Style>
+   <Style Selector="local|RoundedButton:pressed /template/ Border">
+      <Setter Property="Background" Value="{DynamicResource HighlightBrush}"/>
+   </Style>
+    <Style Selector="local|RoundedButton:disabled">
+        <Setter Property="Opacity"
+                Value="{DynamicResource ThemeDisabledOpacity}" />
+    </Style>
+</Styles>

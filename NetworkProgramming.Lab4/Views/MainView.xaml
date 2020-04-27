@@ -9,7 +9,7 @@
       <TextBlock FontSize="14">Accepted clients:</TextBlock>
       <ctrls:ClientsGrid></ctrls:ClientsGrid>
       <TextBlock FontSize="14">Logger:</TextBlock>
-      <ItemsControl Items="{Binding Logs}">
+      <ItemsControl Items="{Binding Logs}" >
          <ItemsControl.ItemTemplate>
             <DataTemplate>
                <TextBlock Text="{Binding}" Foreground="{Binding ColorBrush}">

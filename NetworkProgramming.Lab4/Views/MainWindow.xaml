@@ -17,6 +17,7 @@
          <ia:InvokeCommandAction Command="{Binding ClosingCommand}" />
       </ia:EventTriggerBehavior>
    </i:Interaction.Behaviors>
+   
    <Window.DataContext>
       <vm:MainWindowViewModel/>
    </Window.DataContext>
