@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UdpClient.Models
+namespace CustomControls.Models
 {
    public class ClientModel
    {

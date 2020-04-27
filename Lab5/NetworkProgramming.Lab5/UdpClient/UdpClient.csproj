@@ -11,14 +11,8 @@
       <SubType>Designer</SubType>
     </AvaloniaResource>
     <AvaloniaResource Include="Assets\**" />
-    <AvaloniaResource Include="CustomControl\SliderButton.xaml" />
-    <AvaloniaResource Include="CustomControl\MessageBubble.xaml" />
-    <AvaloniaResource Include="CustomControl\RoundedButton.xaml" />
     <AvaloniaResource Remove="Views\AppView.xaml" />
     <AvaloniaResource Remove="Views\MainMenu.xaml" />
-    <None Remove="CustomControl\MessageBubble.xaml" />
-    <None Remove="CustomControl\RoundedButton.xaml" />
-    <None Remove="CustomControl\SliderButton.xaml" />
     <None Remove="Views\AppView.xaml" />
     <None Remove="Views\MainMenu.xaml" />
   </ItemGroup>
@@ -40,18 +34,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CustomControl\SliderButton.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
+    <ProjectReference Include="..\CustomControls\CustomControls.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CustomControl\MessageBubble.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="CustomControl\RoundedButton.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <Folder Include="Models\" />
   </ItemGroup>
 </Project>

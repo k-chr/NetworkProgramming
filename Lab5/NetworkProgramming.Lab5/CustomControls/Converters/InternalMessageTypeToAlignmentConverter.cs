@@ -2,9 +2,9 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Layout;
-using UdpClient.Models;
+using CustomControls.Models;
 
-namespace UdpClient.CustomControl
+namespace CustomControls.Converters
 {
    public class InternalMessageTypeToAlignmentConverter : IValueConverter
    {

@@ -2,7 +2,7 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
 
-namespace UdpClient.CustomControl
+namespace CustomControls.Converters
 {
    public class SliderButtonThumbConverter : IValueConverter
    {

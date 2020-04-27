@@ -5,7 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
-using UdpClient.CustomControl;
+using CustomControls.Controls;
 
 namespace UdpClient.Views
 {

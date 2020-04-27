@@ -4,8 +4,8 @@ using System.ComponentModel;
 using System.Reflection;
 using Avalonia.Media;
 using Avalonia.Threading;
+using CustomControls.Models;
 using ReactiveUI;
-using UdpClient.Models;
 using UdpClient.Services;
 
 namespace UdpClient.ViewModels
@@ -55,8 +55,7 @@ namespace UdpClient.ViewModels
                };
             }
             
-            
-            return builder.AttachClientData(_server??new ClientModel((0, "Any").ToTuple())).AttachTimeStamp(true).BuildMessage();
+            return builder.AttachTimeStamp(true).BuildMessage();
          }
          catch (Exception e)
          {
@@ -73,6 +72,7 @@ namespace UdpClient.ViewModels
          var msg = Parse(objects);
          if (msg != null)
          {
+            msg.ClientModelData = _server;
             AddMessage(msg);
          }
       }

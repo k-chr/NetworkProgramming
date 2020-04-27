@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UdpServer", "UdpServer\UdpS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UdpClient", "UdpClient\UdpClient.csproj", "{5684F563-498F-4CE6-9649-FA2F016465A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomControls", "CustomControls\CustomControls.csproj", "{6D4EB657-F3E1-4BB2-A424-D15A6A714B53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5684F563-498F-4CE6-9649-FA2F016465A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5684F563-498F-4CE6-9649-FA2F016465A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5684F563-498F-4CE6-9649-FA2F016465A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D4EB657-F3E1-4BB2-A424-D15A6A714B53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D4EB657-F3E1-4BB2-A424-D15A6A714B53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D4EB657-F3E1-4BB2-A424-D15A6A714B53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D4EB657-F3E1-4BB2-A424-D15A6A714B53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

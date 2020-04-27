@@ -8,7 +8,7 @@
         xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
         xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
         xmlns:views="clr-namespace:UdpClient.Views;assembly=UdpClient"
-        xmlns:ctrl="clr-namespace:UdpClient.CustomControl;assembly=UdpClient"
+        xmlns:ctrl="clr-namespace:CustomControls.Controls;assembly=CustomControls"
         Icon="/Assets/avalonia-logo.ico"
         Title="UdpClientService"
         HasSystemDecorations="False"

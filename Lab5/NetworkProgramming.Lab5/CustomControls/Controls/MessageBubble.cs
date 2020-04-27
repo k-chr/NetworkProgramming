@@ -4,9 +4,9 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Media;
-using UdpClient.Models;
+using CustomControls.Models;
 
-namespace UdpClient.CustomControl
+namespace CustomControls.Controls
 {
    public class MessageBubble : TemplatedControl
    {

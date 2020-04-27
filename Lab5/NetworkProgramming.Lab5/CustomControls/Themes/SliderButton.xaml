@@ -1,4 +1,4 @@
-﻿<Styles xmlns:local="clr-namespace:UdpClient.CustomControl;assembly=UdpClient" 
+﻿<Styles xmlns:local="clr-namespace:CustomControls.Controls;assembly=CustomControls" 
         xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
    <Design.PreviewWith>

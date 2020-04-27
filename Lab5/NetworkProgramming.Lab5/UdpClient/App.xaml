@@ -9,8 +9,8 @@
     <Application.Styles>
         <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
         <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"/>
-        <StyleInclude Source="avares://UdpClient/CustomControl/SliderButton.xaml" />
-        <StyleInclude Source="avares://UdpClient/CustomControl/MessageBubble.xaml" />
-        <StyleInclude Source="avares://UdpClient/CustomControl/RoundedButton.xaml" />
+        <StyleInclude Source=" avares://CustomControls/Themes/SliderButton.xaml" />
+        <StyleInclude Source="avares://CustomControls/Themes/MessageBubble.xaml" />
+        <StyleInclude Source="avares://CustomControls/Themes/RoundedButton.xaml" />
     </Application.Styles>
 </Application>

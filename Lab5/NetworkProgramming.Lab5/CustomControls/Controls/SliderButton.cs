@@ -1,5 +1,4 @@
-﻿using System;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -7,7 +6,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 
 
-namespace UdpClient.CustomControl
+namespace CustomControls.Controls
 {
    public class SliderButton : Button
    {

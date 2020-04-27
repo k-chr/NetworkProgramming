@@ -4,10 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="UdpClient.Views.AppView"
-             xmlns:ctrl="clr-namespace:UdpClient.CustomControl;assembly=UdpClient">
+             xmlns:ctrl="clr-namespace:CustomControls.Controls;assembly=CustomControls"
+             xmlns:conv="clr-namespace:CustomControls.Converters;assembly=CustomControls">
    <UserControl.Resources>
-      <ctrl:InternalMessageTypeToAlignmentConverter x:Key="myAlignmentConverter"/>
-      <ctrl:ConvertToDynamicDock x:Key="myDockConverter"/>
+      <conv:InternalMessageTypeToAlignmentConverter x:Key="myAlignmentConverter"/>
+      <conv:ConvertToDynamicDock x:Key="myDockConverter"/>
    </UserControl.Resources>
    <UserControl.Styles>
       <Style Selector="TabControl#AppView > TabItem">

@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 
-namespace UdpClient.CustomControl
+namespace CustomControls.Controls
 {
    public class RoundedButton:Button
    {

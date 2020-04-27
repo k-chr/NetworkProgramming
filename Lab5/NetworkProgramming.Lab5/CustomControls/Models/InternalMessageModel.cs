@@ -1,7 +1,7 @@
 ﻿using System;
 using Avalonia.Media;
 
-namespace UdpClient.Models
+namespace CustomControls.Models
 {
    public class InternalMessageModel
    {
@@ -10,7 +10,7 @@ namespace UdpClient.Models
       public DateTime Date { get; }
       public InternalMessageType Type { get; }
       public IBrush ColorBrush { get; }
-      public ClientModel ClientModelData { get; }
+      public ClientModel ClientModelData { get; set; }
 
       internal InternalMessageModel(MessageBuilder builder)
       {

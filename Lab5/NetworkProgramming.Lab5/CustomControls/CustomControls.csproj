@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+   <PropertyGroup>
+      <OutputType>Library</OutputType>
+      <TargetFramework>netcoreapp3.0</TargetFramework>
+   </PropertyGroup>
+
+   <ItemGroup>
+     <None Remove="Themes\MessageBubble.xaml" />
+     <None Remove="Themes\RoundedButton.xaml" />
+     <None Remove="Themes\SliderButton.xaml" />
+     <AvaloniaResource Include="**\*.xaml">
+        <SubType>Designer</SubType>
+     </AvaloniaResource>
+     <AvaloniaResource Include="Themes\SliderButton.xaml" />
+     <AvaloniaResource Include="Themes\MessageBubble.xaml" />
+     <AvaloniaResource Include="Themes\RoundedButton.xaml" />
+   </ItemGroup>
+
+   <ItemGroup>
+     <EmbeddedResource Include="Themes\MessageBubble.xaml">
+       <Generator>MSBuild:Compile</Generator>
+     </EmbeddedResource>
+     <EmbeddedResource Include="Themes\SliderButton.xaml">
+       <Generator>MSBuild:Compile</Generator>
+     </EmbeddedResource>
+   </ItemGroup>
+
+   <ItemGroup>
+     <PackageReference Include="Avalonia" Version="0.9.9" />
+     <PackageReference Include="Avalonia.Desktop" Version="0.9.9" />
+     <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.9" />
+   </ItemGroup>
+
+   <ItemGroup>
+     <Page Include="Themes\RoundedButton.xaml">
+       <SubType>Designer</SubType>
+       <Generator>MSBuild:Compile</Generator>
+     </Page>
+   </ItemGroup>
+
+</Project>
