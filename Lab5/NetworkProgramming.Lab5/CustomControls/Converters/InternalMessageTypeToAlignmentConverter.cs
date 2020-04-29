@@ -10,11 +10,20 @@ namespace CustomControls.Converters
    {
       public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
       {
-         if (value is InternalMessageType i)
+         if (value is InternalMessageType i && parameter is string s)
          {
-            return i switch
+            return s switch
             {
-               InternalMessageType.Client => HorizontalAlignment.Right,
+               "Client" => i switch
+               {
+                     InternalMessageType.Client => HorizontalAlignment.Right,
+                     _ => HorizontalAlignment.Left
+               },
+               "Server" => i switch
+               {
+                     InternalMessageType.Server => HorizontalAlignment.Right,
+                     _ => HorizontalAlignment.Left
+               },
                _ => HorizontalAlignment.Left
             };
          }

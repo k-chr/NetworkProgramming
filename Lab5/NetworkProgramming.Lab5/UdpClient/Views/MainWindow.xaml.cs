@@ -11,8 +11,8 @@ namespace UdpClient.Views
 {
    public class MainWindow : Window
    {
-      private StyleInclude _dark;
-      private StyleInclude _light;
+      private readonly StyleInclude _dark;
+      private readonly StyleInclude _light;
 
       public MainWindow()
       {
@@ -20,11 +20,11 @@ namespace UdpClient.Views
 #if DEBUG
          this.AttachDevTools();
 #endif
-         var light = new StyleInclude(new Uri("resm:Styles?assembly=UdpClientService"))
+         var light = new StyleInclude(new Uri("resm:Styles?assembly=UdpClient"))
          {
             Source = new Uri("resm:Avalonia.Themes.Default.Accents.BaseLight.xaml?assembly=Avalonia.Themes.Default")
          };
-         var dark = new StyleInclude(new Uri("resm:Styles?assembly=UdpClientService"))
+         var dark = new StyleInclude(new Uri("resm:Styles?assembly=UdpClient"))
          {
             Source = new Uri("resm:Avalonia.Themes.Default.Accents.BaseDark.xaml?assembly=Avalonia.Themes.Default")
          };

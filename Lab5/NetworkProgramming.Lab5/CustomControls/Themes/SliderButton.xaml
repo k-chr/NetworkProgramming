@@ -10,8 +10,7 @@
    </Design.PreviewWith>
    <Style Selector="local|SliderButton">
         <Setter Property="ThumbBackground"
-                Value="{DynamicResource ThemeControlHighBrush}"
-                 />
+                Value="{DynamicResource ThemeControlHighBrush}"/>
         <Setter Property="Background"
                 Value="{DynamicResource ThemeControlHighlightHighBrush}"/>
         <Setter Property="BorderBrush"
@@ -39,23 +38,16 @@
                               Background="Transparent"
                               TextBlock.Foreground="{TemplateBinding Foreground}"
                               VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                              HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                        >
-
-
-                     <Ellipse Name="PART_Thumb" Opacity="10" Fill="{TemplateBinding ThumbBackground}" Width="{TemplateBinding Radius}" Height="{TemplateBinding Radius}" HorizontalAlignment="{TemplateBinding ButtonState}" >
-
-                     </Ellipse>
-
+                              HorizontalAlignment="{TemplateBinding HorizontalAlignment}">
+                     <Ellipse Name="PART_Thumb" Opacity="10" Fill="{TemplateBinding ThumbBackground}" Width="{TemplateBinding Radius}" Height="{TemplateBinding Radius}" HorizontalAlignment="{TemplateBinding ButtonState}" />
                   </StackPanel>
-               </Border>
-               
+               </Border>         
             </ControlTemplate>
         </Setter>
     </Style>
     <Style Selector="local|SliderButton:pointerover /template/ Border">
         <Setter Property="Background"
-                Value="{DynamicResource ThemeBorderMidBrush}" />
+                Value="{DynamicResource ThemeBorderHighBrush}" />
     </Style>
     <Style Selector="local|SliderButton:pointerover /template/ Ellipse">
        <Setter Property="Fill"

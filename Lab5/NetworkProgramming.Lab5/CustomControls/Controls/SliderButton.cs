@@ -10,13 +10,6 @@ namespace CustomControls.Controls
 {
    public class SliderButton : Button
    {
-
-      public static readonly StyledProperty<double> YPosProperty =
-         AvaloniaProperty.Register<Button, double>(nameof(YPos));
-
-      public static readonly StyledProperty<double> XPosProperty =
-         AvaloniaProperty.Register<Button, double>(nameof(XPos));
-
       public static readonly StyledProperty<double> RadiusProperty = AvaloniaProperty.Register<Button, double>(nameof(Radius), 20);
 
       public static readonly StyledProperty<int> StateProperty =
@@ -38,26 +31,9 @@ namespace CustomControls.Controls
          set => SetValue(ThumbBackgroundProperty, value);
       }
 
-      public double YPos => Bounds.Center.Y;
-
-      public double XPos
-      {
-         get
-         {
-            if (State == 1)
-            {
-               return 0;
-            }
-
-            return Bounds.Width;
-         }
-      }
-
       public SliderButton()
       {
          State = 1;
-         SetValue(XPosProperty, XPos);
-         SetValue(YPosProperty, YPos);
       }
 
       protected override void OnClick()
@@ -90,7 +66,6 @@ namespace CustomControls.Controls
          set
          {
             SetValue(ButtonStateProperty, value);
-            SetValue(XPosProperty, XPos);
             InvalidateVisual();
          }
       }

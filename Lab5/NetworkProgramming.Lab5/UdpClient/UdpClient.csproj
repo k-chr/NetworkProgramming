@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CustomControls\CustomControls.csproj" />
+    <ProjectReference Include="..\UdpNetworking\UdpNetworking.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />

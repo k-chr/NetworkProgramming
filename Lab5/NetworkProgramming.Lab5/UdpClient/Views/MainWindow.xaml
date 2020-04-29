@@ -30,12 +30,15 @@
       
       <Grid Name="TitleBar" DockPanel.Dock="Top" Background="{DynamicResource ThemeControlMidBrush}" ColumnDefinitions="Auto, 60, *, Auto ">
          <StackPanel Orientation="Horizontal" Grid.Column="3">
-            <Button Name="iconify" DockPanel.Dock="Right" Height="30" MinWidth="50" VerticalAlignment="Top" Padding="-10,-25" Click="Minimize" FontSize="24" ToolTip.Tip="Minimize">
+            <Button Name="iconify" DockPanel.Dock="Right" Height="30" MinWidth="50" VerticalAlignment="Top" Padding="-10,-25" Click="Minimize" ToolTip.Tip="Minimize" ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
                <Path HorizontalAlignment="Center" VerticalAlignment="Center"
                      Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1"
                      Data="M0,4H15" />
             </Button>
-            <Button Name="closeButton" Height="30" MinWidth="50" VerticalAlignment="Top" FontSize="15" Click="Close" ToolTip.Tip="Close">
+            <Button Name="closeButton" Height="30" MinWidth="50" VerticalAlignment="Top" Click="Close"  ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
+               <ToolTip.Tip>
+                  <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}" Text="Close"/>
+               </ToolTip.Tip>
                <Path HorizontalAlignment="Center" VerticalAlignment="Center"
                      Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1"
                      Data="M4,4L17,17M4,17L17,4M20,20" />
@@ -47,22 +50,20 @@
                </Button.Styles>
             </Button>
          </StackPanel>
-         <Image Grid.Column="0" MaxHeight="30" MaxWidth="25" DockPanel.Dock="Left" Margin="5 2 0 2"  Source="/Assets/messages_small.png" Stretch="Uniform" UseLayoutRounding="True"/>
-
+         <Image Grid.Column="0" MaxHeight="30" MaxWidth="25" DockPanel.Dock="Left" Margin="5 2 0 2" Source="/Assets/messages_small.png" Stretch="Uniform" UseLayoutRounding="True"/>
          <TextBlock Grid.Column="1" HorizontalAlignment="Center" Margin="10 6">QuickMsg</TextBlock>
-         
       </Grid>
       
       <Carousel DockPanel.Dock="Top" SelectedIndex="{Binding CurrentPage}" >
          <Carousel.PageTransition>
-            <PageSlide Duration="0.25" Orientation="Horizontal" />
+            <CrossFade Duration="0.25" />
          </Carousel.PageTransition>
          <views:MainMenu></views:MainMenu>
          <views:AppView VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" Height="380"></views:AppView>
       </Carousel>
       <TextBlock Margin="0,-1,5,2" HorizontalAlignment="Right" DockPanel.Dock="Bottom" Text="{Binding Version}"></TextBlock>
       <DockPanel DockPanel.Dock="Bottom" LastChildFill="False" >
-         <Canvas DockPanel.Dock="Right" Width="20" Height="20" ToolTip.Tip="Dark Mode">
+         <Canvas DockPanel.Dock="Right" Width="20" Height="20" ToolTip.Tip="Dark Mode" ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
             <Path Fill="DarkGray" Stroke="Yellow" Canvas.Left="12" Canvas.Top="0" StrokeThickness="1">
                <Path.Data>
                   <PathGeometry>
@@ -72,11 +73,12 @@
                   </PathGeometry>
                </Path.Data>
             </Path>
-         
          </Canvas>
-         
-         <ctrl:SliderButton DockPanel.Dock="Right" Radius="15" State="1" Height="20" Width="30" Click="OnStyleChange" Command="{Binding OnStyleChange}" ToolTip.Tip="Toggle style"></ctrl:SliderButton>
-         <Canvas DockPanel.Dock="Right" Width="15" Height="20" ToolTip.Tip="Light Mode">
+         <ctrl:SliderButton DockPanel.Dock="Right" Radius="15" State="1" Height="20" Width="30"
+                            Click="OnStyleChange" Command="{Binding OnStyleChange}" 
+                            ToolTip.Tip="Toggle style" ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
+         </ctrl:SliderButton>
+         <Canvas DockPanel.Dock="Right" Width="15" Height="20" ToolTip.Tip="Light Mode" ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
             <Rectangle Canvas.Left="2" Canvas.Right="2" Canvas.Top="9" Fill="Yellow" Stroke="DarkGray" Height="3" Width="3" StrokeThickness="1"></Rectangle>
             <Rectangle Canvas.Left="-3" Canvas.Right="3" Canvas.Top="7" Fill="Yellow" Stroke="DarkGray" Height="3" Width="3" StrokeThickness="1"></Rectangle>
             <Rectangle Canvas.Right="3" Canvas.Left="7" Canvas.Top="7" Fill="Yellow" Stroke="DarkGray" Height="3" Width="3" StrokeThickness="1"></Rectangle>

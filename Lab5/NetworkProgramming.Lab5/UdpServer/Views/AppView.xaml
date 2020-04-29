@@ -1,0 +1,114 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="UdpServer.Views.AppView"
+             xmlns:views="clr-namespace:UdpServer.Views;assembly=UdpServer"
+             xmlns:ctrl="clr-namespace:CustomControls.Controls;assembly=CustomControls"
+             xmlns:vm="clr-namespace:UdpServer.ViewModels;assembly=UdpServer">
+   <UserControl.Styles>
+      <Style Selector="TabControl#AppView > TabItem">
+         <Setter Property="BorderThickness" Value="0"/>
+         <Setter Property="Foreground" Value="White"/>
+         <Setter Property="FontSize" Value="14"/>
+         <Setter Property="Margin" Value="0"/>
+         
+         <Setter Property="Opacity" Value="0.5"/>
+         <Setter Property="Transitions">
+            <Transitions>
+               <DoubleTransition Property="Opacity" Duration="0:0:0.150"/>
+            </Transitions>
+         </Setter>
+      </Style>
+      <Style Selector="TabControl#AppView > TabItem:selected">
+         <Setter Property="Opacity" Value="1"/>
+      </Style>
+      <Style Selector="TabControl#AppView > TabItem:pointerover">
+         <Setter Property="Opacity" Value="1"/>
+      </Style>
+      <Style Selector="ListBoxItem.NonListBox:pointerover">
+         <Setter Property="Background" Value="{DynamicResource ThemeControlHighlightLowBrush}"/>
+      </Style>
+   </UserControl.Styles>
+   <Grid RowDefinitions="*, Auto">
+
+      <TabControl ZIndex="-1" Name="AppView" Grid.Column="0" Grid.Row="0">
+         <TabItem Header="Messages" Background="{DynamicResource ThemeAccentBrush}" ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
+            <ToolTip.Tip>
+               <TextBlock FontSize="12" Text="Your conversations" Foreground="{DynamicResource ThemeForegroundBrush}"/>
+            </ToolTip.Tip>
+            <TabControl Classes="sidebar"
+                        Items="{Binding Conversations}"
+                        Margin="0">
+               <TabControl.ItemTemplate>
+                  <DataTemplate>
+                     <Grid DockPanel.Dock="Left" VerticalAlignment="Bottom">
+                        <Ellipse Grid.Column="0"
+                                 Grid.Row="0"
+                                 Opacity="90"
+                                 Fill="DarkCyan"
+                                 Width="40"
+                                 Height="40">
+                        </Ellipse>
+                        <TextBlock Grid.Column="0"
+                                   Grid.Row="0"
+                                   Margin="0"
+                                   HorizontalAlignment="Center"
+                                   Text="{Binding Client.Shorten}"
+                                   FontSize="32">
+                           <ToolTip.Tip>
+                              <StackPanel>
+                                 <TextBlock Text="{Binding Client.Id}" TextWrapping="Wrap" FontSize="10" Foreground="{DynamicResource ThemeForegroundBrush}"></TextBlock>
+                              </StackPanel>
+                           </ToolTip.Tip>
+                        </TextBlock>
+                     </Grid>
+                  </DataTemplate>
+               </TabControl.ItemTemplate>
+               <TabControl.ContentTemplate>
+                  <DataTemplate>
+                     <views:ConversationView DataContext="{Binding}" BorderThickness="1" BorderBrush="{DynamicResource ThemeBorderMidBrush}"/>
+                  </DataTemplate>
+               </TabControl.ContentTemplate>
+            </TabControl>
+         </TabItem>
+         <TabItem Header="Logs" Background="{DynamicResource ThemeAccentBrush}"
+                  ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
+            <ToolTip.Tip>
+               <TextBlock FontSize="12" Text="Application log" Foreground="{DynamicResource ThemeForegroundBrush}"/>
+            </ToolTip.Tip>
+            <Grid >
+               <ScrollViewer HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Visible" >
+
+                  <ItemsControl Grid.Row="0" Grid.Column="0" Margin="0 0 0 2" Items="{Binding Logs}"
+                                VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                     <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                           <Grid >
+                              <ListBoxItem Classes="NonListBox" HorizontalAlignment="Left" >
+                                 <TextBox CaretBrush="Transparent" Width="580"
+                                 IsReadOnly="True" Background="Transparent"
+                                 BorderThickness="0" AcceptsReturn="True"
+                                 Text="{Binding}" Foreground="{Binding ColorBrush}"
+                                 TextWrapping="Wrap" HorizontalAlignment="Stretch">
+
+                                 </TextBox>
+                              </ListBoxItem>
+                           </Grid>
+                        </DataTemplate>
+                     </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+
+               </ScrollViewer>
+            </Grid>
+         </TabItem>
+      </TabControl>
+      <ctrl:RoundedButton Grid.Row="1" Grid.Column="0" Margin="1, 6,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Radius="20" Width="40" Height="40" Foreground="{DynamicResource ThemeForegroundBrush}"
+         BorderBrush="{DynamicResource ThemeBorderLowBrush}" Background="{Binding ThemeStrongAccentBrush}" ToolTip.Tip="Log Out"
+         Command="{Binding OnLogOut}" ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
+         <Path Stretch="Uniform" Height="15" HorizontalAlignment="Center" StrokeJoin="Round" StrokeLineCap="Round" VerticalAlignment="Center"
+               Stroke="{Binding $parent[ctrl:RoundedButton].Foreground}" StrokeThickness="2" Data="M7,-5V2M7,-2A 5,5 90 1 0 7,10M7,-2A 5,5 90 1 1 7,10"/>
+      </ctrl:RoundedButton>
+   </Grid>
+</UserControl>

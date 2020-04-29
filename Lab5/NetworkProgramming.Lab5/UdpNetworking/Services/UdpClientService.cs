@@ -4,18 +4,14 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using UdpClient.Services.Extensions;
+using UdpNetworking.Services.Enums;
+using UdpNetworking.Services.Extensions;
+using UdpNetworking.Services.States;
 
-namespace UdpClient.Services
+namespace UdpNetworking.Services
 {
-
    public class UdpClientService
    {
-      private enum Logs
-      {
-         Info, Error, Success, Client, Server
-      }
-
       private int _port;
       private string _ip;
       public event EventHandler<object[]> NewMessage;
@@ -24,6 +20,7 @@ namespace UdpClient.Services
       private Socket _socket;
       private EndPoint _endPoint;
       private bool _receiving;
+
       public void InitializeTransfer(int port, string ip) => SocketInit(port, ip).BeginCommunication();
 
       public void StopService() => (_socket == null || _socket.IsDisposed() ? (Action)(() => { }) : _socket.Close)();
@@ -47,6 +44,7 @@ namespace UdpClient.Services
 
       private void Receive(Socket endPoint)
       {
+         if(endPoint.IsDisposed()) return;
          var state = new ControlState()
          {
             CurrentSocket = endPoint,
@@ -57,7 +55,7 @@ namespace UdpClient.Services
 
          NewLog?.Invoke(this, new object[]
          {
-            (int)Logs.Info, "Started transfer data from sender"
+            (int)LogLevels.Info, "Started transfer data from sender"
          });
 
          try
@@ -68,7 +66,7 @@ namespace UdpClient.Services
          {
             NewLog?.Invoke(this, new object[]
             {
-               (int)Logs.Error, e, "Failed to receive data"
+               (int)LogLevels.Error, e, "Failed to receive data"
             });
             _receiving = false;
          }
@@ -100,7 +98,7 @@ namespace UdpClient.Services
          {
             NewLog?.Invoke(this, new object[]
             {
-               (int)Logs.Error, e, "Failed to receive data"
+               (int)LogLevels.Error, e, "Failed to receive data"
             });
             _receiving = false;
          }
@@ -112,8 +110,8 @@ namespace UdpClient.Services
          using var stream = stateStreamBuffer;
          stream.Seek(0, SeekOrigin.Begin);
          var message = Encoding.UTF8.GetString(stream.ToArray());
-         NewMessage?.Invoke(this, new object[] { (int)Logs.Server, message.Trim() });
-         NewLog?.Invoke(this, new object[] { (int)Logs.Success, "Successfully received message" });
+         NewMessage?.Invoke(this, new object[] { (int)LogLevels.Server, message.Trim() });
+         NewLog?.Invoke(this, new object[] { (int)LogLevels.Success, "Successfully received message" });
       }
 
       public void Send(string msg) => Send(_socket, msg);
@@ -123,7 +121,7 @@ namespace UdpClient.Services
          var data = Encoding.ASCII.GetBytes(msg);
          NewLog?.Invoke(this, new object[]
          {
-            (int)Logs.Info, "Started transfer data to receiver"
+            (int)LogLevels.Info, "Started transfer data to receiver"
          });
          try
          {
@@ -133,7 +131,7 @@ namespace UdpClient.Services
          {
             NewLog?.Invoke(this, new object[]
             {
-               (int)Logs.Error, e, "Failed to send data"
+               (int)LogLevels.Error, e, "Failed to send data"
             });
          }
       }
@@ -146,7 +144,7 @@ namespace UdpClient.Services
             var _ = socket.EndSendTo(ar);
             NewLog?.Invoke(this, new object[]
             {
-               (int)Logs.Success, "Data were successfully sent"
+               (int)LogLevels.Success, "Data were successfully sent"
             });
             if (!_receiving)
             {
@@ -158,7 +156,7 @@ namespace UdpClient.Services
          {
             NewLog?.Invoke(this, new object[]
             {
-               (int)Logs.Error, e, "Failed to send data"
+               (int)LogLevels.Error, e, "Failed to send data"
             });
          }
       }

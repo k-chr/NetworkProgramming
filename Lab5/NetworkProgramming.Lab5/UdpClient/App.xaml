@@ -2,15 +2,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:UdpClient"
              x:Class="UdpClient.App">
-    <Application.DataTemplates>
-        <local:ViewLocator/>
-    </Application.DataTemplates>
+   <Application.DataTemplates>
+      <local:ViewLocator/>
+   </Application.DataTemplates>
 
-    <Application.Styles>
-        <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
-        <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"/>
-        <StyleInclude Source=" avares://CustomControls/Themes/SliderButton.xaml" />
-        <StyleInclude Source="avares://CustomControls/Themes/MessageBubble.xaml" />
-        <StyleInclude Source="avares://CustomControls/Themes/RoundedButton.xaml" />
-    </Application.Styles>
+   <Application.Styles>
+      <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
+      <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"/>
+      <StyleInclude Source=" avares://CustomControls/Themes/SliderButton.xaml" />
+      <StyleInclude Source="avares://CustomControls/Themes/MessageBubble.xaml" />
+      <StyleInclude Source="avares://CustomControls/Themes/RoundedButton.xaml" />
+   </Application.Styles>
 </Application>

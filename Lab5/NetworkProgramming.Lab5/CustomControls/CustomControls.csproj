@@ -8,10 +8,12 @@
    <ItemGroup>
      <None Remove="Themes\MessageBubble.xaml" />
      <None Remove="Themes\RoundedButton.xaml" />
+     <None Remove="Themes\SideBar.xaml" />
      <None Remove="Themes\SliderButton.xaml" />
      <AvaloniaResource Include="**\*.xaml">
         <SubType>Designer</SubType>
      </AvaloniaResource>
+     <AvaloniaResource Include="Themes\SideBar.xaml" />
      <AvaloniaResource Include="Themes\SliderButton.xaml" />
      <AvaloniaResource Include="Themes\MessageBubble.xaml" />
      <AvaloniaResource Include="Themes\RoundedButton.xaml" />
@@ -36,6 +38,10 @@
      <Page Include="Themes\RoundedButton.xaml">
        <SubType>Designer</SubType>
        <Generator>MSBuild:Compile</Generator>
+     </Page>
+     <Page Include="Themes\SideBar.xaml">
+        <SubType>Designer</SubType>
+        <Generator>MSBuild:Compile</Generator>
      </Page>
    </ItemGroup>
 

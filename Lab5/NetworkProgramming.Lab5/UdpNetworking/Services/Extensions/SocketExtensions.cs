@@ -1,7 +1,7 @@
 ﻿using System.Net.Sockets;
 using System.Reflection;
 
-namespace UdpClient.Services.Extensions
+namespace UdpNetworking.Services.Extensions
 {
    public static class SocketExtensions
    {

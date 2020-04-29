@@ -1,0 +1,56 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="UdpServer.Views.ConversationView"
+             xmlns:ctrl="clr-namespace:CustomControls.Controls;assembly=CustomControls"
+             xmlns:conv="clr-namespace:CustomControls.Converters;assembly=CustomControls">
+   <UserControl.Resources>
+      <conv:InternalMessageTypeToAlignmentConverter x:Key="myAlignmentConverter"/>
+      <conv:ConvertToDynamicDock x:Key="myDockConverter"/>
+   </UserControl.Resources>
+   <Grid RowDefinitions="13*,4*" >
+      <ScrollViewer  VerticalScrollBarVisibility="Visible">
+         <ItemsControl Items="{Binding Messages}" MinHeight="240" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Margin="0 0 0 2">
+            <ItemsControl.ItemTemplate >
+               <DataTemplate>
+                  <ListBoxItem>
+                     <ctrl:MessageBubble Message="{Binding Data}"
+                                Date="{Binding Date}"
+                                HorizontalAlignment="{Binding Type, Converter={StaticResource myAlignmentConverter} ConverterParameter=Server }"
+                                Client="{Binding ClientModelData}"
+                                BubbleColor="{Binding ColorBrush}"
+                                DynamicDock="{Binding $self.HorizontalAlignment, Converter={StaticResource myDockConverter}}">
+                     </ctrl:MessageBubble>
+                  </ListBoxItem>
+               </DataTemplate>
+            </ItemsControl.ItemTemplate>
+         </ItemsControl>
+      </ScrollViewer>
+      <DockPanel LastChildFill="True" VerticalAlignment="Bottom" Grid.Row="1" Grid.Column="0">
+         <ctrl:RoundedButton DockPanel.Dock="Right" Height="40"  Width="40" Radius="20"
+                             Background="{DynamicResource ThemeControlMidBrush}" BorderBrush="{DynamicResource ThemeAccentBrush4}"
+                             HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource ThemeForegroundBrush}" 
+                             ToolTip.Tip="Send" Command="{Binding SendMessage}"               
+                             ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
+            <Path Data="M-10,6V6M-10,8H-3V15L10,7M-10,4H-3V-3L10,7" Height="10" 
+                  Stretch="Uniform" StrokeLineCap="Round" StrokeJoin="Miter" 
+                  Fill="{Binding $parent[ctrl:RoundedButton].Foreground}" 
+                  Stroke="{Binding $parent[ctrl:RoundedButton].Foreground}" 
+                  StrokeThickness="5" />
+         </ctrl:RoundedButton>
+         <DockPanel.Styles>
+            <Style Selector="Border.border">
+               <Setter Property="BorderBrush" Value="White"></Setter>
+            </Style>
+         </DockPanel.Styles>
+         <Border DockPanel.Dock="Right" BorderBrush="{Binding #Inner.BorderBrush}" BorderThickness="2"
+                 CornerRadius="10" Margin="1" Background="{DynamicResource ThemeControlMidBrush}">
+            <TextBox Background="Transparent" Name="Inner" BorderThickness="0" BorderBrush="{DynamicResource ThemeAccentBrush}"
+                     AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap"
+                     MaxHeight="40" Watermark="Write something..." Text="{Binding InputMessage}" />
+         </Border>
+      </DockPanel>
+   </Grid>
+</UserControl>

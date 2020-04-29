@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Net.Sockets;
 
-namespace UdpClient.Services
+namespace UdpNetworking.Services.States
 {
    public class ControlState
    {

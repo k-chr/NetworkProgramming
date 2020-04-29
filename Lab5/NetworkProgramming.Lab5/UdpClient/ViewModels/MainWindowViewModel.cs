@@ -6,7 +6,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using CustomControls.Models;
 using ReactiveUI;
-using UdpClient.Services;
+using UdpNetworking.Services;
 
 namespace UdpClient.ViewModels
 {
