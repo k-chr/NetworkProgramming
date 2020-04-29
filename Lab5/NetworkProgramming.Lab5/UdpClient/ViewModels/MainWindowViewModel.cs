@@ -162,6 +162,9 @@ namespace UdpClient.ViewModels
          CurrentPage = 1;
          var port = int.Parse(Port);
          _server = new ClientModel((port, IpAddress).ToTuple()){Id = "Server"};
+         var msg = InternalMessageModel.Builder().WithType(InternalMessageType.Client).AttachTextMessage("Hi")
+            .AttachTimeStamp(true).AttachClientData(_you).BuildMessage();
+         AddMessage(msg);
          _clientService.InitializeTransfer(port, IpAddress);
       }
 
