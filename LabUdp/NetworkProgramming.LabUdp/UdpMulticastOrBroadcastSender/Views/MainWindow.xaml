@@ -1,0 +1,66 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:UdpMulticastOrBroadcastSender.ViewModels;assembly=UdpMulticastOrBroadcastSender"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="UdpMulticastOrBroadcastSender.Views.MainWindow"
+        xmlns:views="clr-namespace:UdpMulticastOrBroadcastSender.Views;assembly=UdpMulticastOrBroadcastSender"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="UdpMulticastOrBroadcastSender"
+        xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+        xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+        Name="TheMainWindow"
+        CanResize="False"
+        Height="450"
+        Width="300"
+
+        HasSystemDecorations="False">
+
+   <Design.DataContext>
+      <vm:MainWindowViewModel/>
+   </Design.DataContext>
+
+   <i:Interaction.Behaviors>
+      <ia:EventTriggerBehavior EventName="Closing" SourceObject="{Binding #TheMainWindow}">
+         <ia:InvokeCommandAction Command="{Binding ClosingCommand}" />
+      </ia:EventTriggerBehavior>
+   </i:Interaction.Behaviors>
+
+   <DockPanel LastChildFill="False">
+
+      <Grid Name="TitleBar" DockPanel.Dock="Top" Background="{DynamicResource ThemeControlMidBrush}" ColumnDefinitions="Auto, 60, *, Auto ">
+         <StackPanel Orientation="Horizontal" Grid.Column="3">
+            <Button Name="iconify" DockPanel.Dock="Right" Height="30" MinWidth="50" VerticalAlignment="Top" Padding="-10,-25" Click="Minimize" ToolTip.Tip="Minimize" ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
+               <Path HorizontalAlignment="Center" VerticalAlignment="Center"
+                     Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1"
+                     Data="M0,4H15" />
+            </Button>
+            <Button Name="closeButton" Height="30" MinWidth="50" VerticalAlignment="Top" Click="Close"  ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
+               <ToolTip.Tip>
+                  <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}" Text="Close"/>
+               </ToolTip.Tip>
+               <Path HorizontalAlignment="Center" VerticalAlignment="Center"
+                     Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1"
+                     Data="M4,4L17,17M4,17L17,4M20,20" />
+               <Button.Styles>
+                  <Style Selector="Button:pointerover">
+                     <Setter Property="Background" Value="{Binding ThemeStrongAccentBrush}"/>
+                     <Setter Property="Foreground" Value="AliceBlue"/>
+                  </Style>
+               </Button.Styles>
+            </Button>
+         </StackPanel>
+         <Image Grid.Column="0" MaxHeight="30" MaxWidth="25" DockPanel.Dock="Left" Margin="5 2 0 2" Source="/Assets/messages_small.png" Stretch="Uniform" UseLayoutRounding="True"/>
+         <TextBlock Grid.Column="1" HorizontalAlignment="Center" Margin="10 6">QuickMsg</TextBlock>
+      </Grid>
+      <Carousel DockPanel.Dock="Top" SelectedIndex="{Binding CurrentIndex}">
+         <Carousel.PageTransition>
+            <CrossFade Duration="0.25" />
+         </Carousel.PageTransition>
+         <views:MainMenu></views:MainMenu>
+         <views:AppView></views:AppView>
+      </Carousel>
+
+   </DockPanel>
+</Window>

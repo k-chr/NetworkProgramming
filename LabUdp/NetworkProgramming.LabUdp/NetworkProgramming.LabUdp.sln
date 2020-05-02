@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomControls", "CustomCon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UdpNetworking", "UdpNetworking\UdpNetworking.csproj", "{59CE3560-5D15-4D9B-940B-0FF6C0318172}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UdpMulticastOrBroadcastSender", "UdpMulticastOrBroadcastSender\UdpMulticastOrBroadcastSender.csproj", "{1CADD3D3-6EBB-4C65-A674-8782E650CD40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{59CE3560-5D15-4D9B-940B-0FF6C0318172}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59CE3560-5D15-4D9B-940B-0FF6C0318172}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59CE3560-5D15-4D9B-940B-0FF6C0318172}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CADD3D3-6EBB-4C65-A674-8782E650CD40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CADD3D3-6EBB-4C65-A674-8782E650CD40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CADD3D3-6EBB-4C65-A674-8782E650CD40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CADD3D3-6EBB-4C65-A674-8782E650CD40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

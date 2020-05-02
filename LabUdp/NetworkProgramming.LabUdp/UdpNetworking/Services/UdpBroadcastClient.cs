@@ -4,12 +4,13 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
+using UdpNetworking.Interfaces;
 using UdpNetworking.Services.Enums;
 using UdpNetworking.Services.Extensions;
 
 namespace UdpNetworking.Services
 {
-   public class UdpBroadcastClient
+   public class UdpBroadcastClient : IUdpSender
    {
       private Socket _socket;
       private int _port;
@@ -92,7 +93,7 @@ namespace UdpNetworking.Services
          try
          {
             var endPoint = new IPEndPoint(_address, _port);
-            socket.BeginSendTo(data, 0, data.Length, SocketFlags.Broadcast, endPoint, SendToCallback, socket);
+            socket.BeginSendTo(data, 0, data.Length, SocketFlags.None, endPoint, SendToCallback, socket);
          }
          catch (Exception e)
          {

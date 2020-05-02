@@ -1,0 +1,62 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="UdpMulticastOrBroadcastSender.Views.AppView"
+             xmlns:ctrl="clr-namespace:CustomControls.Controls;assembly=CustomControls"
+             xmlns:conv="clr-namespace:CustomControls.Converters;assembly=CustomControls"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib">
+   <UserControl.Resources>
+      <conv:WidthConverter x:Key="myWidthConverter"/>
+   </UserControl.Resources>
+   <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto,*" Margin="5">
+      <StackPanel Orientation="Vertical">
+         <TextBlock FontSize="18" FontFamily="Bauhaus 93">QuickSender</TextBlock>
+         <TextBlock Text="{Binding Mode}" FontSize="14" FontFamily="Bauhaus 93"></TextBlock>
+      </StackPanel>
+      <ctrl:RoundedButton Margin="0,0,0,9" HorizontalAlignment="Right" Radius="20" Width="40" Height="40" Foreground="{DynamicResource ThemeForegroundBrush}"
+                                   BorderBrush="{DynamicResource ThemeBorderLowBrush}" Background="{Binding ThemeStrongAccentBrush}" ToolTip.Tip="Log Out"
+                                   Command="{Binding OnLogOut}" ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
+         <Path Stretch="Uniform" Height="15" HorizontalAlignment="Center" StrokeJoin="Round" StrokeLineCap="Round" VerticalAlignment="Center"
+               Stroke="{Binding $parent[ctrl:RoundedButton].Foreground}" StrokeThickness="2" Data="M7,-5V2M7,-2A 5,5 90 1 0 7,10M7,-2A 5,5 90 1 1 7,10"/>
+      </ctrl:RoundedButton>
+      <Grid ColumnDefinitions="12*,Auto" Grid.Row="1" Grid.ColumnSpan="1">
+         <Border Grid.Column="0" Grid.ColumnSpan="1" BorderBrush="{Binding #Inner.BorderBrush}" BorderThickness="2" CornerRadius="10" Margin="1" Background="{DynamicResource ThemeControlMidBrush}">
+            <TextBox Background="Transparent" Name="Inner" BorderThickness="0" BorderBrush="{DynamicResource ThemeAccentBrush}"
+                     AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap"
+                     MaxHeight="40" Watermark="Write something..." Text="{Binding MessageToSend}" />
+         </Border>
+         <ctrl:RoundedButton Grid.Column="1" HorizontalAlignment="Right" Height="40"  Width="40" Radius="20" Background="{DynamicResource ThemeControlMidBrush}"
+                          BorderBrush="{DynamicResource ThemeAccentBrush4}"  VerticalAlignment="Center"
+                          Foreground="{DynamicResource ThemeForegroundBrush}" ToolTip.Tip="Send" Command="{Binding Send}"
+                          ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
+            <Path Data="M-10,6V6M-10,8H-3V15L10,7M-10,4H-3V-3L10,7" Height="10" Stretch="Uniform" StrokeLineCap="Round"
+                  StrokeJoin="Miter" Fill="{Binding $parent[ctrl:RoundedButton].Foreground}"
+                  Stroke="{Binding $parent[ctrl:RoundedButton].Foreground}" StrokeThickness="5" />
+         </ctrl:RoundedButton>
+      </Grid>
+      <TextBlock Grid.Row="2">Logs:</TextBlock>
+      <ScrollViewer VerticalScrollBarVisibility="Visible" Grid.Row="3" Margin="0,6,0,0">
+         <ItemsControl Items="{Binding Logs}" VerticalAlignment="Top" >
+            <ItemsControl.ItemTemplate>
+               <DataTemplate>
+                  <ListBoxItem >
+                     <TextBox CaretBrush="Transparent" MaxWidth="{Binding $parent[Window].Width, Converter={StaticResource myWidthConverter} ConverterParameter=25}"
+                     IsReadOnly="True" Background="Transparent"
+                     BorderThickness="0" AcceptsReturn="True"
+                     Text="{Binding}" Foreground="{Binding ColorBrush}"
+                     TextWrapping="Wrap">
+                        <TextBox.Styles>
+                           <Style Selector="TextBox:pointerover">
+                              <Setter Property="Background" Value="Transparent"/>
+                           </Style>
+                        </TextBox.Styles>
+                     </TextBox>
+                  </ListBoxItem>
+               </DataTemplate>
+            </ItemsControl.ItemTemplate>
+         </ItemsControl>
+      </ScrollViewer>
+   </Grid>
+</UserControl>

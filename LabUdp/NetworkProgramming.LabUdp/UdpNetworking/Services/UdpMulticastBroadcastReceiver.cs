@@ -5,14 +5,14 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
+using UdpNetworking.Interfaces;
 using UdpNetworking.Services.Enums;
 using UdpNetworking.Services.Extensions;
 using UdpNetworking.Services.States;
 
 namespace UdpNetworking.Services
 {
-   public class UdpMulticastBroadcastReceiver
+   public class UdpMulticastBroadcastReceiver : IUdpReceiver
    {
       private Socket _serverSocket;
       private int _port;

@@ -21,11 +21,11 @@ namespace UdpNetworking.Services
       private EndPoint _endPoint;
       private bool _receiving;
 
-      public void InitializeTransfer(int port, string ip) => SocketInit(port, ip).BeginCommunication();
+      public void InitializeTransfer(int port, string ip) => InitSocket(port, ip).BeginCommunication();
 
       public void StopService() => (_socket == null || _socket.IsDisposed() ? (Action)(() => { }) : _socket.Close)();
 
-      private UdpClientService SocketInit(int port, string ip)
+      private UdpClientService InitSocket(int port, string ip)
       {
          if (_socket != null && !_socket.IsDisposed())
          {

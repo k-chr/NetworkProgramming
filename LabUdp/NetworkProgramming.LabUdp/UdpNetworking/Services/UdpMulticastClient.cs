@@ -2,12 +2,13 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using UdpNetworking.Interfaces;
 using UdpNetworking.Services.Enums;
 using UdpNetworking.Services.Extensions;
 
 namespace UdpNetworking.Services
 {
-   public class UdpMulticastClient
+   public class UdpMulticastClient : IUdpSender
    {
       private Socket _socket;
       private int _port;
@@ -44,7 +45,7 @@ namespace UdpNetworking.Services
 
       public void StopService() => (_socket == null || _socket.IsDisposed() ? (Action)(() => { }) : () =>
       {
-         _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DropMembership, _address);
+         _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DropMembership, new MulticastOption(_address));
          _socket.Close();
       })();
 
@@ -63,7 +64,7 @@ namespace UdpNetworking.Services
          try
          {
             var endPoint = new IPEndPoint(_address, _port);
-            socket.BeginSendTo(data, 0, data.Length, SocketFlags.Broadcast, endPoint, SendToCallback, socket);
+            socket.BeginSendTo(data, 0, data.Length, SocketFlags.None, endPoint, SendToCallback, socket);
          }
          catch (Exception e)
          {
