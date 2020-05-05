@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
+using System.Net;
 using Avalonia.Media;
 using Avalonia.Threading;
 using CustomControls.Models;
@@ -12,7 +11,7 @@ using ReactiveUI;
 using UdpNetworking.Interfaces;
 using UdpNetworking.Services;
 
-namespace UdpMulticastOrBroadcastSender.ViewModels
+namespace UdpBroadcastOrMulticastReceiver.ViewModels
 {
    public class MainWindowViewModel : ViewModelBase
    {
@@ -22,13 +21,12 @@ namespace UdpMulticastOrBroadcastSender.ViewModels
       private bool _broadcastEnabled;
       private string _multicastAddress;
       private string _port;
-      private string _messageToSend;
       private int _currentIndex;
       private string _mode;
+      private readonly List<ClientModel> _clientsList = new List<ClientModel>();
 
       public ObservableCollection<InternalMessageModel> Logs { get; set; }
-      public ObservableCollection<NetworkInterfaceModel> AvailableInterfaces { get; }
-      public NetworkInterfaceModel SelectedInterface { get; set; }
+      public ObservableCollection<InternalMessageModel> Messages { get; set; }
 
       public IBrush ThemeStrongAccentBrush => Brush.Parse("#cd2626");
 
@@ -65,12 +63,6 @@ namespace UdpMulticastOrBroadcastSender.ViewModels
          }
       }
 
-      public string MessageToSend
-      {
-         get => _messageToSend;
-         set => this.RaiseAndSetIfChanged(ref _messageToSend, value);
-      }
-
       public int CurrentIndex
       {
          get => _currentIndex;
@@ -84,8 +76,7 @@ namespace UdpMulticastOrBroadcastSender.ViewModels
          Port = _initPort;
          MulticastAddress = _initAddress;
          Logs = new ObservableCollection<InternalMessageModel>();
-         AvailableInterfaces = new ObservableCollection<NetworkInterfaceModel>(GetNetworkInterfaces());
-         SelectedInterface = AvailableInterfaces[0];
+         Messages = new ObservableCollection<InternalMessageModel>();
       }
 
       public void ToggleBroadcast(string s)
@@ -98,13 +89,6 @@ namespace UdpMulticastOrBroadcastSender.ViewModels
          };
       }
 
-      public void Send()
-      {
-         if(string.IsNullOrEmpty(MessageToSend)) return;
-         ((IUdpSender)_service).Send(MessageToSend);
-         MessageToSend = "";
-      }
-
       public void OnLogOut()
       {
          Clear();
@@ -113,34 +97,41 @@ namespace UdpMulticastOrBroadcastSender.ViewModels
 
       private void Clear()
       {
-         MessageToSend = "";
          Port = _initPort;
          MulticastAddress = _initAddress;
          _service?.StopService();
          Logs.Clear();
+         Messages.Clear();
+      }
+
+      private ClientModel FindClientModel(IPEndPoint ip)
+      {
+         var client =
+            _clientsList.FirstOrDefault(c => c.Ip.Equals(ip.Address.ToString()) && c.Port == ip.Port);
+         if (client == null)
+         {
+            var model = new ClientModel((ip.Port, ip.Address.ToString()).ToTuple());
+            _clientsList.Add(model);
+            return model;
+         }
+
+         return client;
       }
 
       public void OnLogIn()
       {
          CurrentIndex = 1;
-
+         Messages?.Clear();
+         Logs?.Clear();
          try
          {
             var port = int.Parse(Port);
-            _service = BroadcastEnabled ? (IUdpService)new UdpBroadcastClient() : new UdpMulticastClient();
+            _service = new UdpMulticastBroadcastReceiver();
             _service.LogEvent += (sender, objects) => ParseEvent(objects);
             var builder = InternalMessageModel.Builder();
-
-            if (BroadcastEnabled)
-            {
-               ((UdpBroadcastClient)_service).InitSocket(SelectedInterface.Ip,port);
-               builder.AttachTextMessage("Prepared broadcast module");
-            }
-            else
-            {
-               ((UdpMulticastClient)_service).InitSocket(MulticastAddress, port);
-               builder.AttachTextMessage("Prepared multicast module");
-            }
+            ((UdpMulticastBroadcastReceiver)_service).InitSocket(MulticastAddress, port, BroadcastEnabled);
+            builder.AttachTextMessage("Prepared multicast module" +
+                                      (BroadcastEnabled ? " with broadcast functionality" : ""));
 
             builder.AttachTimeStamp(true).WithType(InternalMessageType.Info);
 
@@ -170,7 +161,7 @@ namespace UdpMulticastOrBroadcastSender.ViewModels
             {
                builder = arg switch
                {
-                  ClientModel m => builder.AttachClientData(m),
+                  IPEndPoint m => builder.AttachClientData(FindClientModel(m)),
                   Exception e => builder.AttachExceptionData(e),
                   string s => builder.AttachTextMessage(s),
                   int num => builder.WithType((InternalMessageType)num),
@@ -179,7 +170,10 @@ namespace UdpMulticastOrBroadcastSender.ViewModels
             }
 
             var msg = builder.AttachTimeStamp(true).BuildMessage();
-            AddLog(msg);
+            if (msg.Type == InternalMessageType.Client)
+               AddMsg(msg);
+            else
+               AddLog(msg);
          }
          catch (Exception e)
          {
@@ -190,20 +184,9 @@ namespace UdpMulticastOrBroadcastSender.ViewModels
          }
       }
 
-
-      private static List<NetworkInterfaceModel> GetNetworkInterfaces()
+      private void AddMsg(InternalMessageModel msg)
       {
-         var interfaces = NetworkInterface.GetAllNetworkInterfaces();
-         var output = new List<NetworkInterfaceModel>();
-
-         foreach (var @interface in interfaces)
-         {
-            var name = @interface.Name;
-            var ip = @interface.GetIPProperties().UnicastAddresses.SingleOrDefault(ipAddressInformation => ipAddressInformation.Address.AddressFamily == AddressFamily.InterNetwork)?.Address;
-            output.Add(new NetworkInterfaceModel { Ip = ip?.ToString() ?? "localhost", Name = name });
-         }
-
-         return output;
+         Dispatcher.UIThread.InvokeAsync(() => Messages.Add(msg));
       }
 
       protected override void ExecuteClosing(CancelEventArgs args)

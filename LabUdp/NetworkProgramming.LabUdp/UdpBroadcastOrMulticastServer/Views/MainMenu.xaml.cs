@@ -1,8 +1,7 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace UdpMulticastOrBroadcastSender.Views
+namespace UdpBroadcastOrMulticastReceiver.Views
 {
    public class MainMenu : UserControl
    {
@@ -14,9 +13,6 @@ namespace UdpMulticastOrBroadcastSender.Views
       private void InitializeComponent()
       {
          AvaloniaXamlLoader.Load(this);
-         var ctrl = this.FindControl<ComboBox>("cBox");
-         if(ctrl != null)
-            ctrl.SelectedIndex = 0;
       }
    }
 }

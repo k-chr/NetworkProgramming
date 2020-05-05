@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="UdpMulticastOrBroadcastSender.Views.MainMenu"
+             x:Class="UdpBroadcastOrMulticastReceiver.Views.MainMenu"         
              xmlns:ctrl="clr-namespace:CustomControls.Controls;assembly=CustomControls">
    <DockPanel>
 
@@ -16,39 +16,30 @@
       <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
          <Button Margin="2,0,0,30" MinWidth="100"
                  Command="{Binding OnLogIn}"
-                 ToolTip.Tip="Log in to start conversation"
+                 ToolTip.Tip="Start receive udp group datagrams"
                  ToolTip.VerticalOffset="0"
-                 ToolTip.Placement="Bottom">Join</Button>
+                 ToolTip.Placement="Bottom">Serve</Button>
 
       </StackPanel>
-      <ComboBox Items="{Binding AvailableInterfaces}" 
-                DockPanel.Dock="Bottom"
-                IsVisible="{Binding BroadcastEnabled}"
-                SelectedItem="{Binding SelectedInterface}"
-                Name="cBox"
-                MaxWidth="400"
-                Margin="10"
-                ToolTip.Tip="Select interface for broadcast"/>
       <TextBox DockPanel.Dock="Bottom"
                Width="200"
                Watermark="Port"
                UseFloatingWatermark="True"
                Margin="10"
                Text="{Binding Port, Mode=TwoWay}"
-               ToolTip.Tip="Provide port of remote host"
+               ToolTip.Tip="Provide port"
                ToolTip.VerticalOffset="0"
                ToolTip.Placement="Bottom"/>
       <TextBox DockPanel.Dock="Bottom"
                Width="200"
                Watermark="Multicast IP address"
                UseFloatingWatermark="True"
-               IsEnabled="{Binding !BroadcastEnabled}"
                Text="{Binding MulticastAddress, Mode=TwoWay}"
                ToolTip.Tip="Provide Ip address of multicast group"
                ToolTip.VerticalOffset="0"
                ToolTip.Placement="Bottom"/>
       <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 40 0 0">
-         <Image HorizontalAlignment="Left" Source="avares://UdpMulticastOrBroadcastSender/Assets/messages.png" Width="50" Margin="10"></Image>
+         <Image HorizontalAlignment="Left" Source="avares://UdpBroadcastOrMulticastReceiver/Assets/messages.png" Width="50" Margin="10"></Image>
          <StackPanel Orientation="Vertical">
             <TextBlock FontFamily="Bauhaus 93" FontSize="30">QuickMsg</TextBlock>
             <TextBlock FontFamily="Bauhaus 93" FontSize="12">Multicast / Broadcast</TextBlock>

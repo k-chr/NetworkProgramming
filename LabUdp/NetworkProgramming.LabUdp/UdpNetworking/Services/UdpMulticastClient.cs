@@ -26,13 +26,17 @@ namespace UdpNetworking.Services
          {
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _port = port;
+
             var add = IPAddress.Parse(address);
-
-            _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.ReuseAddress, 1);
-            _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 255);
-            _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(add));
-
+            //_socket.Bind(new IPEndPoint(IPAddress.Any, 0));
+            _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 3);
             _address = add;
+
+
+            LogEvent?.Invoke(this, new object[]
+            {
+               (int)LogLevels.Info,$"Initialized Udp Multicast module to send data to {address}:{port}"
+            });
          }
          catch (Exception e)
          {
@@ -45,7 +49,7 @@ namespace UdpNetworking.Services
 
       public void StopService() => (_socket == null || _socket.IsDisposed() ? (Action)(() => { }) : () =>
       {
-         _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DropMembership, new MulticastOption(_address));
+        // _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DropMembership, new MulticastOption(_address));
          _socket.Close();
       })();
 

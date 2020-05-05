@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using UdpNetworking.Interfaces;
@@ -36,19 +37,18 @@ namespace UdpNetworking.Services
          {
             _port = port;
             _acceptBroadcast = acceptBroadcast;
-            _serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
-            {
-               EnableBroadcast = _acceptBroadcast
-            };
+            _serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-            _serverSocket.Bind(new IPEndPoint(IPAddress.Any, _port));
             var add = IPAddress.Parse(groupAddress);
+            var add2 = IPAddress.Any;
 
-            _serverSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.ReuseAddress, 1);
-            _serverSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 255);
-            _serverSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(add));
-
+            _serverSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, _acceptBroadcast);
+            _serverSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+            _serverSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(add, add2));
+            _serverSocket.Bind(new IPEndPoint(add2, _port));
+            _serverSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastLoopback, 1);
             _address = add;
+            Receive();
          }
          catch (Exception e)
          {
@@ -61,7 +61,7 @@ namespace UdpNetworking.Services
 
       public void StopService() => (_serverSocket == null || _serverSocket.IsDisposed() ? (Action)(() => { }) : () =>
       {
-         _serverSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DropMembership, _address);
+         _serverSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DropMembership, new MulticastOption(_address));
          _serverSocket.Close();
       })();
 

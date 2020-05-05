@@ -17,7 +17,7 @@ namespace UdpNetworking.Services
       private IPAddress _address;
       public event EventHandler<object[]> LogEvent;
 
-      public void InitSocket(int port)
+      public void InitSocket(string selectedIp, int port)
       {
          LogEvent?.Invoke(this, new object[]
          {
@@ -28,8 +28,10 @@ namespace UdpNetworking.Services
          {
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _port = port;
-            _socket.EnableBroadcast = true;
-            SetBroadcastIp();
+            //_socket.EnableBroadcast = true;
+            _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
+            _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 1);
+            SetBroadcastIp(selectedIp);
          }
          catch (Exception e)
          {
@@ -42,10 +44,10 @@ namespace UdpNetworking.Services
 
       public void StopService() => (_socket == null || _socket.IsDisposed() ? (Action)(() => { }) : _socket.Close)();
 
-      private static (IPAddress mask, IPAddress address) ObtainMaskAndLocalIp()
+      private static (IPAddress mask, IPAddress address) ObtainMaskAndLocalIp(string selectedIp)
       {
          var ipAddress = Dns.GetHostEntry(Dns.GetHostName())
-            .AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+            .AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork && ip.ToString().Equals(selectedIp));
 
          var ipMask = GetSubnetMask(ipAddress);
 
@@ -68,14 +70,19 @@ namespace UdpNetworking.Services
          throw new ArgumentException($"Can't find subnet mask for provided IPv4 address '{address}'");
       }
 
-      private void SetBroadcastIp()
+      private void SetBroadcastIp(string selectedIp)
       {
-         var (mask, address) = ObtainMaskAndLocalIp();
+         var (mask, address) = ObtainMaskAndLocalIp(selectedIp);
          var ipAddress = BitConverter.ToUInt32(address.GetAddressBytes(), 0);
          var ipMaskV4 = BitConverter.ToUInt32(mask.GetAddressBytes(), 0);
          var broadCastIpAddress = ipAddress | ~ipMaskV4;
 
          _address = new IPAddress(BitConverter.GetBytes(broadCastIpAddress));
+
+         LogEvent?.Invoke(this, new object[]
+         {
+            (int)LogLevels.Info, $"Initialized udp broadcast client module for address {_address}:{_port}"
+         });
       }
 
       public void Send(string msg) => Send(_socket, msg);
@@ -93,7 +100,7 @@ namespace UdpNetworking.Services
          try
          {
             var endPoint = new IPEndPoint(_address, _port);
-            socket.BeginSendTo(data, 0, data.Length, SocketFlags.None, endPoint, SendToCallback, socket);
+            socket.BeginSendTo(data, 0, data.Length, SocketFlags.DontRoute, endPoint, SendToCallback, socket);
          }
          catch (Exception e)
          {

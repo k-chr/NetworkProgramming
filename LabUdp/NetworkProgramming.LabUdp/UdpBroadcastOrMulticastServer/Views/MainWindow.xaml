@@ -1,0 +1,81 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:UdpBroadcastOrMulticastReceiver.ViewModels;assembly=UdpBroadcastOrMulticastReceiver"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="250"
+        xmlns:views="clr-namespace:UdpBroadcastOrMulticastReceiver.Views;assembly=UdpBroadcastOrMulticastReceiver"
+        x:Class="UdpBroadcastOrMulticastReceiver.Views.MainWindow"
+        xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+        xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="UdpBroadcastOrMulticastReceiver"
+        HasSystemDecorations="False"
+        Name="TheMainWindow"
+        MinHeight="450"
+        MinWidth="300">
+   <i:Interaction.Behaviors>
+      <ia:EventTriggerBehavior EventName="Closing" SourceObject="{Binding #TheMainWindow}">
+         <ia:InvokeCommandAction Command="{Binding ClosingCommand}" />
+      </ia:EventTriggerBehavior>
+   </i:Interaction.Behaviors>
+
+   <Design.DataContext>
+      <vm:MainWindowViewModel/>
+   </Design.DataContext>
+   <Grid RowDefinitions="1,*,1" ColumnDefinitions="1,*,1" >
+      <DockPanel LastChildFill="False"  Grid.Column="1"  Grid.Row="1">
+
+         <Grid Name="TitleBar" DockPanel.Dock="Top" Background="{DynamicResource ThemeControlMidBrush}" ColumnDefinitions="Auto, 60, *, Auto ">
+            <StackPanel Orientation="Horizontal" Grid.Column="3">
+               <Button Name="Iconify" DockPanel.Dock="Right" Height="30" MinWidth="50" VerticalAlignment="Top" Click="Minimize" ToolTip.Tip="Minimize" ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
+                  <Path HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1"
+                        Data="M0,4H15" />
+               </Button>
+               <Button Name="Restore Down" Tag="Restore Down" DockPanel.Dock="Right" Height="30" MinWidth="50" VerticalAlignment="Top" Click="Maximize" ToolTip.Tip="{Binding $self.Tag}" ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
+                  <Path HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1"  StrokeLineCap="Flat" StrokeJoin="Round"
+                        Data="M0,6H8V14H0ZM3,6V3H11V11H9" />
+               </Button>
+               <Button Name="CloseButton" Height="30" MinWidth="50" VerticalAlignment="Top" Click="Close"  ToolTip.VerticalOffset="0" ToolTip.Placement="Bottom">
+                  <ToolTip.Tip>
+                     <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}" Text="Close"/>
+                  </ToolTip.Tip>
+                  <Path HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1"
+                        Data="M4,4L17,17M4,17L17,4M20,20" />
+                  <Button.Styles>
+                     <Style Selector="Button:pointerover">
+                        <Setter Property="Background" Value="{Binding ThemeStrongAccentBrush}"/>
+                        <Setter Property="Foreground" Value="AliceBlue"/>
+                     </Style>
+                  </Button.Styles>
+               </Button>
+            </StackPanel>
+            <Image Grid.Column="0" MaxHeight="30" MaxWidth="25" DockPanel.Dock="Left" Margin="5 2 0 2" Source="/Assets/messages_small.png" Stretch="Uniform" UseLayoutRounding="True"/>
+            <TextBlock Grid.Column="1" HorizontalAlignment="Center" Margin="10 6">QuickMsg</TextBlock>
+         </Grid>
+         <Carousel DockPanel.Dock="Top" SelectedIndex="{Binding CurrentIndex}" VerticalAlignment="Center">
+            <Carousel.PageTransition >
+               <CrossFade Duration="0.25" />
+            </Carousel.PageTransition>
+            <views:MainMenu></views:MainMenu>
+            <views:AppView></views:AppView>
+         </Carousel>
+
+      </DockPanel>
+      <Border Background="{DynamicResource ThemeAccentBrush}" BorderThickness="1"/>
+      <Border Background="{DynamicResource ThemeAccentBrush}" Grid.Column="2" />
+      <Border Background="{DynamicResource ThemeAccentBrush}" Grid.Row="2" />
+      <Border Background="{DynamicResource ThemeAccentBrush}"  Grid.Row="2" Grid.Column="2"/>
+      <Rectangle Name="TopLeft" Width="30" Height="30" Fill="Transparent"/>
+      <Rectangle Name="TopRight" Width="30" Height="30" Fill="Transparent" Grid.Column="2" />
+      <Rectangle Name="BottomLeft" Width="30" Height="30" Fill="Transparent" Grid.Row="2" />
+      <Rectangle Name="BottomRight" Width="30" Height="30" Fill="Transparent"  Grid.Row="2" Grid.Column="2"/>
+      <Border Name="Top"    Background="{DynamicResource ThemeAccentBrush}" Grid.Column="1" />
+      <Border Name="Right"  Background="{DynamicResource ThemeAccentBrush}" Grid.Row="1"  Grid.Column="2" />
+      <Border Name="Bottom" Background="{DynamicResource ThemeAccentBrush}" Grid.Row="2" Grid.Column="1"  />
+      <Border Name="Left"   Background="{DynamicResource ThemeAccentBrush}"  Grid.Row="1" />
+   </Grid>
+</Window>
