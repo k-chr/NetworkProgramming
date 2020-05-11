@@ -1,6 +1,6 @@
 ﻿namespace NetworkingUtilities.Http.Routing
 {
-	interface IRouteElement
+	public interface IRouteElement
 	{
 		int Id { get; }
 		string Key { get; }
