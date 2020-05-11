@@ -10,7 +10,7 @@
          <DataGrid.Columns>
             <DataGridTextColumn Header="Client Id"
                                 Binding="{Binding Id}"
-                                Width="2*" />
+                                Width="2*"  />
             <DataGridTextColumn Header="Client Ip"
                                 Binding="{Binding Ip}"
                                 Width="2*" />
