@@ -1,6 +1,6 @@
-﻿namespace NetworkingUtilities.Extensions
+﻿namespace NetworkingUtilities.Http.Routing
 {
-	public class RouteLiteral
+	public class RouteLiteral : IRouteElement
 	{
 		public int Id { get; }
 		public string Key { get; }
