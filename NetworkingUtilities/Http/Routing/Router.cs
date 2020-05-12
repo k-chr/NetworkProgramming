@@ -1,10 +1,11 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 
 namespace NetworkingUtilities.Http.Routing
 {
 	public class Router : IRouter
 	{
-		public string Route(string[] segments)
+		public string Route(string[] segments, string requestHttpMethod)
 		{
 			return "";
 		}
@@ -13,5 +14,7 @@ namespace NetworkingUtilities.Http.Routing
 		{
 			throw new System.NotImplementedException();
 		}
+
+		private ICollection<IHttpEndPoint> _endPoints;
 	}
 }

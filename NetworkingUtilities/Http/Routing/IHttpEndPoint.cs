@@ -3,6 +3,6 @@
 	public interface IHttpEndPoint
 	{
 		string Invoke(object[] @params);
-		bool Matches(string[] segments);
+		bool Matches(string[] segments, string httpMethod);
 	}
 }

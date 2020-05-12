@@ -40,7 +40,7 @@ namespace NetworkingUtilities.Http.Services
 					{
 						try
 						{
-							var response = _router.Route(ctx.Request.Url.Segments);
+							var response = _router.Route(ctx.Request.Url.Segments, ctx.Request.HttpMethod);
 
 							if (response != null)
 							{

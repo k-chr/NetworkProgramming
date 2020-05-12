@@ -24,7 +24,7 @@ namespace NetworkingUtilities.Http.Routing
 			return null;
 		}
 
-		public bool Matches(string[] segments)
+		public bool Matches(string[] segments, string httpMethod)
 		{
 
 			return false;

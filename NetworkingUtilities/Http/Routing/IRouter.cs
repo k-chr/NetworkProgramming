@@ -2,7 +2,7 @@
 {
 	public interface IRouter
 	{
-		string Route(string[] segments);
+		string Route(string[] segments, string requestHttpMethod);
 		void BuildEndPoints();
 	}
 }
