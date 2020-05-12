@@ -11,6 +11,7 @@ namespace NetworkingUtilities.Http.Routing
 		private readonly IController _instanceOfController;
 		private readonly RoutePattern _pattern;
 		private readonly List<string> _supportedMethods;
+
 		public string Invoke(object[] @params)
 		{
 			try
@@ -37,6 +38,18 @@ namespace NetworkingUtilities.Http.Routing
 
 			var rV = true;
 
+			if (segments.Length < patternSegments.Count)
+			{
+				foreach (var routeElement in patternSegments.Skip(segments.Length))
+				{
+					if (routeElement is RouteLiteral l || (routeElement is RouteParam p && !p.Optional))
+					{
+						rV = false;
+						break;
+					}
+				}
+			}
+
 			for(var i = 0; i < segments.Length && rV; ++i)
 			{
 				var segment = segments[i].Replace("/", "");
@@ -58,8 +71,6 @@ namespace NetworkingUtilities.Http.Routing
 						break;
 				}
 			}
-
-
 
 			return rV;
 		}
