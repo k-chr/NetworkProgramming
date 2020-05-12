@@ -9,14 +9,17 @@ namespace NetworkingUtilities.Http.Services
 	public class WebServer : IService
 	{
 		private HttpListener _listener;
-		private string _baseRoute;
-		private IRouter _router;
-		private int? _port;
-		private bool _async;
+		private readonly string _baseRoute;
+		private readonly IRouter _router;
+		private readonly int? _port;
+		private readonly bool _async;
 
 		internal WebServer(WebServerServiceBuilder serviceBuilder)
 		{
-
+			_router = serviceBuilder.Router;
+			_port = serviceBuilder.Port;
+			_async = serviceBuilder.Async;
+			_baseRoute = serviceBuilder.Prefix;
 		}
 
 		public void StartService()
