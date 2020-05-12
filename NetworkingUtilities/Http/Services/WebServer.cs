@@ -22,6 +22,11 @@ namespace NetworkingUtilities.Http.Services
 			_baseRoute = serviceBuilder.Prefix;
 		}
 
+		public void StopService()
+		{
+			_listener?.Stop();
+		}
+
 		public void StartService()
 		{
 			_listener = new HttpListener();

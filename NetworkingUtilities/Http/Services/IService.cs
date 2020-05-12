@@ -2,5 +2,7 @@
 {
 	public interface IService
 	{
+		void StopService();
+		void StartService();
 	}
 }
