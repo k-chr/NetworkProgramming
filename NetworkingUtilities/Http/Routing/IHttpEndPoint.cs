@@ -2,5 +2,7 @@
 {
 	public interface IHttpEndPoint
 	{
+		string Invoke(object[] @params);
+		bool Matches(string[] segments);
 	}
 }

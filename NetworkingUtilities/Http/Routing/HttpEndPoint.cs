@@ -24,6 +24,12 @@ namespace NetworkingUtilities.Http.Routing
 			return null;
 		}
 
+		public bool Matches(string[] segments)
+		{
+
+			return false;
+		}
+
 		public HttpEndPoint(MethodInfo targetMethod, IController instanceOfController)
 		{
 			_targetMethod = targetMethod;
