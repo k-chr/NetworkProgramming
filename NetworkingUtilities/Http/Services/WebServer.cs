@@ -22,6 +22,11 @@ namespace NetworkingUtilities.Http.Services
 			_baseRoute = serviceBuilder.Prefix;
 		}
 
+		public static WebServerServiceBuilder Builder()
+		{
+			return new WebServerServiceBuilder();
+		}
+
 		public void StopService()
 		{
 			_listener?.Stop();
@@ -30,15 +35,11 @@ namespace NetworkingUtilities.Http.Services
 		public void StartService()
 		{
 			_listener = new HttpListener();
-			_listener.Prefixes.Add(_baseRoute + (_port.HasValue? $":{_port.Value}" : ""));
+			_listener.Prefixes.Add(_baseRoute + (_port.HasValue ? $":{_port.Value}" : ""));
 
-			if (_async)
+			var fun = (Action) (() =>
 			{
-
-			}
-			else
-			{
-				while (true)
+				while (_listener.IsListening)
 				{
 					var ctx = _listener.GetContext();
 					ThreadPool.QueueUserWorkItem((_) =>
@@ -66,6 +67,15 @@ namespace NetworkingUtilities.Http.Services
 
 					});
 				}
+			});
+
+			if (_async)
+			{
+				//TODO implement async action
+			}
+			else
+			{
+				fun.Invoke();
 			}
 		}
 	}
