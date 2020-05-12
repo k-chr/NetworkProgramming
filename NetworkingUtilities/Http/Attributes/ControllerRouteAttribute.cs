@@ -2,7 +2,7 @@
 
 namespace NetworkingUtilities.Http.Attributes
 {
-   [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+   [AttributeUsage( AttributeTargets.Method)]
    public sealed class ControllerRouteAttribute : Attribute
    {
 	   public string Template { get; }

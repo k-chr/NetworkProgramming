@@ -24,7 +24,6 @@ namespace NetworkingUtilities.Http.Routing
 				Console.Write(e);
 			}
 
-
 			return null;
 		}
 
