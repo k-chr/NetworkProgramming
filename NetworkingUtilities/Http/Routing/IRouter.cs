@@ -4,7 +4,7 @@ namespace NetworkingUtilities.Http.Routing
 {
 	public interface IRouter
 	{
-		string Route(HttpListenerContext ctx);
+		string Route(string[] segments);
 		void BuildEndPoints();
 
 	}

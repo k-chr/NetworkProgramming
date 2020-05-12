@@ -4,7 +4,8 @@
 	{
 		public IService Build()
 		{
-			return null;
+			return new WebServer(this);
 		}
+
 	}
 }

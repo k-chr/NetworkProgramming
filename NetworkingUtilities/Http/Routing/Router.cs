@@ -4,9 +4,9 @@ namespace NetworkingUtilities.Http.Routing
 {
 	public class Router : IRouter
 	{
-		public string Route(HttpListenerContext ctx)
+		public string Route(string[] segments)
 		{
-			
+			return "";
 		}
 
 		public void BuildEndPoints()
