@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using NetworkingUtilities.Http.Attributes;
 
 namespace NetworkingUtilities.Http.Routing
@@ -10,9 +9,9 @@ namespace NetworkingUtilities.Http.Routing
 	{
 		public string Route(string[] segments, string requestHttpMethod)
 		{
+			var endPoint = _endPoints.FirstOrDefault(e => e.Matches(segments, requestHttpMethod));
 
-
-			return null;
+			return endPoint?.Invoke(segments);
 		}
 
 		public void BuildEndPoints()

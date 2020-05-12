@@ -37,45 +37,44 @@ namespace NetworkingUtilities.Http.Services
 			_listener = new HttpListener();
 			_listener.Prefixes.Add(_baseRoute + (_port.HasValue ? $":{_port.Value}" : ""));
 
-			var fun = (Action) (() =>
-			{
-				while (_listener.IsListening)
-				{
-					var ctx = _listener.GetContext();
-					ThreadPool.QueueUserWorkItem((_) =>
-					{
-						try
-						{
-							var response = _router.Route(ctx.Request.Url.Segments, ctx.Request.HttpMethod);
-
-							if (response != null)
-							{
-								ctx.Response.StatusCode = 200;
-								using var output = ctx.Response.OutputStream;
-								output.Write(Encoding.Unicode.GetBytes(response));
-							}
-							else
-							{
-								ctx.Response.StatusCode = 404;
-							}
-						}
-						catch (Exception e)
-						{
-							Console.WriteLine(e);
-							ctx.Response.StatusCode = 403;
-						}
-
-					});
-				}
-			});
-
 			if (_async)
 			{
 				//TODO implement async action
 			}
 			else
 			{
-				fun.Invoke();
+				Start();
+			}
+		}
+
+		private void Start()
+		{
+			while (_listener.IsListening)
+			{
+				var ctx = _listener.GetContext();
+				ThreadPool.QueueUserWorkItem((_) =>
+				{
+					try
+					{
+						var response = _router.Route(ctx.Request.Url.Segments, ctx.Request.HttpMethod);
+
+						if (response != null)
+						{
+							ctx.Response.StatusCode = 200;
+							using var output = ctx.Response.OutputStream;
+							output.Write(Encoding.Unicode.GetBytes(response));
+						}
+						else
+						{
+							ctx.Response.StatusCode = 404;
+						}
+					}
+					catch (Exception e)
+					{
+						Console.WriteLine(e);
+						ctx.Response.StatusCode = 403;
+					}
+				});
 			}
 		}
 	}
