@@ -8,6 +8,6 @@
 <body>
 <style>{{cssloader}}</style>
 <h1>{{header}}</h1>
-<table class="center">{{content}}</table>
+{{content}}
 </body>
 </html>

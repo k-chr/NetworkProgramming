@@ -4,10 +4,11 @@ using System.Text;
 
 namespace HttpStorehouse.Models
 {
-	public class StoreHouseModel : IModel<int, string>
+	public class StoreHouseModel : IModel<int, string, string>
 	{
 		public int Key { get; set; }
 		public string Value { get; set; }
+		public string Description { get; set; }
 
 		private List<ProductModel> Models { get; set; } 
 	}
