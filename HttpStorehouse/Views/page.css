@@ -13,6 +13,7 @@ table.center > tr > td {
 	margin-right: auto;
 	background: azure;
 	color: darkslategrey;
+	text-align: center;
 }
 
 table.center > tr > th {
@@ -20,6 +21,7 @@ table.center > tr > th {
 	margin-right: auto;
 	background: cadetblue;
 	color: cornsilk;
+	text-align: center;
 }
 
 h1 {
@@ -28,4 +30,10 @@ h1 {
 	margin-right: auto;
 	color: aliceblue;
 	background: cornflowerblue;
+}
+
+h3 {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
 }
