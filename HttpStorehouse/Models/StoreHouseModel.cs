@@ -10,6 +10,6 @@ namespace HttpStorehouse.Models
 		public string Value { get; set; }
 		public string Description { get; set; }
 
-		private List<ProductModel> Models { get; set; } 
+		public List<ProductModel> Models { get; set; } 
 	}
 }
