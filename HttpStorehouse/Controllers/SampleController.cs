@@ -3,7 +3,7 @@ using System.Linq;
 using NetworkingUtilities.Http.Attributes;
 using NetworkingUtilities.Http.Routing;
 
-namespace HttpStorehouse
+namespace HttpStorehouse.Controllers
 {
 	class SampleController : IController
 	{
