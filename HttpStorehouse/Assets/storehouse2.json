@@ -1,30 +1,30 @@
 {
-	"Id": 1,
-	"Description": "Storehouse 1",
+	"Key": 2,
+	"Description": "Storehouse 2",
 	"Value": "",
 	"Models": [
 		{
-			"Id": 1,
+			"Key": 1,
 			"Description": "USB Flash memory devices",
 			"Value": "854530"
 		},
 		{
-			"Id": 2,
+			"Key": 2,
 			"Description": "MP3 players",
 			"Value": "65347891"
 		},
 		{
-			"Id": 3,
+			"Key": 3,
 			"Description": "Speakers",
 			"Value": "2879000"
 		},
 		{
-			"Id": 4,
+			"Key": 4,
 			"Description": "CPUs",
 			"Value": "65600000"
 		},
 		{
-			"Id": 5,
+			"Key": 5,
 			"Description": "Detectors",
 			"Value": "76849321"
 		}

@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using HttpStorehouse.Models;
+using HttpStorehouse.Views;
 using NetworkingUtilities.Http.Attributes;
 using NetworkingUtilities.Http.Routing;
 
 namespace HttpStorehouse.Controllers
 {
-	public class StoreHouseController : IController
+	class StoreHouseController : IController
 	{
 		private readonly List<StoreHouseModel> _storeHouses;
 
@@ -32,6 +34,7 @@ namespace HttpStorehouse.Controllers
 						var storeHouse = JsonSerializer.Deserialize<StoreHouseModel>(str);
 						_storeHouses.Add(storeHouse);
 					}
+					else throw new Exception();
 				}
 				catch (Exception e)
 				{
@@ -42,13 +45,18 @@ namespace HttpStorehouse.Controllers
 		}
 
 		[ControllerRoute("/Company/{id:int}/")]
-		public string GetStorehouse(int id)
+		private string GetStorehouse(int id)
 		{
-			return "";
+			var obj = _storeHouses.FirstOrDefault(model => model.Key == id);
+			if (obj == null) return null;
+			return new Page()
+				.BindData<int, string, string>(
+					obj.Models.Select(product => product as IModel<int, string, string>).ToList(), obj.Description,
+					"Company storehouses", obj.Models.Sum(product => long.Parse(product.Value)).ToString()).ToString();
 		}
 
 		[ControllerRoute("/Company/{ids:intRange}/")]
-		public string GetStorehouses(int[] ids)
+		private string GetStorehouses(int[] ids)
 		{
 			return "";
 		}

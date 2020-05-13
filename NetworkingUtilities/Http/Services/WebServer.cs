@@ -63,7 +63,7 @@ namespace NetworkingUtilities.Http.Services
 						{
 							ctx.Response.StatusCode = 200;
 							using var output = ctx.Response.OutputStream;
-							output.Write(Encoding.Unicode.GetBytes(response));
+							output.Write(Encoding.UTF8.GetBytes(response));
 						}
 						else
 						{

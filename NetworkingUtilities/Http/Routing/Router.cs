@@ -28,7 +28,7 @@ namespace NetworkingUtilities.Http.Routing
 					var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance );
 					methods = methods.Where(m =>
 					m.GetCustomAttributes(true).Any(attribute => attribute is ControllerRouteAttribute)).ToArray();
-
+					var instance = Activator.CreateInstance(type, null);
 					foreach (var methodInfo in methods)
 					{
 						if (methodInfo.GetCustomAttributes(true)
@@ -36,7 +36,6 @@ namespace NetworkingUtilities.Http.Routing
 						{
 							var verb = attr.Verb;
 							var template = attr.Template;
-							var instance = Activator.CreateInstance(type, null);
 							var pattern = new RouteParser().ParsePattern(template);
 							var endPoint = new HttpEndPoint(methodInfo, (IController)instance, pattern, new List<string> { verb });
 							endPoints.Add(endPoint);
