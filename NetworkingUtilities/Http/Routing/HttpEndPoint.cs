@@ -16,7 +16,7 @@ namespace NetworkingUtilities.Http.Routing
 		{
 			try
 			{
-				@params = @params?.Select(param => param.Replace("/", "")).Skip(1).ToArray();
+				@params = @params?.Select(param => param.Replace("/", "")).ToArray();
 				var args = new List<object>();
 
 				var patternSegments = _pattern.RouteElems.ToList();
@@ -26,7 +26,7 @@ namespace NetworkingUtilities.Http.Routing
 
 				var dict = new Dictionary<string, string>();
 
-				for (var i = 0; i < (@params?.Length ?? 0) && @params != null; ++i)
+				for (var i = 1; i < (@params?.Length ?? 0) && @params != null; ++i)
 				{
 					var name = patternSegments.FirstOrDefault(element => element.Id == i)?.Key;
 					var value = @params[i];
@@ -47,6 +47,12 @@ namespace NetworkingUtilities.Http.Routing
 							{
 								var valueObject = value.Split('_').Select(int.Parse).ToArray();
 								args.Add(valueObject);
+							}
+
+							else if (constraints.ContainsKey("double"))
+							{
+								var valueObject = double.Parse(value);
+								args.Add(value);
 							}
 
 							else if (constraints.ContainsKey("int"))
@@ -138,7 +144,7 @@ namespace NetworkingUtilities.Http.Routing
 
 			var patternSegments = _pattern.RouteElems;
 
-			segments = segments.Skip(1).ToArray();
+			segments = segments.ToArray();
 
 			var rV = true;
 
@@ -154,7 +160,7 @@ namespace NetworkingUtilities.Http.Routing
 				}
 			}
 
-			for (var i = 0; i < segments.Length && rV; ++i)
+			for (var i = 1; i < segments.Length && rV; ++i)
 			{
 				var segment = segments[i].Replace("/", "");
 				var elem = patternSegments.FirstOrDefault(seg => seg.Id == i);

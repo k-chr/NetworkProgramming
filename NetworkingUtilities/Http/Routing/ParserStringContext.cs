@@ -11,7 +11,7 @@ namespace NetworkingUtilities.Http.Routing
 		public ParserStringContext(string data)
 		{
 			_data = data;
-			_index = -1;
+			_index = 0;
 			_captureStart = null;
 		}
 
@@ -20,7 +20,7 @@ namespace NetworkingUtilities.Http.Routing
 		public string GetMark()
 		{
 			if (!_captureStart.HasValue) return null;
-			string d = _data[_captureStart.Value.._index];
+			string d = _data[_captureStart.Value..(_index+1)];
 			_captureStart = null;
 			return d;
 		}

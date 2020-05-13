@@ -35,7 +35,7 @@ namespace NetworkingUtilities.Http.Services
 		public void StartService()
 		{
 			_listener = new HttpListener();
-			_listener.Prefixes.Add(_baseRoute + (_port.HasValue ? $":{_port.Value}" : ""));
+			_listener.Prefixes.Add(_baseRoute + (_port.HasValue ? $":{_port.Value}/" : "/"));
 
 			if (_async)
 			{
@@ -49,6 +49,7 @@ namespace NetworkingUtilities.Http.Services
 
 		private void Start()
 		{
+			_listener.Start();
 			while (_listener.IsListening)
 			{
 				var ctx = _listener.GetContext();
@@ -73,6 +74,10 @@ namespace NetworkingUtilities.Http.Services
 					{
 						Console.WriteLine(e);
 						ctx.Response.StatusCode = 403;
+					}
+					finally
+					{
+						ctx.Response.Close();
 					}
 				});
 			}

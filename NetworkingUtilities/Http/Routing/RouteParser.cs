@@ -71,6 +71,10 @@ namespace NetworkingUtilities.Http.Routing
 					var elem = ParsePatternLiteral();
 					routeElems.Add(elem);
 				}
+				if (_ctx.CurrentChar == _availableCharacters[ValidCharacters.SubPathSign])
+				{
+					++_currentSegment;
+				}
 			}
 			
 			return new RoutePattern(uri, routeElems);
@@ -109,7 +113,9 @@ namespace NetworkingUtilities.Http.Routing
 				_ctx.Next();
 			}
 
+			_ctx.Previous();
 			var name = _ctx.GetMark().Replace("{", "").Replace("}", "");
+			_ctx.Next();
 			if(char.IsNumber(_ctx.CurrentChar) || !_availableCharacters.ContainsValue(_ctx.CurrentChar)) throw new Exception();
 
 			var optional = false;

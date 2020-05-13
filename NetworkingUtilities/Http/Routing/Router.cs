@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using NetworkingUtilities.Http.Attributes;
 
 namespace NetworkingUtilities.Http.Routing
@@ -20,10 +21,13 @@ namespace NetworkingUtilities.Http.Routing
 
 			try
 			{
-				foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IController))))
+				var collection = System.Reflection.Assembly.GetEntryAssembly().GetTypes();
+				var collection2 = collection.Where(t => t.GetInterfaces().Contains(typeof(IController))).ToList();
+				foreach (var type in collection2)
 				{
-					var methods = type.GetMethods().Where(m =>
-						m.GetCustomAttributes(true).Any(attribute => attribute is ControllerRouteAttribute));
+					var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance );
+					methods = methods.Where(m =>
+					m.GetCustomAttributes(true).Any(attribute => attribute is ControllerRouteAttribute)).ToArray();
 
 					foreach (var methodInfo in methods)
 					{

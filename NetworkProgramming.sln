@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkProgramming.Lab2", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkProgramming.Lab4", "NetworkProgramming.Lab4\NetworkProgramming.Lab4.csproj", "{08CEBA3F-6CF6-4203-9BE9-062C49589A03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpStorehouse", "HttpStorehouse\HttpStorehouse.csproj", "{D5C2323E-0E65-47DC-B254-3661E56BF305}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpStorehouse", "HttpStorehouse\HttpStorehouse.csproj", "{D5C2323E-0E65-47DC-B254-3661E56BF305}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkingUtilities", "NetworkingUtilities\NetworkingUtilities.csproj", "{45ECED5A-A66A-42BF-9D3B-7FDBA6E62313}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkingUtilities", "NetworkingUtilities\NetworkingUtilities.csproj", "{45ECED5A-A66A-42BF-9D3B-7FDBA6E62313}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{56D5F055-A06A-40D6-8830-C2EF74128A99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +44,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D5C2323E-0E65-47DC-B254-3661E56BF305} = {56D5F055-A06A-40D6-8830-C2EF74128A99}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {88D7FA24-0B70-4E51-8FD5-F15F33FEF3E5}
