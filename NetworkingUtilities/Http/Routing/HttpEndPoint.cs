@@ -12,11 +12,32 @@ namespace NetworkingUtilities.Http.Routing
 		private readonly RoutePattern _pattern;
 		private readonly List<string> _supportedMethods;
 
-		public string Invoke(object[] @params)
+		public string Invoke(string[] @params)
 		{
 			try
 			{
-				var obj = _targetMethod?.Invoke(_instanceOfController, @params);
+				@params = @params?.Select(param => param.Replace("/", "")).Skip(1).ToArray();
+				var args = new List<object>();
+
+				var patternSegments = _pattern.RouteElems.ToList();
+
+				var methodParams = _targetMethod.GetParameters();
+				var names = methodParams.Select((info, i) => info.Name).ToList();
+
+				var dict = new Dictionary<string, string>();
+
+				for (var i = 0; i < (@params?.Length ?? 0) && @params != null; ++i)
+				{
+					var name = patternSegments.FirstOrDefault(element => element.Id == i)?.Key;
+					var value = @params[i];
+					dict.Add(name, value);
+				}
+
+				dict = dict.Where(pair => names.Contains(pair.Key)).ToDictionary(pair => pair.Key, pair => pair.Value);
+
+
+
+				var obj = _targetMethod.Invoke(_instanceOfController, args.ToArray());
 				if (obj is string s) return s;
 			}
 			catch (Exception e)
@@ -49,7 +70,7 @@ namespace NetworkingUtilities.Http.Routing
 				}
 			}
 
-			for(var i = 0; i < segments.Length && rV; ++i)
+			for (var i = 0; i < segments.Length && rV; ++i)
 			{
 				var segment = segments[i].Replace("/", "");
 				var elem = patternSegments.FirstOrDefault(seg => seg.Id == i);

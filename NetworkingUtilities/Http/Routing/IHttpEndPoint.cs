@@ -2,7 +2,7 @@
 {
 	public interface IHttpEndPoint
 	{
-		string Invoke(object[] @params);
+		string Invoke(string[] @params);
 		bool Matches(string[] segments, string httpMethod);
 	}
 }
