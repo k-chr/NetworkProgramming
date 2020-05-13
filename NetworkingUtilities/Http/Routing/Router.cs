@@ -21,9 +21,9 @@ namespace NetworkingUtilities.Http.Routing
 
 			try
 			{
-				var collection = System.Reflection.Assembly.GetEntryAssembly().GetTypes();
-				var collection2 = collection.Where(t => t.GetInterfaces().Contains(typeof(IController))).ToList();
-				foreach (var type in collection2)
+				var collection = Assembly.GetEntryAssembly()?.GetTypes();
+				var collection2 = collection?.Where(t => t.GetInterfaces().Contains(typeof(IController))).ToList();
+				foreach (var type in collection2??new List<Type>())
 				{
 					var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance );
 					methods = methods.Where(m =>

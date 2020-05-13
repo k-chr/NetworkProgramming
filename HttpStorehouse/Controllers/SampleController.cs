@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using HttpStorehouse.Views;
 using NetworkingUtilities.Http.Attributes;
 using NetworkingUtilities.Http.Routing;
 
@@ -11,7 +12,7 @@ namespace HttpStorehouse.Controllers
 		string GetString(int id, string name, int[] values)
 		{
 			Console.WriteLine($"{id} | {name} | values: {string.Join(',', values.Select(v => v.ToString()).ToArray())}");
-			return $"{id} | {name} | values: {string.Join(',', values.Select(v => v.ToString()).ToArray())}";
+			return new Page().ToString();
 		}
 	}
 }
