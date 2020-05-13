@@ -1,3 +1,32 @@
 {
-
+	"Id": 5,
+	"Description": "Storehouse 5",
+	"Value": "",
+	"Models": [
+		{
+			"Id": 1,
+			"Description": "Other components",
+			"Value": "730012"
+		},
+		{
+			"Id": 2,
+			"Description": "Touch-pads",
+			"Value": "1234567"
+		},
+		{
+			"Id": 3,
+			"Description": "Headphones",
+			"Value": "21999937"
+		},
+		{
+			"Id": 4,
+			"Description": "LCDs",
+			"Value": "123455432"
+		},
+		{
+			"Id": 5,
+			"Description": "Cables",
+			"Value": "12345"
+		}
+	]
 }

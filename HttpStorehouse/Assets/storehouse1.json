@@ -1,3 +1,32 @@
 {
-
+	"Id": 1,
+	"Description": "Storehouse 1",
+	"Value": "",
+	"Models": [
+		{
+			"Id": 1,
+			"Description": "Motherboards",
+			"Value": "10043242"
+		},
+		{
+			"Id": 2,
+			"Description": "Arduino",
+			"Value": "1231453"
+		},
+		{
+			"Id": 3,
+			"Description": "Raspberries",
+			"Value": "2134551"
+		},
+		{
+			"Id": 4,
+			"Description": "Operational Systems",
+			"Value": "5432112"
+		},
+		{
+			"Id": 5,
+			"Description": "RAM sticks",
+			"Value": "235451"
+		}
+	] 
 }

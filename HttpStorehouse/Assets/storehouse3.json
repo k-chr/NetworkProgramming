@@ -1,3 +1,32 @@
 {
-
+	"Id": 3,
+	"Description": "Storehouse 3",
+	"Value": "",
+	"Models": [
+		{
+			"Id": 1,
+			"Description": "Power suppliers",
+			"Value": "5445623"
+		},
+		{
+			"Id": 2,
+			"Description": "SSDs",
+			"Value": "998774"
+		},
+		{
+			"Id": 3,
+			"Description": "HDDs",
+			"Value": "1249897"
+		},
+		{
+			"Id": 4,
+			"Description": "Switches",
+			"Value": "123178967"
+		},
+		{
+			"Id": 5,
+			"Description": "Routers",
+			"Value": "10435300"
+		}
+	]
 }
