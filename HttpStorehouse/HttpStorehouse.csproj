@@ -9,4 +9,9 @@
     <ProjectReference Include="..\NetworkingUtilities\NetworkingUtilities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="Views\page.bindable" />
+    <Resource Include="Views\page.css" />
+  </ItemGroup>
+
 </Project>
