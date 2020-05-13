@@ -20,7 +20,7 @@ namespace HttpStorehouse.Views
 
 		private void InitializeComponent()
 		{
-			using var stream = System.Reflection.Assembly.GetExecutingAssembly()?.GetManifestResourceStream("HttpStorehouse.Views.page.css");
+			using var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("HttpStorehouse.Views.page.css");
 			if (stream != null)
 			{
 				using var fStreamReader = new StreamReader(stream);
@@ -28,7 +28,7 @@ namespace HttpStorehouse.Views
 				_css = strCss;
 			}
 
-			using var streamBindable = System.Reflection.Assembly.GetExecutingAssembly()?.GetManifestResourceStream("HttpStorehouse.Views.page.bindable");
+			using var streamBindable = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("HttpStorehouse.Views.page.bindable");
 			if (streamBindable != null)
 			{
 				using var fStreamReader = new StreamReader(streamBindable);
