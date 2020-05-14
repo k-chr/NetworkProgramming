@@ -6,6 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Http\ErrorPages\403.html" />
+    <None Remove="Http\ErrorPages\404.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Http\ErrorPages\403.html" />
+    <EmbeddedResource Include="Http\ErrorPages\404.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Udp\" />
     <Folder Include="Tcp\" />
   </ItemGroup>

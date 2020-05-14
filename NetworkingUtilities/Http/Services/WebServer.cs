@@ -29,7 +29,19 @@ namespace NetworkingUtilities.Http.Services
 
 		public void StopService()
 		{
-			_listener?.Stop();
+			try
+			{
+				if (_listener.IsListening)
+				{
+					_listener?.Stop();
+					_listener?.Abort();
+					_listener?.Close(); 
+				}
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+			}
 		}
 
 		public void StartService()
@@ -40,6 +52,9 @@ namespace NetworkingUtilities.Http.Services
 			if (_async)
 			{
 				//TODO implement async action
+				//TODO due to the fact that in .Net Core 3.1 in HttpListener class method GetContext
+				//TODO is full of bugs (it hangs all app however Stop, Abort, Close methods were called) https://github.com/dotnet/runtime/issues/35526
+				//TODO I had to write asynchronous api, which works perfectly without blocking.
 			}
 			else
 			{
@@ -49,12 +64,27 @@ namespace NetworkingUtilities.Http.Services
 
 		private void Start()
 		{
-			_listener.Start();
-			while (_listener.IsListening)
+			try
 			{
-				var ctx = _listener.GetContext();
-				ThreadPool.QueueUserWorkItem((_) =>
+				_listener.Start();
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				Environment.Exit(1);
+			}
+			_listener.BeginGetContext(OnBeginGetContext, _listener);
+			
+		}
+
+		private void OnBeginGetContext(IAsyncResult ar)
+		{
+			
+			ThreadPool.QueueUserWorkItem((_) =>
+			{
+				try
 				{
+					var ctx = _listener.EndGetContext(ar);
 					try
 					{
 						var response = _router.Route(ctx.Request.Url.Segments, ctx.Request.HttpMethod);
@@ -79,8 +109,14 @@ namespace NetworkingUtilities.Http.Services
 					{
 						ctx.Response.Close();
 					}
-				});
-			}
+					_listener.BeginGetContext(OnBeginGetContext, _listener);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e);
+				}
+			});
+			
 		}
 	}
 }
