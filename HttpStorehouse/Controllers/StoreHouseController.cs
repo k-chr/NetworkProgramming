@@ -60,7 +60,8 @@ namespace HttpStorehouse.Controllers
 		private string GetStorehouses(int[] ids)
 		{
 			var collection = _storeHouses.Where(store => ids.Contains(store.Key)).ToList();
-			var header = string.Join('&', collection.Select(store => store.Description));
+			if (collection == null || collection.Count == 0) return null;
+			var header = "Storehouses: " + string.Join(',', collection.Select(store => store.Key));
 			var output = new List<ProductModel>();
 			collection.ForEach(store => output.AddRange(store.Models));
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -13,6 +14,8 @@ namespace NetworkingUtilities.Http.Services
 		private readonly IRouter _router;
 		private readonly int? _port;
 		private readonly bool _async;
+		private readonly string _403;
+		private readonly string _404;
 
 		internal WebServer(WebServerServiceBuilder serviceBuilder)
 		{
@@ -20,6 +23,21 @@ namespace NetworkingUtilities.Http.Services
 			_port = serviceBuilder.Port;
 			_async = serviceBuilder.Async;
 			_baseRoute = serviceBuilder.Prefix;
+			using var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("NetworkingUtilities.Http.ErrorPages.403.html");
+			if (stream != null)
+			{
+				using var fStreamReader = new StreamReader(stream);
+				var str403 = fStreamReader.ReadToEnd();
+				_403 = str403;
+			}
+
+			using var stream404 = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("NetworkingUtilities.Http.ErrorPages.404.html");
+			if (stream404 != null)
+			{
+				using var fStreamReader = new StreamReader(stream404);
+				var str404 = fStreamReader.ReadToEnd();
+				_404 = str404;
+			}
 		}
 
 		public static WebServerServiceBuilder Builder()
@@ -98,12 +116,16 @@ namespace NetworkingUtilities.Http.Services
 						else
 						{
 							ctx.Response.StatusCode = 404;
+							using var output = ctx.Response.OutputStream;
+							output.Write(Encoding.UTF8.GetBytes(_404));
 						}
 					}
 					catch (Exception e)
 					{
 						Console.WriteLine(e);
 						ctx.Response.StatusCode = 403;
+						using var output = ctx.Response.OutputStream;
+						output.Write(Encoding.UTF8.GetBytes(_403));
 					}
 					finally
 					{
