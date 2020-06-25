@@ -67,7 +67,6 @@ namespace NetworkingUtilities.Http.Services
 			_listener = new HttpListener();
 			_listener.Prefixes.Add(_baseRoute + (_port.HasValue ? $":{_port.Value}/" : "/"));
 
-
 			Start();
 		}
 
