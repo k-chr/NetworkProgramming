@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NetworkingUtilities\NetworkingUtilities.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Assets\storehouse1.json" />
     <EmbeddedResource Include="Assets\storehouse2.json" />
     <EmbeddedResource Include="Assets\storehouse3.json" />
@@ -17,6 +13,10 @@
     <EmbeddedResource Include="Assets\storehouse5.json" />
     <EmbeddedResource Include="Views\page.bindable" />
     <EmbeddedResource Include="Views\page.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
   </ItemGroup>
 
 </Project>
