@@ -46,6 +46,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NetworkProgramming.Lab1\NetworkProgramming.Lab1.csproj" />
+    <ProjectReference Include="..\..\Lab2\NetworkProgramming.Lab2\NetworkProgramming.Lab2.csproj" />
   </ItemGroup>
 </Project>

@@ -3,8 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="NetworkProgramming.Lab2.Views.MainView"
-             xmlns:ctrls="clr-namespace:NetworkProgramming.Lab2.Views;assembly=NetworkProgramming.Lab2">
+             x:Class="NetworkProgramming.Lab3.Views.MainView"
+             xmlns:ctrls="clr-namespace:NetworkProgramming.Lab3.Views;assembly=NetworkProgramming.Lab3">
    <StackPanel IsEnabled="{Binding !ShowPopup}" Margin="10">
       <TextBlock FontSize="14">Accepted clients:</TextBlock>
       <ctrls:ClientsGrid></ctrls:ClientsGrid>

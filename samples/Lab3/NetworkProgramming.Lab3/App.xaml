@@ -1,9 +1,10 @@
 ﻿<Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:NetworkProgramming.Lab2"
-             x:Class="NetworkProgramming.Lab2.App">
+             xmlns:lab3="clr-namespace:NetworkProgramming.Lab3"
+             x:Class="NetworkProgramming.Lab3.App">
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <lab3:ViewLocator/>
     </Application.DataTemplates>
 
     <Application.Styles>

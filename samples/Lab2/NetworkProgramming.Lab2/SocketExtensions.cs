@@ -1,7 +1,7 @@
 ﻿using System.Net.Sockets;
 using System.Reflection;
 
-namespace NetworkProgramming.Lab1
+namespace NetworkProgramming.Lab2
 {
 	public static class SocketExtensions
 	{

@@ -1,8 +1,7 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace NetworkProgramming.Lab2.Views
+namespace NetworkProgramming.Lab3.Views
 {
    public class MenuControl : UserControl
    {

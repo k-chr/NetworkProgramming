@@ -1,29 +1,29 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using NetworkProgramming.Lab2.ViewModels;
-using NetworkProgramming.Lab2.Views;
+using NetworkProgramming.Lab3.ViewModels;
+using NetworkProgramming.Lab3.Views;
 
-namespace NetworkProgramming.Lab2
+namespace NetworkProgramming.Lab3
 {
-   public class App : Application
-   {
-      public override void Initialize()
-      {
-         AvaloniaXamlLoader.Load(this);
-      }
+	public class App : Application
+	{
+		public override void Initialize()
+		{
+			AvaloniaXamlLoader.Load(this);
+		}
 
-      public override void OnFrameworkInitializationCompleted()
-      {
-         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-         {
-            desktop.MainWindow = new MainWindow
-            {
-               DataContext = new MainWindowViewModel(),
-            };
-         }
+		public override void OnFrameworkInitializationCompleted()
+		{
+			if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+			{
+				desktop.MainWindow = new MainWindow
+				{
+					DataContext = new MainWindowViewModel(),
+				};
+			}
 
-         base.OnFrameworkInitializationCompleted();
-      }
-   }
+			base.OnFrameworkInitializationCompleted();
+		}
+	}
 }

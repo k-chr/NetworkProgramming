@@ -2,21 +2,21 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace NetworkProgramming.Lab2.Views
+namespace NetworkProgramming.Lab3.Views
 {
-   public class MainWindow : Window
-   {
-      public MainWindow()
-      {
-         InitializeComponent();
+	public class MainWindow : Window
+	{
+		public MainWindow()
+		{
+			InitializeComponent();
 #if DEBUG
-            this.AttachDevTools();
+			this.AttachDevTools();
 #endif
-      }
+		}
 
-      private void InitializeComponent()
-      {
-         AvaloniaXamlLoader.Load(this);
-      }
-   }
+		private void InitializeComponent()
+		{
+			AvaloniaXamlLoader.Load(this);
+		}
+	}
 }

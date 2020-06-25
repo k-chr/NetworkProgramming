@@ -4,7 +4,8 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-namespace NetworkProgramming.Lab1
+
+namespace NetworkProgramming.Lab2
 {
    public abstract class AbstractClient
    {

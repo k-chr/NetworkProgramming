@@ -1,8 +1,8 @@
 ﻿using ReactiveUI;
 
-namespace NetworkProgramming.Lab2.ViewModels
+namespace NetworkProgramming.Lab3.ViewModels
 {
-   public class ViewModelBase : ReactiveObject
-   {
-   }
+	public class ViewModelBase : ReactiveObject
+	{
+	}
 }

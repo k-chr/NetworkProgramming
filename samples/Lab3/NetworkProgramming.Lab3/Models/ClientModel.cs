@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NetworkProgramming.Lab2.Models
+namespace NetworkProgramming.Lab3.Models
 {
 	public class ClientModel
 	{

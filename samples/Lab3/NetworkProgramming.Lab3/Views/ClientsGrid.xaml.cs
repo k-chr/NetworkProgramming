@@ -1,19 +1,18 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace NetworkProgramming.Lab2.Views
+namespace NetworkProgramming.Lab3.Views
 {
-   public class ClientsGrid : UserControl
-   {
-      public ClientsGrid()
-      {
-         this.InitializeComponent();
-      }
+	public class ClientsGrid : UserControl
+	{
+		public ClientsGrid()
+		{
+			this.InitializeComponent();
+		}
 
-      private void InitializeComponent()
-      {
-         AvaloniaXamlLoader.Load(this);
-      }
-   }
+		private void InitializeComponent()
+		{
+			AvaloniaXamlLoader.Load(this);
+		}
+	}
 }

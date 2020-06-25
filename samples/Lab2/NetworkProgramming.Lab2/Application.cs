@@ -1,4 +1,4 @@
-﻿namespace NetworkProgramming.Lab1
+﻿namespace NetworkProgramming.Lab2
 {
    public class Application
    {

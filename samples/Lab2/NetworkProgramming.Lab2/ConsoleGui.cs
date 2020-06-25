@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace NetworkProgramming.Lab1
+namespace NetworkProgramming.Lab2
 {
    public sealed class ConsoleGui
    {

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Net.Sockets;
 
-namespace NetworkProgramming.Lab1
+namespace NetworkProgramming.Lab2
 {
 	public class ControlState
 	{

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" 
              d:DesignHeight="200"
-             x:Class="NetworkProgramming.Lab2.Views.ClientsGrid">
+             x:Class="NetworkProgramming.Lab3.Views.ClientsGrid">
    <Grid >
       <DataGrid Grid.Row="0" Grid.Column="0" Name="dataGrid1" Margin="12" Items="{Binding Clients}" AutoGenerateColumns="True">
       </DataGrid>
