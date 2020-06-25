@@ -20,7 +20,7 @@ namespace NetworkingUtilities.Http.Routing
 		public string GetMark()
 		{
 			if (!_captureStart.HasValue) return null;
-			string d = _data[_captureStart.Value..(_index+1)];
+			var d = _data[_captureStart.Value..(_index + 1)];
 			_captureStart = null;
 			return d;
 		}

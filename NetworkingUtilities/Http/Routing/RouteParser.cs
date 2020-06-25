@@ -11,29 +11,38 @@ namespace NetworkingUtilities.Http.Routing
 	{
 		private enum ValidCharacters
 		{
-			CurlyOpenBrace, CurlyClosedBrace, EqualsSign, OptionalSign, SubPathSign, ValuesSeparator, ConstraintIndicator, NormalOpenBrace, NormalClosedBrace, DefaultsSeparator
+			CurlyOpenBrace,
+			CurlyClosedBrace,
+			EqualsSign,
+			OptionalSign,
+			SubPathSign,
+			ValuesSeparator,
+			ConstraintIndicator,
+			NormalOpenBrace,
+			NormalClosedBrace,
+			DefaultsSeparator
 		}
 
 		private readonly Dictionary<ValidCharacters, char> _availableCharacters = new Dictionary<ValidCharacters, char>
 		{
-			{ValidCharacters.CurlyOpenBrace, '{' },
-			{ValidCharacters.CurlyClosedBrace, '}' },
-			{ValidCharacters.EqualsSign, '=' },
-			{ValidCharacters.OptionalSign, '?' },
-			{ValidCharacters.SubPathSign, '/' },
-			{ValidCharacters.ValuesSeparator, '_' },
-			{ValidCharacters.ConstraintIndicator, ':' },
-			{ValidCharacters.NormalOpenBrace, '(' },
-			{ValidCharacters.NormalClosedBrace, ')' },
-			{ValidCharacters.DefaultsSeparator, ',' }
+			{ValidCharacters.CurlyOpenBrace, '{'},
+			{ValidCharacters.CurlyClosedBrace, '}'},
+			{ValidCharacters.EqualsSign, '='},
+			{ValidCharacters.OptionalSign, '?'},
+			{ValidCharacters.SubPathSign, '/'},
+			{ValidCharacters.ValuesSeparator, '_'},
+			{ValidCharacters.ConstraintIndicator, ':'},
+			{ValidCharacters.NormalOpenBrace, '('},
+			{ValidCharacters.NormalClosedBrace, ')'},
+			{ValidCharacters.DefaultsSeparator, ','}
 		};
 
 		private readonly Dictionary<string, string> _availableMatchers = new Dictionary<string, string>
 		{
-			{"int", @"^\d+$" },
-			{"double", @"^-?\d+(?:\.\d+)$" },
-			{"intRange", @"^-?\d+(?:_-?\d+)*$" },
-			{"alpha", @"^[a-zA-Z]+$" }
+			{"int", @"^\d+$"},
+			{"double", @"^-?\d+(?:\.\d+)$"},
+			{"intRange", @"^-?\d+(?:_-?\d+)*$"},
+			{"alpha", @"^[a-zA-Z]+$"}
 		};
 
 		private readonly HashSet<string> _availableParametrizedMatchers = new HashSet<string>
@@ -71,12 +80,13 @@ namespace NetworkingUtilities.Http.Routing
 					var elem = ParsePatternLiteral();
 					routeElems.Add(elem);
 				}
+
 				if (_ctx.CurrentChar == _availableCharacters[ValidCharacters.SubPathSign])
 				{
 					++_currentSegment;
 				}
 			}
-			
+
 			return new RoutePattern(uri, routeElems);
 		}
 
@@ -92,7 +102,9 @@ namespace NetworkingUtilities.Http.Routing
 			var key = _ctx.GetMark();
 			_ctx.Next();
 
-			if(_availableCharacters.Values.Any(c => key.Contains(c)) || (_ctx.HasNext() && _ctx.CurrentChar != _availableCharacters[ValidCharacters.SubPathSign])) throw new Exception(); 
+			if (_availableCharacters.Values.Any(c => key.Contains(c)) ||
+				(_ctx.HasNext() && _ctx.CurrentChar != _availableCharacters[ValidCharacters.SubPathSign]))
+				throw new Exception();
 
 			return new RouteLiteral(key, _currentSegment);
 		}
@@ -116,19 +128,20 @@ namespace NetworkingUtilities.Http.Routing
 			_ctx.Previous();
 			var name = _ctx.GetMark().Replace("{", "").Replace("}", "");
 			_ctx.Next();
-			if(char.IsNumber(_ctx.CurrentChar) || !_availableCharacters.ContainsValue(_ctx.CurrentChar)) throw new Exception();
+			if (char.IsNumber(_ctx.CurrentChar) || !_availableCharacters.ContainsValue(_ctx.CurrentChar))
+				throw new Exception();
 
 			var optional = false;
 
 			if (_ctx.HasNext() && _ctx.CurrentChar != _availableCharacters[ValidCharacters.SubPathSign])
 			{
 				object obj = _ctx.CurrentChar switch
-				{
-					':' => ParseConstraint(),
-					'=' => ParseDefaults(),
-					'?' => SetOptional(),
-					_ => throw new Exception()
-				};
+							 {
+								 ':' => ParseConstraint(),
+								 '=' => ParseDefaults(),
+								 '?' => SetOptional(),
+								 _ => throw new Exception()
+							 };
 
 				switch (obj)
 				{
@@ -149,14 +162,14 @@ namespace NetworkingUtilities.Http.Routing
 
 		private bool SetOptional()
 		{
-			if(_currentQuestionMark == 1) throw new Exception();
+			if (_currentQuestionMark == 1) throw new Exception();
 			++_currentQuestionMark;
 			return true;
 		}
 
 		private List<string> ParseDefaults()
 		{
-			if(_currentEqualSignMark == 1) throw new Exception();
+			if (_currentEqualSignMark == 1) throw new Exception();
 
 			++_currentEqualSignMark;
 
@@ -170,7 +183,7 @@ namespace NetworkingUtilities.Http.Routing
 				defaults.Add(@default);
 			} while (_ctx.HasNext() && _ctx.CurrentChar == _availableCharacters[ValidCharacters.DefaultsSeparator]);
 
-			if(_ctx.HasNext() && !_availableCharacters.ContainsValue(_ctx.CurrentChar)) throw new Exception();
+			if (_ctx.HasNext() && !_availableCharacters.ContainsValue(_ctx.CurrentChar)) throw new Exception();
 
 			return defaults;
 		}
@@ -211,8 +224,9 @@ namespace NetworkingUtilities.Http.Routing
 				return (val, o => Regex.IsMatch((string) o, _availableMatchers[val]));
 			}
 
-			if (!_availableParametrizedMatchers.Contains(val) || _ctx.CurrentChar != _availableCharacters[ValidCharacters.NormalOpenBrace]) throw new Exception();
-			
+			if (!_availableParametrizedMatchers.Contains(val) ||
+				_ctx.CurrentChar != _availableCharacters[ValidCharacters.NormalOpenBrace]) throw new Exception();
+
 			Func<object, bool> func = null;
 			_ctx.Next();
 			_ctx.Mark();
@@ -226,7 +240,8 @@ namespace NetworkingUtilities.Http.Routing
 			var pattern = _ctx.GetMark();
 			_ctx.Next();
 
-			if (string.IsNullOrEmpty(pattern) || _ctx.CurrentChar != _availableCharacters[ValidCharacters.NormalClosedBrace]) throw new Exception();
+			if (string.IsNullOrEmpty(pattern) ||
+				_ctx.CurrentChar != _availableCharacters[ValidCharacters.NormalClosedBrace]) throw new Exception();
 
 			switch (val)
 			{
@@ -239,10 +254,10 @@ namespace NetworkingUtilities.Http.Routing
 					};
 					break;
 				case "inRange":
-					if(!pattern.Contains(',')) throw new Exception();
+					if (!pattern.Contains(',')) throw new Exception();
 					var args = pattern.Split(',');
-					
-					if(args.Length != 2 || args.Any(string.IsNullOrEmpty) || args.Any(s =>
+
+					if (args.Length != 2 || args.Any(string.IsNullOrEmpty) || args.Any(s =>
 					{
 						int _;
 						return !int.TryParse(s, out _);
@@ -259,7 +274,7 @@ namespace NetworkingUtilities.Http.Routing
 					break;
 				case "length":
 
-					if(!(int.TryParse(pattern, out var res))) throw new Exception();
+					if (!(int.TryParse(pattern, out var res))) throw new Exception();
 
 					func = o =>
 					{
@@ -293,7 +308,6 @@ namespace NetworkingUtilities.Http.Routing
 
 					break;
 			}
-
 
 			return (val, func);
 		}

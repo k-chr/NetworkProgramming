@@ -11,7 +11,8 @@ namespace HttpStorehouse.Controllers
 		[ControllerRoute(url: "/Sample/String/{id:int}/{name:alpha}/{values:intRange}/", verb: "GET")]
 		string GetString(int id, string name, int[] values)
 		{
-			Console.WriteLine($"{id} | {name} | values: {string.Join(',', values.Select(v => v.ToString()).ToArray())}");
+			Console.WriteLine(
+				$"{id} | {name} | values: {string.Join(',', values.Select(v => v.ToString()).ToArray())}");
 			return new Page().ToString();
 		}
 	}

@@ -23,21 +23,23 @@ namespace NetworkingUtilities.Http.Routing
 			{
 				var collection = Assembly.GetEntryAssembly()?.GetTypes();
 				var collection2 = collection?.Where(t => t.GetInterfaces().Contains(typeof(IController))).ToList();
-				foreach (var type in collection2??new List<Type>())
+				foreach (var type in collection2 ?? new List<Type>())
 				{
-					var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance );
+					var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
 					methods = methods.Where(m =>
-					m.GetCustomAttributes(true).Any(attribute => attribute is ControllerRouteAttribute)).ToArray();
+						m.GetCustomAttributes(true).Any(attribute => attribute is ControllerRouteAttribute)).ToArray();
 					var instance = Activator.CreateInstance(type, null);
 					foreach (var methodInfo in methods)
 					{
 						if (methodInfo.GetCustomAttributes(true)
-							.FirstOrDefault(attribute => attribute is ControllerRouteAttribute) is ControllerRouteAttribute attr)
+							   .FirstOrDefault(attribute => attribute is ControllerRouteAttribute) is
+							ControllerRouteAttribute attr)
 						{
 							var verb = attr.Verb;
 							var template = attr.Template;
 							var pattern = new RouteParser().ParsePattern(template);
-							var endPoint = new HttpEndPoint(methodInfo, (IController)instance, pattern, new List<string> { verb });
+							var endPoint = new HttpEndPoint(methodInfo, (IController) instance, pattern,
+								new List<string> {verb});
 							endPoints.Add(endPoint);
 						}
 					}

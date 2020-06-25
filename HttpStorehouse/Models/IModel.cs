@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace HttpStorehouse.Models
+﻿namespace HttpStorehouse.Models
 {
-	public interface IModel<K, V, D>
+	public interface IModel<TK, TV, TD>
 	{
-		K Key { get;  set; }
-		V Value { get; set; }
-		D Description { get; set; }
+		TK Key { get; set; }
+		TV Value { get; set; }
+		TD Description { get; set; }
 	}
 }

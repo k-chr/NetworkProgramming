@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace HttpStorehouse.Models
+﻿namespace HttpStorehouse.Models
 {
 	public class ProductModel : IModel<int, string, string>
 	{
