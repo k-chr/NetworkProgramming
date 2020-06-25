@@ -20,7 +20,8 @@ namespace HttpStorehouse.Views
 
 		private void InitializeComponent()
 		{
-			using var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("HttpStorehouse.Views.page.css");
+			using var stream = System.Reflection.Assembly.GetExecutingAssembly()
+			   .GetManifestResourceStream("HttpStorehouse.Views.page.css");
 			if (stream != null)
 			{
 				using var fStreamReader = new StreamReader(stream);
@@ -28,7 +29,8 @@ namespace HttpStorehouse.Views
 				_css = strCss;
 			}
 
-			using var streamBindable = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("HttpStorehouse.Views.page.bindable");
+			using var streamBindable = System.Reflection.Assembly.GetExecutingAssembly()
+			   .GetManifestResourceStream("HttpStorehouse.Views.page.bindable");
 			if (streamBindable != null)
 			{
 				using var fStreamReader = new StreamReader(streamBindable);
@@ -41,16 +43,21 @@ namespace HttpStorehouse.Views
 			}
 		}
 
-		public Page BindData<K, V, D>(List<IModel<K, V, D>> collection, string title, string appName, string totalValue)
+		public Page BindData<TK, TV, TD>(List<IModel<TK, TV, TD>> collection, string title, string appName,
+			string totalValue)
 		{
 			var builder = new StringBuilder();
 			builder.Append(@"<table class=""center table table-striped table-hover"">");
-			builder.Append(@"<tr><th scope=""col"">Product Key</th><th scope=""col"">Product Name</th><th scope=""col"">Product Value</th></tr>");
-			collection.ForEach(model => builder.Append($"<tr scope=\"row\"><td>{model.Key}</td><td>{model.Description}</td><td>{model.Value}</td></tr>") );
+			builder.Append(
+				@"<tr><th scope=""col"">Product Key</th><th scope=""col"">Product Name</th><th scope=""col"">Product Value</th></tr>");
+			collection.ForEach(model =>
+				builder.Append(
+					$"<tr scope=\"row\"><td>{model.Key}</td><td>{model.Description}</td><td>{model.Value}</td></tr>"));
 			builder.Append(@"</table>");
 			builder.Append($"<h3>Total: {totalValue}</h3>");
-			_bindable = _bindable.Replace("{{appname}}", appName).Replace("{{header}}", title).Replace("{{cssloader}}", _css).Replace("{{content}}", builder.ToString());
-			
+			_bindable = _bindable.Replace("{{appname}}", appName).Replace("{{header}}", title)
+			   .Replace("{{cssloader}}", _css).Replace("{{content}}", builder.ToString());
+
 			return this;
 		}
 

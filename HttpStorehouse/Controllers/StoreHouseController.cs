@@ -60,13 +60,13 @@ namespace HttpStorehouse.Controllers
 		private string GetStorehouses(int[] ids)
 		{
 			var collection = _storeHouses.Where(store => ids.Contains(store.Key)).ToList();
-			if (collection == null || collection.Count == 0) return null;
+			if (collection.Count == 0) return null;
 			var header = "Storehouses: " + string.Join(',', collection.Select(store => store.Key));
 			var output = new List<ProductModel>();
 			collection.ForEach(store => output.AddRange(store.Models));
 
 			return new Page()
-				.BindData<int, string, string>(output.Select(product => product as IModel<int, string, string>).ToList(),
+				.BindData(output.Select(product => product as IModel<int, string, string>).ToList(),
 					header, "Company storehouses", output.Sum(product => long.Parse(product.Value)).ToString()).ToString();
 		}
 
