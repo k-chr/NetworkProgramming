@@ -20,8 +20,8 @@
     <PackageReference Include="Avalonia.Xaml.Interactions" Version="0.9.9" />
     <PackageReference Include="Avalonia.Xaml.Interactivity" Version="0.9.9" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CustomControls\CustomControls.csproj" />
-    <ProjectReference Include="..\UdpNetworking\UdpNetworking.csproj" />
-  </ItemGroup>
+   <ItemGroup>
+     <ProjectReference Include="..\..\..\CustomControls\CustomControls.csproj" />
+     <ProjectReference Include="..\..\..\UdpNetworking\UdpNetworking.csproj" />
+   </ItemGroup>
 </Project>

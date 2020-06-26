@@ -34,10 +34,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CustomControls\CustomControls.csproj" />
-    <ProjectReference Include="..\UdpNetworking\UdpNetworking.csproj" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
+    <ProjectReference Include="..\..\..\CustomControls\CustomControls.csproj" />
+    <ProjectReference Include="..\..\..\UdpNetworking\UdpNetworking.csproj" />
   </ItemGroup>
 </Project>

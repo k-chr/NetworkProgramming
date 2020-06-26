@@ -36,8 +36,8 @@
      </EmbeddedResource>
    </ItemGroup>
    <ItemGroup>
-      <ProjectReference Include="..\CustomControls\CustomControls.csproj" />
-      <ProjectReference Include="..\UdpNetworking\UdpNetworking.csproj" />
+      <ProjectReference Include="..\..\..\CustomControls\CustomControls.csproj" />
+      <ProjectReference Include="..\..\..\UdpNetworking\UdpNetworking.csproj" />
    </ItemGroup>
 
 
