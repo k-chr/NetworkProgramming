@@ -1,11 +1,11 @@
 ﻿namespace NetworkProgramming.Lab2
 {
-   public class Application
-   {
-      public static void Main(string[] args)
-      {
-         //
-         ConsoleGui.Launch(args);
-      }
-   }
+	public static class Application
+	{
+		public static void Main(string[] args)
+		{
+			//
+			ConsoleGui.Launch(args);
+		}
+	}
 }
