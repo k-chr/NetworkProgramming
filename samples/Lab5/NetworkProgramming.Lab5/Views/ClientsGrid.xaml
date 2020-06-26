@@ -4,23 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              d:DesignHeight="200"
-             x:Class="NetworkProgramming.Lab4.Views.ClientsGrid">
-   <Grid>
-      <DataGrid Grid.Row="0" Grid.Column="0" Name="dataGrid1" Margin="12" Items="{Binding Clients}" >
-         <DataGrid.Columns>
-            <DataGridTextColumn Header="Client Id"
-                                Binding="{Binding Id}"
-                                Width="2*"  />
-            <DataGridTextColumn Header="Client Ip"
-                                Binding="{Binding Ip}"
-                                Width="2*" />
-            <DataGridTextColumn Header="Client Port"
-                                Binding="{Binding Port}"
-                                Width="*" />
-            <DataGridTextColumn Header="Client Status"
-                                Binding="{Binding Connected}"
-                                Width="*" />
-         </DataGrid.Columns>
-      </DataGrid>
-   </Grid>
+             x:Class="NetworkProgramming.Lab5.Views.ClientsGrid">
+	<Grid>
+		<DataGrid Grid.Row="0" Grid.Column="0" Name="dataGrid1" Margin="12" Items="{Binding Clients}">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Client Id"
+				                    Binding="{Binding Id}"
+				                    Width="2*" />
+				<DataGridTextColumn Header="Client Ip"
+				                    Binding="{Binding Ip}"
+				                    Width="2*" />
+				<DataGridTextColumn Header="Client Port"
+				                    Binding="{Binding Port}"
+				                    Width="*" />
+				<DataGridTextColumn Header="Client Status"
+				                    Binding="{Binding Connected}"
+				                    Width="*" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</Grid>
 </UserControl>

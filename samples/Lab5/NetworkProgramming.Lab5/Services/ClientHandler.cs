@@ -5,209 +5,208 @@ using System.Net.Sockets;
 using System.Text;
 using NetworkProgramming.Lab4.Extensions;
 using NetworkProgramming.Lab4.Models;
-using NetworkProgramming.Lab4.Services;
 
-namespace NetworkProgramming.Lab4.Services
+namespace NetworkProgramming.Lab5.Services
 {
-   public class ClientHandler
-   {
-      protected string OnSendErrorMessage => "Cannot send provided message to client due to connection issues!\n";
-      protected string OnDisconnectSuccessMessage => $"Succeeded in disconnecting current connection with: {_data}";
-      protected string OnDisconnectErrorMessage => "Failed to disconnect\n";
-      protected string OnReceiveErrorMessage => "Failed to receive message due to connection issues\n";
+	public class ClientHandler
+	{
+		protected string OnSendErrorMessage => "Cannot send provided message to client due to connection issues!\n";
+		protected string OnDisconnectSuccessMessage => $"Succeeded in disconnecting current connection with: {_data}";
+		protected string OnDisconnectErrorMessage => "Failed to disconnect\n";
+		protected string OnReceiveErrorMessage => "Failed to receive message due to connection issues\n";
 
-      private readonly Socket _socket;
-      private readonly ClientModel _data;
-      private const int MaxLen = 1024;
+		private readonly Socket _socket;
+		private readonly ClientModel _data;
+		private const int MaxLen = 1024;
 
-      public ClientModel Data => _data;
+		public ClientModel Data => _data;
 
-      public ClientHandler(Socket connectedSocket, ClientModel data)
-      {
-         _data = data;
-         _socket = connectedSocket;
-         Receive(_socket);
-      }
+		public ClientHandler(Socket connectedSocket, ClientModel data)
+		{
+			_data = data;
+			_socket = connectedSocket;
+			Receive(_socket);
+		}
 
-      public event EventHandler<object[]> OnLogEvent;
-      public event EventHandler<ClientModel> ClientDisconnected;
-
-
-      public bool IsConnected() =>
-         !(_socket.IsDisposed() || (_socket.Poll(1000, SelectMode.SelectRead) && (_socket.Available == 0)) || !_socket.Connected);
+		public event EventHandler<object[]> OnLogEvent;
+		public event EventHandler<ClientModel> ClientDisconnected;
 
 
-      private void Receive(Socket socket)
-      {
-         var state = new ControlState
-         {
-            CurrentSocket = socket,
-            Buffer = new byte[MaxLen],
-            BufferSize = MaxLen
-         };
-         try
-         {
-            socket.BeginReceive(state.Buffer, 0, state.Buffer.Length, 0,
-               ReceiveCallback, state);
-         }
-         catch (Exception exception)
-         {
-            if (!_socket.IsDisposed())
-            {
-               OnLogEvent?.Invoke(this,
-             new object[] { (int)InternalMessageType.Error, exception, OnReceiveErrorMessage });
-               Disconnect();
-            }
-         }
-      }
-
-      private void ReceiveCallback(IAsyncResult ar)
-      {
-         var state = (ControlState)ar.AsyncState;
-         var client = state.CurrentSocket;
-
-         try
-         {
-            var bytesRead = client.EndReceive(ar);
-
-            if (bytesRead > 0)
-            {
-               state.StreamBuffer.Write(state.Buffer, 0, bytesRead);
-               if (state.Buffer.Any(byte_ => byte_ == '\0'))
-               {
-                  ProcessMessage(state.StreamBuffer);
-                  state.StreamBuffer = new MemoryStream();
-               }
-            }
-            else if (state.StreamBuffer.CanWrite && state.StreamBuffer.Length > 0)
-            {
-               ProcessMessage(state.StreamBuffer);
-               state.StreamBuffer = new MemoryStream();
-            }
-            else
-            {
-               Disconnect();
-            }
-         }
-         catch (Exception s)
-         {
-            if (!_socket.IsDisposed())
-            {
-               Disconnect();
-               OnLogEvent?.Invoke(this, new object[] { (int)InternalMessageType.Error, s, OnReceiveErrorMessage });
-            }
-         }
-
-         state.Buffer = new byte[state.BufferSize];
+		public bool IsConnected() =>
+			!(_socket.IsDisposed() || (_socket.Poll(1000, SelectMode.SelectRead) && (_socket.Available == 0)) ||
+			  !_socket.Connected);
 
 
-         try
-         {
-            client.BeginReceive(state.Buffer, 0, (int)state.BufferSize, 0, ReceiveCallback, state);
-         }
-         catch (Exception exception)
-         {
-            if (!_socket.IsDisposed())
-            {
-               OnLogEvent?.Invoke(this,
-                  new object[] { (int)InternalMessageType.Error, exception, OnReceiveErrorMessage });
-            }
+		private void Receive(Socket socket)
+		{
+			var state = new ControlState
+			{
+				CurrentSocket = socket,
+				Buffer = new byte[MaxLen],
+				BufferSize = MaxLen
+			};
+			try
+			{
+				socket.BeginReceive(state.Buffer, 0, state.Buffer.Length, 0,
+					ReceiveCallback, state);
+			}
+			catch (Exception exception)
+			{
+				if (!_socket.IsDisposed())
+				{
+					OnLogEvent?.Invoke(this,
+						new object[] {(int) InternalMessageType.Error, exception, OnReceiveErrorMessage});
+					Disconnect();
+				}
+			}
+		}
 
-            Disconnect();
-         }
+		private void ReceiveCallback(IAsyncResult ar)
+		{
+			var state = (ControlState) ar.AsyncState;
+			var client = state.CurrentSocket;
 
-      }
+			try
+			{
+				var bytesRead = client.EndReceive(ar);
 
-      private void ProcessMessage(MemoryStream memory)
-      {
-         using var stream = memory;
-         stream.Seek(0, SeekOrigin.Begin);
-         var message = Encoding.UTF8.GetString(stream.ToArray());
-         OnLogEvent?.Invoke(this, new object[] { (int)InternalMessageType.Server, message.Trim(), Data });
-      }
+				if (bytesRead > 0)
+				{
+					state.StreamBuffer.Write(state.Buffer, 0, bytesRead);
+					if (state.Buffer.Any(byte_ => byte_ == '\0'))
+					{
+						ProcessMessage(state.StreamBuffer);
+						state.StreamBuffer = new MemoryStream();
+					}
+				}
+				else if (state.StreamBuffer.CanWrite && state.StreamBuffer.Length > 0)
+				{
+					ProcessMessage(state.StreamBuffer);
+					state.StreamBuffer = new MemoryStream();
+				}
+				else
+				{
+					Disconnect();
+				}
+			}
+			catch (Exception s)
+			{
+				if (!_socket.IsDisposed())
+				{
+					Disconnect();
+					OnLogEvent?.Invoke(this, new object[] {(int) InternalMessageType.Error, s, OnReceiveErrorMessage});
+				}
+			}
 
-      public void Send(string msg)
-      {
-         Send(_socket, msg);
-         OnLogEvent?.Invoke(this, new object[] { (int)InternalMessageType.Client, msg.Trim() });
-      }
+			state.Buffer = new byte[state.BufferSize];
 
-      private void Send(Socket socket, string data)
-      {
-         var byteData = Encoding.ASCII.GetBytes(data);
 
-         try
-         {
-            socket.BeginSend(byteData, 0, byteData.Length, 0,
-               SendCallback, socket);
-         }
-         catch (Exception exception)
-         {
-            if (!_socket.IsDisposed())
-            {
-               Disconnect();
-               OnLogEvent?.Invoke(this, new object[] { (int)InternalMessageType.Error, exception, OnSendErrorMessage });
-            }
-         }
-      }
+			try
+			{
+				client.BeginReceive(state.Buffer, 0, (int) state.BufferSize, 0, ReceiveCallback, state);
+			}
+			catch (Exception exception)
+			{
+				if (!_socket.IsDisposed())
+				{
+					OnLogEvent?.Invoke(this,
+						new object[] {(int) InternalMessageType.Error, exception, OnReceiveErrorMessage});
+				}
 
-      private void SendCallback(IAsyncResult ar)
-      {
-         try
-         {
-            var socket = (Socket)ar.AsyncState;
-            var _ = socket.EndSend(ar);
-         }
-         catch (Exception e)
-         {
-            if (!_socket.IsDisposed())
-            {
+				Disconnect();
+			}
+		}
 
-               Disconnect();
-               OnLogEvent?.Invoke(this, new object[] { (int)InternalMessageType.Error, e, OnSendErrorMessage });
-            }
-         }
-      }
+		private void ProcessMessage(MemoryStream memory)
+		{
+			using var stream = memory;
+			stream.Seek(0, SeekOrigin.Begin);
+			var message = Encoding.UTF8.GetString(stream.ToArray());
+			OnLogEvent?.Invoke(this, new object[] {(int) InternalMessageType.Server, message.Trim(), Data});
+		}
 
-      public void Disconnect()
-      {
-         Disconnect(_socket);
-      }
+		public void Send(string msg)
+		{
+			Send(_socket, msg);
+			OnLogEvent?.Invoke(this, new object[] {(int) InternalMessageType.Client, msg.Trim()});
+		}
 
-      private void Disconnect(Socket socket)
-      {
-         try
-         {
-            socket.Shutdown(SocketShutdown.Both);
-            socket.BeginDisconnect(true, DisconnectCallback, socket);
-         }
-         catch (Exception e)
-         {
-            if (!socket.IsDisposed())
-               OnLogEvent?.Invoke(this, new object[] { (int)InternalMessageType.Error, e, OnDisconnectErrorMessage });
-         }
-      }
+		private void Send(Socket socket, string data)
+		{
+			var byteData = Encoding.ASCII.GetBytes(data);
 
-      private void DisconnectCallback(IAsyncResult ar)
-      {
-         var socket = (Socket)ar.AsyncState;
+			try
+			{
+				socket.BeginSend(byteData, 0, byteData.Length, 0,
+					SendCallback, socket);
+			}
+			catch (Exception exception)
+			{
+				if (!_socket.IsDisposed())
+				{
+					Disconnect();
+					OnLogEvent?.Invoke(this,
+						new object[] {(int) InternalMessageType.Error, exception, OnSendErrorMessage});
+				}
+			}
+		}
 
-         try
-         {
-            socket.EndDisconnect(ar);
-         }
-         catch (Exception e)
-         {
-            // ignored
-         }
-         finally
-         {
-            socket.Close(2000);
-            OnLogEvent?.Invoke(this, new object[] { (int)InternalMessageType.Success, OnDisconnectSuccessMessage });
-            _data.Connected = "Offline";
-            ClientDisconnected?.Invoke(this, _data);
-         }
-      }
+		private void SendCallback(IAsyncResult ar)
+		{
+			try
+			{
+				var socket = (Socket) ar.AsyncState;
+				var _ = socket.EndSend(ar);
+			}
+			catch (Exception e)
+			{
+				if (!_socket.IsDisposed())
+				{
+					Disconnect();
+					OnLogEvent?.Invoke(this, new object[] {(int) InternalMessageType.Error, e, OnSendErrorMessage});
+				}
+			}
+		}
 
-   }
+		public void Disconnect()
+		{
+			Disconnect(_socket);
+		}
+
+		private void Disconnect(Socket socket)
+		{
+			try
+			{
+				socket.Shutdown(SocketShutdown.Both);
+				socket.BeginDisconnect(true, DisconnectCallback, socket);
+			}
+			catch (Exception e)
+			{
+				if (!socket.IsDisposed())
+					OnLogEvent?.Invoke(this,
+						new object[] {(int) InternalMessageType.Error, e, OnDisconnectErrorMessage});
+			}
+		}
+
+		private void DisconnectCallback(IAsyncResult ar)
+		{
+			var socket = (Socket) ar.AsyncState;
+
+			try
+			{
+				socket.EndDisconnect(ar);
+			}
+			catch (Exception e)
+			{
+				// ignored
+			}
+			finally
+			{
+				socket.Close(2000);
+				OnLogEvent?.Invoke(this, new object[] {(int) InternalMessageType.Success, OnDisconnectSuccessMessage});
+				_data.Connected = "Offline";
+				ClientDisconnected?.Invoke(this, _data);
+			}
+		}
+	}
 }

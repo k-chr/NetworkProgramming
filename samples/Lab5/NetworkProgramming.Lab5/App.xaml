@@ -1,14 +1,15 @@
 ﻿<Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:NetworkProgramming.Lab4"
-             x:Class="NetworkProgramming.Lab4.App">
-    <Application.DataTemplates>
-        <local:ViewLocator/>
-    </Application.DataTemplates>
+             xmlns:local="clr-namespace:NetworkProgramming.Lab5"
+             xmlns:lab5="clr-namespace:NetworkProgramming.Lab5"
+             x:Class="NetworkProgramming.Lab5.App">
+	<Application.DataTemplates>
+		<lab5:ViewLocator />
+	</Application.DataTemplates>
 
-    <Application.Styles>
-        <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
-        <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"/>
-        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Default.xaml"/>
-    </Application.Styles>
+	<Application.Styles>
+		<StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml" />
+		<StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml" />
+		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Default.xaml" />
+	</Application.Styles>
 </Application>
