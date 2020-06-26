@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Net.Sockets;
 
-namespace NetworkingUtilities.Utilities
+namespace NetworkingUtilities.Utilities.StateObjects
 {
 	public class ControlState
 	{

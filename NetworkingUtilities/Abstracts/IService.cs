@@ -1,4 +1,4 @@
-﻿namespace NetworkingUtilities.Http.Services
+﻿namespace NetworkingUtilities.Abstracts
 {
 	public interface IService
 	{
