@@ -5,28 +5,31 @@ using Task2.ViewModels;
 
 namespace Task2
 {
-   public class ViewLocator : IDataTemplate
-   {
-      public bool SupportsRecycling => false;
+	public class ViewLocator : IDataTemplate
+	{
+		public bool SupportsRecycling => false;
 
-      public IControl Build(object data)
-      {
-         var name = data.GetType().FullName.Replace("ViewModel", "View");
-         var type = Type.GetType(name);
+		public IControl Build(object data)
+		{
+			var name = data.GetType().FullName?.Replace("ViewModel", "View");
+			if (name == null)
+			{
+				return new TextBlock {Text = "Not Found"};
+			}
 
-         if (type != null)
-         {
-            return (Control)Activator.CreateInstance(type);
-         }
-         else
-         {
-            return new TextBlock { Text = "Not Found: " + name };
-         }
-      }
+			var type = Type.GetType(name);
 
-      public bool Match(object data)
-      {
-         return data is ViewModelBase;
-      }
-   }
+			if (type != null)
+			{
+				return (Control) Activator.CreateInstance(type);
+			}
+
+			return new TextBlock {Text = "Not Found: " + name};
+		}
+
+		public bool Match(object data)
+		{
+			return data is ViewModelBase;
+		}
+	}
 }

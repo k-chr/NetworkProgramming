@@ -21,6 +21,6 @@
     <PackageReference Include="Avalonia.Xaml.Interactivity" Version="0.9.7" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ThreadingUtilities\ThreadingUtilities.csproj" />
+    <ProjectReference Include="..\..\..\..\ThreadingUtilities\ThreadingUtilities.csproj" />
   </ItemGroup>
 </Project>

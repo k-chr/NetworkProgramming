@@ -1,70 +1,69 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using ReactiveUI;
 using ThreadingUtilities.KamillimakThreading;
 
 namespace Task3.ViewModels
 {
-   public class MainWindowViewModel : ViewModelBase
-   {
-      private readonly Dictionary<string, SynchronizedThread> _threads;
-      private object _lock;
+	public class MainWindowViewModel : ViewModelBase
+	{
+		private readonly Dictionary<string, SynchronizedThread> _threads;
 
-      public MainWindowViewModel()
-      {
-         ConsoleOutput = "";
-         _lock = new object();
-         
-         _threads = new Dictionary<string, SynchronizedThread>
-         {
-            {"Th10", new SynchronizedThread(UpdateConsole, 0, _lock) },
-            {"Th1", new SynchronizedThread(UpdateConsole, 1, _lock)},
-            {"Th2", new SynchronizedThread(UpdateConsole, 2, _lock) },
-            {"Th3", new SynchronizedThread(UpdateConsole, 3, _lock)},
-            {"Th4", new SynchronizedThread(UpdateConsole, 4, _lock)},
-            {"Th5", new SynchronizedThread(UpdateConsole, 5, _lock)},
-            {"Th6", new SynchronizedThread(UpdateConsole, 6, _lock)},
-            {"Th7", new SynchronizedThread(UpdateConsole, 7, _lock) },
-            {"Th8", new SynchronizedThread(UpdateConsole, 8, _lock)},
-            {"Th9", new SynchronizedThread(UpdateConsole, 9, _lock)},
-         };
+		public MainWindowViewModel()
+		{
+			ConsoleOutput = "";
+			var @lock = new object();
 
-         Start();
-      }
+			_threads = new Dictionary<string, SynchronizedThread>
+			{
+				{"Th10", new SynchronizedThread(UpdateConsole, 0, @lock)},
+				{"Th1", new SynchronizedThread(UpdateConsole, 1, @lock)},
+				{"Th2", new SynchronizedThread(UpdateConsole, 2, @lock)},
+				{"Th3", new SynchronizedThread(UpdateConsole, 3, @lock)},
+				{"Th4", new SynchronizedThread(UpdateConsole, 4, @lock)},
+				{"Th5", new SynchronizedThread(UpdateConsole, 5, @lock)},
+				{"Th6", new SynchronizedThread(UpdateConsole, 6, @lock)},
+				{"Th7", new SynchronizedThread(UpdateConsole, 7, @lock)},
+				{"Th8", new SynchronizedThread(UpdateConsole, 8, @lock)},
+				{"Th9", new SynchronizedThread(UpdateConsole, 9, @lock)},
+			};
 
-      private void Start()
-      {
-         foreach (var (_, thread) in _threads)
-         {
-            thread.Start();
-         }
-      }
+			Start();
+		}
 
-      protected override void ExecuteClosing(CancelEventArgs args)
-      {
-         foreach (var (key, value) in _threads)
-         {
-            value.Stop();
-         }
+		private void Start()
+		{
+			foreach (var (_, thread) in _threads)
+			{
+				thread.Start();
+			}
+		}
 
-         base.ExecuteClosing(args);
-      }
+		protected override void ExecuteClosing(CancelEventArgs args)
+		{
+			foreach (var (_, value) in _threads)
+			{
+				value.Stop();
+			}
 
-      public string ConsoleOutput
-      {
-         get => _console;
-         set => this.RaiseAndSetIfChanged(ref _console, value);
-      }
+			base.ExecuteClosing(args);
+		}
 
-      public string Greeting => "Welcome to Task3, this time only one thread in one time will do work specified in its body!";
+		public string ConsoleOutput
+		{
+			get => _console;
+			set => this.RaiseAndSetIfChanged(ref _console, value);
+		}
 
-      private string _console;
+		public string Greeting =>
+			"Welcome to Task3, this time only one thread in one time will do work specified in its body!";
+
+		private string _console;
 
 
-      public void UpdateConsole(string s)
-      {
-         ConsoleOutput += s;
-      }
-   }
+		private void UpdateConsole(string s)
+		{
+			ConsoleOutput += s;
+		}
+	}
 }
