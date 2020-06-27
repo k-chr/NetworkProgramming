@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Tcp\" />
     <Folder Include="Udp\" />
   </ItemGroup>
 
