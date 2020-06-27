@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <Folder Include="Udp\" />
-    <Folder Include="Tcp\" />
   </ItemGroup>
 
 </Project>
