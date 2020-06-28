@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using NetworkingUtilities.Utilities.Events;
 
 namespace NetworkingUtilities.Abstracts
 {
@@ -8,6 +9,8 @@ namespace NetworkingUtilities.Abstracts
 		private readonly IReporter _lastException;
 		private readonly IReporter _lastMessage;
 		private readonly IReporter _disconnected;
+		
+		public ClientEvent PersonalData { get; protected set; }
 
 		protected AbstractClient(IReporter lastException, IReporter lastMessage, IReporter disconnected)
 		{
@@ -16,37 +19,37 @@ namespace NetworkingUtilities.Abstracts
 			_disconnected = disconnected;
 		}
 
-		protected void AddExceptionSubscription(Action<object, object> procedure)
+		public void AddExceptionSubscription(Action<object, object> procedure)
 		{
 			_lastException.AddSubscriber(procedure);
 		}
 
-		protected void AddMessageSubscription(Action<object, object> procedure)
+		public void AddMessageSubscription(Action<object, object> procedure)
 		{
 			_lastMessage.AddSubscriber(procedure);
 		}
 
-		protected void AddOnDisconnectedSubscription(Action<object, object> procedure)
+		public void AddOnDisconnectedSubscription(Action<object, object> procedure)
 		{
 			_disconnected.AddSubscriber(procedure);
 		}
 
-		protected void OnNewMessage(Tuple<string, string, string> messageWithAddresses)
+		public void OnNewMessage(Tuple<string, string, string> messageWithAddresses)
 		{
 			_lastMessage.Notify(messageWithAddresses);
 		}
 
-		protected void OnDisconnect(Tuple<IPAddress, string, int> clientData)
+		public void OnDisconnect(Tuple<IPAddress, string, int> clientData)
 		{
 			_disconnected.Notify(clientData);
 		}
 
-		protected void OnCaughtException(Exception exception)
+		public void OnCaughtException(Exception exception)
 		{
 			_lastException.Notify(exception);
 		}
 
-		public abstract void Send(string message);
+		public abstract void Send(string message, string to="");
 
 		public abstract void Receive();
 

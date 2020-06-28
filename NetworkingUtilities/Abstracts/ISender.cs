@@ -2,6 +2,6 @@
 {
    public interface ISender
    {
-	   void Send(string message);
+	   void Send(string message, string to="");
    }
 }
