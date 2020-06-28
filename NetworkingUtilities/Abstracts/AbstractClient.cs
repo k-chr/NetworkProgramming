@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 
 namespace NetworkingUtilities.Abstracts
 {
@@ -6,11 +7,13 @@ namespace NetworkingUtilities.Abstracts
 	{
 		private readonly IReporter _lastException;
 		private readonly IReporter _lastMessage;
+		private readonly IReporter _disconnected;
 
-		protected AbstractClient(IReporter lastException, IReporter lastMessage)
+		protected AbstractClient(IReporter lastException, IReporter lastMessage, IReporter disconnected)
 		{
 			_lastException = lastException;
 			_lastMessage = lastMessage;
+			_disconnected = disconnected;
 		}
 
 		protected void AddExceptionSubscription(Action<object, object> procedure)
@@ -23,9 +26,19 @@ namespace NetworkingUtilities.Abstracts
 			_lastMessage.AddSubscriber(procedure);
 		}
 
+		protected void AddOnDisconnectedSubscription(Action<object, object> procedure)
+		{
+			_disconnected.AddSubscriber(procedure);
+		}
+
 		protected void OnNewMessage(Tuple<string, string, string> messageWithAddresses)
 		{
 			_lastMessage.Notify(messageWithAddresses);
+		}
+
+		protected void OnDisconnect(Tuple<IPAddress, string, int> clientData)
+		{
+			_disconnected.Notify(clientData);
 		}
 
 		protected void OnCaughtException(Exception exception)

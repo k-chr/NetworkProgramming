@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Utilities.Events;
 
@@ -8,8 +9,8 @@ namespace NetworkingUtilities.Publishers
 	{
 		public void Notify(object obj)
 		{
-			if (obj is ClientEvent client)
-				Report?.Invoke(this, client);
+			if (obj is Tuple<IPAddress, string, int> data)
+				Report?.Invoke(this, new ClientEvent(data.Item1, data.Item3, data.Item2));
 		}
 
 		public void AddSubscriber(Action<object, object> procedure)
