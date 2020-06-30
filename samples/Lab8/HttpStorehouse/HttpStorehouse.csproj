@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\storehouse1.json" />
+    <EmbeddedResource Include="Assets\storehouse2.json" />
+    <EmbeddedResource Include="Assets\storehouse3.json" />
+    <EmbeddedResource Include="Assets\storehouse4.json" />
+    <EmbeddedResource Include="Assets\storehouse5.json" />
+    <EmbeddedResource Include="Views\page.bindable" />
+    <EmbeddedResource Include="Views\page.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -29,6 +29,7 @@ namespace NetworkingUtilities.Http.Routing
 				for (var i = 1; i < (@params?.Length ?? 0) && @params != null; ++i)
 				{
 					var name = patternSegments.FirstOrDefault(element => element.Id == i)?.Key;
+					if (name == null) throw new ArgumentException();
 					var value = @params[i];
 					dict.Add(name, value);
 				}
@@ -52,7 +53,7 @@ namespace NetworkingUtilities.Http.Routing
 							else if (constraints.ContainsKey("double"))
 							{
 								var valueObject = double.Parse(value);
-								args.Add(value);
+								args.Add(valueObject);
 							}
 
 							else if (constraints.ContainsKey("int"))
@@ -61,7 +62,7 @@ namespace NetworkingUtilities.Http.Routing
 
 								Func<object, bool> func;
 								var test = true;
-								
+
 								if (constraints.ContainsKey("min"))
 								{
 									func = constraints["min"];
@@ -185,7 +186,8 @@ namespace NetworkingUtilities.Http.Routing
 			return rV;
 		}
 
-		public HttpEndPoint(MethodInfo targetMethod, IController instanceOfController, RoutePattern pattern, List<string> supportedMethods)
+		public HttpEndPoint(MethodInfo targetMethod, IController instanceOfController, RoutePattern pattern,
+			List<string> supportedMethods)
 		{
 			_targetMethod = targetMethod;
 			_instanceOfController = instanceOfController;

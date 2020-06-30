@@ -1,10 +1,10 @@
-﻿using NetworkingUtilities.Http.Routing;
+﻿using NetworkingUtilities.Abstracts;
+using NetworkingUtilities.Http.Routing;
 
 namespace NetworkingUtilities.Http.Services
 {
 	public class WebServerServiceBuilder : IServiceBuilder
 	{
-
 		internal WebServerServiceBuilder()
 		{
 			Router = new Router();
@@ -28,16 +28,8 @@ namespace NetworkingUtilities.Http.Services
 			return this;
 		}
 
-		public WebServerServiceBuilder UseAsyncInvocations(bool value)
-		{
-			Async = value;
-			return this;
-		}
-
-		internal IRouter Router { get;}
+		internal IRouter Router { get; }
 		internal int? Port { get; private set; }
 		internal string Prefix { get; private set; }
-		internal bool Async { get; private set; }
-
 	}
 }

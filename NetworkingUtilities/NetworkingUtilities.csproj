@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Udp\" />
     <Folder Include="Tcp\" />
+    <Folder Include="Udp\" />
   </ItemGroup>
 
 </Project>

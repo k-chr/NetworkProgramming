@@ -19,6 +19,6 @@ namespace NetworkingUtilities.Http.Routing
 			return $"Endpoint attached to {_baseData}";
 		}
 
-		public ICollection<IRouteElement> RouteElems =>(_routeElems).ToImmutableList();
+		public ICollection<IRouteElement> RouteElems => (_routeElems).ToImmutableList();
 	}
 }

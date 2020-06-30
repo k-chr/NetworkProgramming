@@ -5,8 +5,8 @@ namespace NetworkingUtilities.Http.Routing
 {
 	public class RouteParam : IRouteElement
 	{
-
-		public RouteParam(string key, int id, bool optional, Dictionary<string, Func<object, bool>> constraints, IEnumerable<string> defaults)
+		public RouteParam(string key, int id, bool optional, Dictionary<string, Func<object, bool>> constraints,
+			IEnumerable<string> defaults)
 		{
 			Key = key;
 			Id = id;
