@@ -10,6 +10,7 @@ namespace NetworkingUtilities.Abstracts
 		private readonly IReporter _lastMessage;
 		private readonly IReporter _disconnected;
 		private readonly IReporter _newClient;
+
 		protected AbstractServer(IReporter disconnected, IReporter lastMessage, IReporter lastException, IReporter newClient)
 		{
 			_disconnected = disconnected;
