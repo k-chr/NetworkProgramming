@@ -106,12 +106,58 @@ namespace NetworkingUtilities.Tcp
 
 		public override void StopService()
 		{
-			throw new NotImplementedException();
+			Disconnect(ClientSocket);
 		}
 
 		public override void StartService()
 		{
 			Receive();
+		}
+
+		private void Disconnect(Socket clientSocket)
+		{
+			try
+			{
+				clientSocket.Shutdown(SocketShutdown.Both);
+				clientSocket.BeginDisconnect(true, OnDisconnectCallback, clientSocket);
+			}
+			catch (ObjectDisposedException)
+			{
+				OnDisconnect((WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port).ToTuple());
+			}
+			catch (SocketException s)
+			{
+				OnCaughtException(s);
+				OnDisconnect((WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port).ToTuple());
+			}
+			catch (Exception e)
+			{
+				OnCaughtException(e);
+				OnDisconnect((WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port).ToTuple());
+			}
+		}
+
+		private void OnDisconnectCallback(IAsyncResult ar)
+		{
+			if (ar.AsyncState is Socket socket)
+			{
+				try
+				{
+					socket.EndDisconnect(ar);
+					socket.Close(2000);
+				}
+				catch (ObjectDisposedException)
+				{
+				}
+				catch (SocketException socketException)
+				{
+					OnCaughtException(socketException);
+				}
+				finally
+				{
+					OnDisconnect((WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port).ToTuple());
+				}
+			}
 		}
 	}
 }
