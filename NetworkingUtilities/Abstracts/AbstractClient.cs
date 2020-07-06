@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Net;
+using System.Net.Sockets;
 using NetworkingUtilities.Utilities.Events;
 
 namespace NetworkingUtilities.Abstracts
 {
 	public abstract class AbstractClient : ISender, IReceiver, IService
 	{
+		private readonly Socket _clientSocket;
 		private readonly IReporter _lastException;
 		private readonly IReporter _lastMessage;
 		private readonly IReporter _disconnected;
 		
 		public ClientEvent PersonalData { get; protected set; }
 
-		protected AbstractClient(IReporter lastException, IReporter lastMessage, IReporter disconnected)
+		protected AbstractClient(Socket clientSocket, IReporter lastException, IReporter lastMessage, IReporter disconnected)
 		{
+			_clientSocket = clientSocket;
 			_lastException = lastException;
 			_lastMessage = lastMessage;
 			_disconnected = disconnected;

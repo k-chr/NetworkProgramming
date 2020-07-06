@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Text;
 using NetworkingUtilities.Abstracts;
 
@@ -7,7 +8,7 @@ namespace NetworkingUtilities.Tcp
 {
    public class Client : AbstractClient
    {
-	   public Client(IReporter lastException, IReporter lastMessage, IReporter disconnected) : base(lastException, lastMessage, disconnected)
+	   public Client(Socket socket, IReporter lastException, IReporter lastMessage, IReporter disconnected) : base(socket, lastException, lastMessage, disconnected)
 	   {
 	   }
 

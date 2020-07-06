@@ -8,20 +8,26 @@ namespace NetworkingUtilities.Abstracts
 	{
 		private readonly IReporter _lastException;
 		private readonly IReporter _lastMessage;
+		protected readonly string _ip;
+		protected readonly int _port;
+		protected readonly string _interfaceName;
 		private readonly IReporter _disconnected;
 		private readonly IReporter _newClient;
 
-		protected AbstractServer(IReporter disconnected, IReporter lastMessage, IReporter lastException, IReporter newClient)
+		protected AbstractServer(string ip, int port, string interfaceName, IReporter disconnected,
+			IReporter lastMessage, IReporter lastException, IReporter newClient)
 		{
+			_ip = ip;
+			_port = port;
+			_interfaceName = interfaceName;
 			_disconnected = disconnected;
 			_lastMessage = lastMessage;
 			_lastException = lastException;
 			_newClient = newClient;
-
 			Clients = new List<AbstractClient>();
 		}
 
-		public List<AbstractClient> Clients { get; }
+		public ICollection<AbstractClient> Clients { get; }
 
 		public abstract void Send(string message, string to = "");
 
