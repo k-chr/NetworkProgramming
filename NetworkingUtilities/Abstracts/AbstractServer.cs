@@ -8,18 +8,18 @@ namespace NetworkingUtilities.Abstracts
 	{
 		private readonly IReporter _lastException;
 		private readonly IReporter _lastMessage;
-		protected readonly string _ip;
-		protected readonly int _port;
-		protected readonly string _interfaceName;
+		protected readonly string Ip;
+		protected readonly int Port;
+		protected readonly string InterfaceName;
 		private readonly IReporter _disconnected;
 		private readonly IReporter _newClient;
 
 		protected AbstractServer(string ip, int port, string interfaceName, IReporter disconnected,
 			IReporter lastMessage, IReporter lastException, IReporter newClient)
 		{
-			_ip = ip;
-			_port = port;
-			_interfaceName = interfaceName;
+			Ip = ip;
+			Port = port;
+			InterfaceName = interfaceName;
 			_disconnected = disconnected;
 			_lastMessage = lastMessage;
 			_lastException = lastException;

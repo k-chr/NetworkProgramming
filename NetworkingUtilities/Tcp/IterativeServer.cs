@@ -70,7 +70,7 @@ namespace NetworkingUtilities.Tcp
 			InitSocket();
 			try
 			{
-				var endPoint = new IPEndPoint(IPAddress.Parse(_ip), _port);
+				var endPoint = new IPEndPoint(IPAddress.Parse(Ip), Port);
 				_socket.Bind(endPoint);
 				_socket.Listen(1);
 				OnNewMessage(new Tuple<string, string, string>(
