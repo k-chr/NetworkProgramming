@@ -7,7 +7,8 @@ namespace NetworkingUtilities.Abstracts
 {
 	public abstract class AbstractClient : ISender, IReceiver, IService
 	{
-		private readonly Socket _clientSocket;
+		protected const int MaxBufferSize = 4096;
+		protected readonly Socket ClientSocket;
 		private readonly IReporter _lastException;
 		private readonly IReporter _lastMessage;
 		private readonly IReporter _disconnected;
@@ -17,7 +18,7 @@ namespace NetworkingUtilities.Abstracts
 		protected AbstractClient(Socket clientSocket, IReporter lastException, IReporter lastMessage,
 			IReporter disconnected)
 		{
-			_clientSocket = clientSocket;
+			ClientSocket = clientSocket;
 			_lastException = lastException;
 			_lastMessage = lastMessage;
 			_disconnected = disconnected;
@@ -26,7 +27,6 @@ namespace NetworkingUtilities.Abstracts
 				WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port);
 			}
 		}
-
 
 		public void AddExceptionSubscription(Action<object, object> procedure)
 		{
