@@ -74,7 +74,8 @@ namespace NetworkingUtilities.Tcp
 				_socket.Bind(endPoint);
 				_socket.Listen(1);
 				OnNewMessage(new Tuple<string, string, string>(
-					$"Server is currently listening on {endPoint.Address} on {endPoint.Port} port", "server", "server"));
+					$"Server is currently listening on {endPoint.Address} on {endPoint.Port} port", "server",
+					"server"));
 				AcceptNextPendingConnection();
 			}
 			catch (ObjectDisposedException)
@@ -119,7 +120,8 @@ namespace NetworkingUtilities.Tcp
 			{
 				if (_socket is null) throw new ArgumentException("Socket is null");
 				var client = _socket.EndAccept(ar);
-				var handler = new Client(client, new ExceptionReporter(), new MessageReporter(), new ClientReporter());
+				var handler = new Client(client, new ExceptionReporter(), new MessageReporter(), new ClientReporter(),
+					true);
 				var whoAreYou = handler.WhoAmI;
 				OnNewClient((whoAreYou.Ip, whoAreYou.Id, whoAreYou.Port).ToTuple());
 				CleanClients();

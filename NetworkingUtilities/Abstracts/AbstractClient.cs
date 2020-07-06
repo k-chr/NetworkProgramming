@@ -12,19 +12,32 @@ namespace NetworkingUtilities.Abstracts
 		private readonly IReporter _lastException;
 		private readonly IReporter _lastMessage;
 		private readonly IReporter _disconnected;
+		protected readonly bool ServerHandler;
 
 		public ClientEvent WhoAmI { get; }
 
 		protected AbstractClient(Socket clientSocket, IReporter lastException, IReporter lastMessage,
-			IReporter disconnected)
+			IReporter disconnected, bool serverHandler = false)
 		{
 			ClientSocket = clientSocket;
 			_lastException = lastException;
 			_lastMessage = lastMessage;
 			_disconnected = disconnected;
-			if (clientSocket.RemoteEndPoint is IPEndPoint endPoint)
+			ServerHandler = serverHandler;
+
+			if (ServerHandler)
 			{
-				WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port);
+				if (clientSocket.RemoteEndPoint is IPEndPoint endPoint)
+				{
+					WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port);
+				}
+			}
+			else
+			{
+				if (clientSocket.LocalEndPoint is IPEndPoint endPoint)
+				{
+					WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port);
+				}
 			}
 		}
 

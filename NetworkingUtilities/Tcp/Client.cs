@@ -10,8 +10,9 @@ namespace NetworkingUtilities.Tcp
 {
 	public class Client : AbstractClient
 	{
-		public Client(Socket socket, IReporter lastException, IReporter lastMessage, IReporter disconnected) : base(
-			socket, lastException, lastMessage, disconnected)
+		public Client(Socket socket, IReporter lastException, IReporter lastMessage, IReporter disconnected,
+			bool serverHandler) : base(
+			socket, lastException, lastMessage, disconnected, serverHandler)
 		{
 		}
 
@@ -99,7 +100,8 @@ namespace NetworkingUtilities.Tcp
 			using var stream = stateStreamBuffer;
 			stream.Seek(0, SeekOrigin.Begin);
 			var message = Encoding.UTF8.GetString(stream.ToArray());
-			OnNewMessage((message, "", "").ToTuple());
+			var (from, to) = ServerHandler ? (WhoAmI.Id, "server") : ("server", WhoAmI.Id);
+			OnNewMessage((message, from, to).ToTuple());
 		}
 
 		public override void StopService()
