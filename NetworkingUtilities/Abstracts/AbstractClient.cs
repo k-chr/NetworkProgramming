@@ -11,16 +11,22 @@ namespace NetworkingUtilities.Abstracts
 		private readonly IReporter _lastException;
 		private readonly IReporter _lastMessage;
 		private readonly IReporter _disconnected;
-		
-		public ClientEvent PersonalData { get; protected set; }
 
-		protected AbstractClient(Socket clientSocket, IReporter lastException, IReporter lastMessage, IReporter disconnected)
+		public ClientEvent WhoAmI { get; }
+
+		protected AbstractClient(Socket clientSocket, IReporter lastException, IReporter lastMessage,
+			IReporter disconnected)
 		{
 			_clientSocket = clientSocket;
 			_lastException = lastException;
 			_lastMessage = lastMessage;
 			_disconnected = disconnected;
+			if (clientSocket.RemoteEndPoint is IPEndPoint endPoint)
+			{
+				WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port);
+			}
 		}
+
 
 		public void AddExceptionSubscription(Action<object, object> procedure)
 		{
@@ -52,7 +58,7 @@ namespace NetworkingUtilities.Abstracts
 			_lastException.Notify(exception);
 		}
 
-		public abstract void Send(string message, string to="");
+		public abstract void Send(string message, string to = "");
 
 		public abstract void Receive();
 

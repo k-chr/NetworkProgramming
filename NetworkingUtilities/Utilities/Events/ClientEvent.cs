@@ -16,10 +16,10 @@ namespace NetworkingUtilities.Utilities.Events
 
 			if (string.IsNullOrEmpty(id))
 			{
-				id = new Guid().ToString();
+				id = $"Client_{new Guid()}";
 			}
 
-			Id = $"Client_{id}";
+			Id = id;
 		}
 	}
 }
