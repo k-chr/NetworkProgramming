@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Security;
@@ -46,7 +47,11 @@ namespace NetworkingUtilities.Tcp
 
 		public override void Send(string message, string to = "")
 		{
-			throw new NotImplementedException();
+			if (Clients.Any())
+			{
+				var handler = Clients.First();
+				handler.Send(message, to);
+			}
 		}
 
 		public override void StopService()
@@ -68,6 +73,8 @@ namespace NetworkingUtilities.Tcp
 				var endPoint = new IPEndPoint(IPAddress.Parse(_ip), _port);
 				_socket.Bind(endPoint);
 				_socket.Listen(1);
+				OnNewMessage(new Tuple<string, string, string>(
+					$"Server is currently listening on {endPoint.Address} on {endPoint.Port} port", "server", "server"));
 				AcceptNextPendingConnection();
 			}
 			catch (ObjectDisposedException)
