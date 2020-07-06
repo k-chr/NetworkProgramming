@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 using System.Security;
 using NetworkingUtilities.Abstracts;
+using NetworkingUtilities.Publishers;
 
 namespace NetworkingUtilities.Tcp
 {
@@ -19,12 +19,7 @@ namespace NetworkingUtilities.Tcp
 
 		private void DisposeCurrentSession()
 		{
-			foreach (var abstractClient in Clients)
-			{
-				abstractClient.StopService();
-			}
-
-			Clients.Clear();
+			CleanClients();
 
 			try
 			{
@@ -37,6 +32,16 @@ namespace NetworkingUtilities.Tcp
 			{
 				OnCaughtException(socketException);
 			}
+		}
+
+		private void CleanClients()
+		{
+			foreach (var abstractClient in Clients)
+			{
+				abstractClient.StopService();
+			}
+
+			Clients.Clear();
 		}
 
 		public override void Send(string message, string to = "")
@@ -63,6 +68,7 @@ namespace NetworkingUtilities.Tcp
 				var endPoint = new IPEndPoint(IPAddress.Parse(_ip), _port);
 				_socket.Bind(endPoint);
 				_socket.Listen(1);
+				AcceptNextPendingConnection();
 			}
 			catch (ObjectDisposedException)
 			{
@@ -79,6 +85,82 @@ namespace NetworkingUtilities.Tcp
 			{
 				OnCaughtException(e);
 			}
+		}
+
+		private void AcceptNextPendingConnection()
+		{
+			try
+			{
+				_socket.BeginAccept(OnAcceptCallback, null);
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException);
+			}
+			catch (Exception exception)
+			{
+				OnCaughtException(exception);
+			}
+		}
+
+		private void OnAcceptCallback(IAsyncResult ar)
+		{
+			try
+			{
+				if (_socket is null) throw new ArgumentException("Socket is null");
+				var client = _socket.EndAccept(ar);
+				var handler = new Client(client, new ExceptionReporter(), new MessageReporter(), new ClientReporter());
+				var whoAreYou = handler.WhoAmI;
+				OnNewClient((whoAreYou.Ip, whoAreYou.Id, whoAreYou.Port).ToTuple());
+				CleanClients();
+				RegisterHandler(handler);
+				Clients.Add(handler);
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException);
+			}
+			catch (ArgumentException argumentException)
+			{
+				OnCaughtException(argumentException);
+			}
+			catch (Exception exception)
+			{
+				OnCaughtException(exception);
+			}
+		}
+
+		private void RegisterHandler(AbstractClient handler)
+		{
+			handler.AddExceptionSubscription((o, o1) =>
+			{
+				if (o1 is Exception e)
+				{
+					OnCaughtException(e);
+				}
+			});
+
+			handler.AddMessageSubscription((o, o1) =>
+			{
+				if (o1 is Tuple<string, string, string> tuple)
+					OnNewMessage(tuple);
+			});
+
+			handler.AddOnDisconnectedSubscription((o, o1) =>
+			{
+				if (o1 is Tuple<IPAddress, string, int> tuple)
+				{
+					OnDisconnect(tuple);
+					CleanClients();
+					AcceptNextPendingConnection();
+				}
+			});
 		}
 
 		private void InitSocket()
