@@ -82,18 +82,46 @@ namespace NetworkProgramming.Lab3.ViewModels
 				if (obj is ClientEvent clientEvent)
 				{
 					var model = new ClientModel((clientEvent.Ip.ToString(), clientEvent.Id, clientEvent.Port));
+					var messageModel = InternalMessageModel.Builder().WithType(InternalMessageType.Success)
+					   .AttachTimeStamp(true).AttachTextMessage("Successfully accepted new client").BuildMessage();
 					AddClient(model);
+					AddLog(messageModel);
 				}
 			});
+
 			_server.AddMessageSubscription((sender, obj) =>
 			{
 				if (obj is MessageEvent messageEvent)
 				{
-					var model = InternalMessageModel.Builder().BuildMessage();
+					var builder = InternalMessageModel.Builder().AttachTextMessage(messageEvent.Message);
+					if (messageEvent.From.Equals(messageEvent.To))
+					{
+						builder = builder.WithType(InternalMessageType.Info);
+					}
+					else
+					{
+						builder = builder.WithType(InternalMessageType.Client)
+						   .AttachClientData(Clients.First(clientModel => clientModel.Id.Equals(messageEvent.From)));
+					}
+
+					var model = builder.BuildMessage();
 					AddLog(model);
 				}
 			});
-			_server.AddOnDisconnectedSubscription((sender, args) => ShowPopUp());
+
+			_server.AddOnDisconnectedSubscription((sender, args) =>
+			{
+				if (args is ClientEvent @event)
+				{
+					var messageModel = InternalMessageModel.Builder().WithType(InternalMessageType.Success)
+					   .AttachTimeStamp(true)
+					   .AttachTextMessage($"Successfully disconnected client: {@event.Id}").BuildMessage();
+					AddLog(messageModel);
+				}
+
+				ShowPopUp();
+			});
+
 			_server.AddExceptionSubscription((o, o1) =>
 			{
 				if (o1 is ExceptionEvent exceptionEvent)
