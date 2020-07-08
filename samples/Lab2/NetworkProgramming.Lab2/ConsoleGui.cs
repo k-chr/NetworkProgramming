@@ -2,11 +2,22 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
+using NetworkingUtilities.Tcp;
+using NetworkingUtilities.Utilities.Events;
 
 namespace NetworkProgramming.Lab2
 {
 	public static class ConsoleGui
 	{
+		private static string OnSendErrorMessage =>
+			"Cannot send provided message to server due to connection issues!\n";
+
+		private static string OnConnectErrorMessage => "Failed to connect to remote server\n";
+		public static string OnConnectSuccessMessage => "Succeeded in connecting to remote server\n";
+		public static string OnDisconnectSuccessMessage => "Successfully disconnected\n";
+		private static string OnDisconnectErrorMessage => "Can't properly disconnect from host\n";
+		private static string OnReceiveErrorMessage => "Failed to receive message due to connection issues\n";
+
 		private static readonly Dictionary<string, Tuple<int, int>> ConsoleLinePositions =
 			new Dictionary<string, Tuple<int, int>>()
 			{
@@ -209,10 +220,7 @@ namespace NetworkProgramming.Lab2
 
 		private static void QuitProcedure()
 		{
-			if (_client != null && !_client.IsConnected())
-			{
-				_client?.Disconnect();
-			}
+			_client?.StopService();
 
 			Logger.LogInfo("Shutting down");
 			Console.SetCursorPosition(0, Logger.LoggerBeginLine);
@@ -222,7 +230,7 @@ namespace NetworkProgramming.Lab2
 
 		private static void SendProcedure()
 		{
-			if (_client == null || !_client.IsConnected())
+			if (_client == null)
 			{
 				throw new InvalidOperationException(
 					"Can't send any data - client is currently not connected with remote host");
@@ -235,17 +243,17 @@ namespace NetworkProgramming.Lab2
 
 		private static void DisconnectProcedure()
 		{
-			if (_client == null || !_client.IsConnected())
+			if (_client == null)
 			{
 				throw new InvalidOperationException("Can't disconnect client due to not being currently connected");
 			}
 
-			_client.Disconnect();
+			_client.StopService();
 		}
 
 		private static void ConnectProcedure()
 		{
-			if (_client != null && _client.IsConnected())
+			if (_client != null)
 			{
 				throw new InvalidOperationException(
 					"Can't connect to server - client is currently connected with remote host");
@@ -257,7 +265,7 @@ namespace NetworkProgramming.Lab2
 			{
 				var port = int.Parse(portStr);
 				_client = new Client(address, port, ClientEventDone);
-				_client.OnLogEvent += (sender, objects) => Logger.Log(objects);
+				RegisterClient();
 			}
 			catch (Exception e)
 			{
@@ -266,6 +274,70 @@ namespace NetworkProgramming.Lab2
 
 			ClientEventDone.WaitOne();
 			ClientEventDone.Reset();
+		}
+
+		private static void RegisterClient()
+		{
+			_client.AddExceptionSubscription((sender, objects) =>
+			{
+				if (objects is ExceptionEvent exceptionEvent)
+				{
+					var message = exceptionEvent.LastErrorCode switch
+								  {
+									  EventCode.Other => "",
+									  EventCode.Receive => OnReceiveErrorMessage,
+									  EventCode.Connect => OnConnectErrorMessage,
+									  EventCode.Send => OnSendErrorMessage,
+									  EventCode.Disconnect => OnDisconnectErrorMessage,
+									  EventCode.Accept => "",
+									  _ => throw new ArgumentOutOfRangeException()
+								  };
+					Logger.LogError(exceptionEvent.LastError, message);
+				}
+			});
+
+			_client.AddMessageSubscription((o, o1) =>
+			{
+				if (o1 is MessageEvent messageEvent)
+				{
+					if (messageEvent.From.Equals(messageEvent.To))
+					{
+						Logger.LogInfo(messageEvent.Message);
+					}
+					else
+					{
+						Logger.Log(new object[]
+						{
+							Logger.MessageType.Server,
+							messageEvent.Message
+						});
+					}
+				}
+			});
+
+			_client.AddOnDisconnectedSubscription((o, o1) =>
+			{
+				if (o1 is ClientEvent)
+				{
+					Logger.Log(new object[]
+					{
+						Logger.MessageType.Success,
+						OnDisconnectSuccessMessage
+					});
+				}
+			});
+
+			_client.AddOnConnectedSubscription((o, o1) =>
+			{
+				if (o1 is ClientEvent)
+				{
+					Logger.Log(new object[]
+					{
+						Logger.MessageType.Success,
+						OnConnectSuccessMessage
+					});
+				}
+			});
 		}
 	}
 }
