@@ -145,6 +145,8 @@ namespace NetworkingUtilities.Tcp
 			}
 		}
 
+		public void AcceptNext() => AcceptNextPendingConnection();
+
 		private void RegisterHandler(AbstractClient handler)
 		{
 			handler.AddExceptionSubscription((o, o1) =>
@@ -165,7 +167,6 @@ namespace NetworkingUtilities.Tcp
 				{
 					OnDisconnect(@event.Ip, @event.Id, @event.Port);
 					CleanClients();
-					AcceptNextPendingConnection();
 				}
 			});
 		}

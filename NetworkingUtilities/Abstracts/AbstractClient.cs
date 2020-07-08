@@ -17,7 +17,7 @@ namespace NetworkingUtilities.Abstracts
 		private readonly IReporter _connected;
 		protected readonly bool ServerHandler;
 
-		public ClientEvent WhoAmI { get; }
+		public ClientEvent WhoAmI { get; protected set; }
 
 		protected AbstractClient(Socket clientSocket, bool serverHandler = false)
 		{

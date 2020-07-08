@@ -13,8 +13,8 @@ namespace NetworkProgramming.Lab2
 			"Cannot send provided message to server due to connection issues!\n";
 
 		private static string OnConnectErrorMessage => "Failed to connect to remote server\n";
-		public static string OnConnectSuccessMessage => "Succeeded in connecting to remote server\n";
-		public static string OnDisconnectSuccessMessage => "Successfully disconnected\n";
+		private static string OnConnectSuccessMessage => "Succeeded in connecting to remote server\n";
+		private static string OnDisconnectSuccessMessage => "Successfully disconnected\n";
 		private static string OnDisconnectErrorMessage => "Can't properly disconnect from host\n";
 		private static string OnReceiveErrorMessage => "Failed to receive message due to connection issues\n";
 

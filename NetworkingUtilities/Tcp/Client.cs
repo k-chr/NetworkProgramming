@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -51,6 +52,11 @@ namespace NetworkingUtilities.Tcp
 					var socket = state.ClientSocket;
 					socket.EndConnect(ar);
 					state.BlockingEvent.Set();
+					if (ClientSocket.LocalEndPoint is IPEndPoint endPoint)
+					{
+						WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port);
+					}
+
 					OnConnect(WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port);
 				}
 				catch (ObjectDisposedException)
