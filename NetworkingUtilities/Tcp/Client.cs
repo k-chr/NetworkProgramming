@@ -134,7 +134,7 @@ namespace NetworkingUtilities.Tcp
 			}
 			catch (SocketException socketException)
 			{
-				OnCaughtException(socketException, EventCode.Send);
+				OnCaughtException(socketException, EventCode.Receive);
 			}
 			catch (Exception exception)
 			{

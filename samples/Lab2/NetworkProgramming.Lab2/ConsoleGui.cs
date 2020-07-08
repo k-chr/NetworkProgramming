@@ -230,7 +230,7 @@ namespace NetworkProgramming.Lab2
 
 		private static void SendProcedure()
 		{
-			if (_client == null)
+			if (_client == null || !_client.IsConnected())
 			{
 				throw new InvalidOperationException(
 					"Can't send any data - client is currently not connected with remote host");
@@ -243,7 +243,7 @@ namespace NetworkProgramming.Lab2
 
 		private static void DisconnectProcedure()
 		{
-			if (_client == null)
+			if (_client == null || !_client.IsConnected())
 			{
 				throw new InvalidOperationException("Can't disconnect client due to not being currently connected");
 			}
@@ -253,7 +253,7 @@ namespace NetworkProgramming.Lab2
 
 		private static void ConnectProcedure()
 		{
-			if (_client != null)
+			if (_client != null && _client.IsConnected())
 			{
 				throw new InvalidOperationException(
 					"Can't connect to server - client is currently connected with remote host");
@@ -266,14 +266,15 @@ namespace NetworkProgramming.Lab2
 				var port = int.Parse(portStr);
 				_client = new Client(address, port, ClientEventDone);
 				RegisterClient();
+
+				ClientEventDone.WaitOne();
+				ClientEventDone.Reset();
+				_client.StartService();
 			}
 			catch (Exception e)
 			{
 				Logger.LogError(e, "Wrong value of port - provided data cannot be parsed to number of port");
 			}
-
-			ClientEventDone.WaitOne();
-			ClientEventDone.Reset();
 		}
 
 		private static void RegisterClient()
@@ -293,6 +294,7 @@ namespace NetworkProgramming.Lab2
 									  _ => throw new ArgumentOutOfRangeException()
 								  };
 					Logger.LogError(exceptionEvent.LastError, message);
+					ClientEventDone.Set();
 				}
 			});
 
