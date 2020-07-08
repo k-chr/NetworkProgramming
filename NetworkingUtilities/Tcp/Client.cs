@@ -14,8 +14,49 @@ namespace NetworkingUtilities.Tcp
 		{
 		}
 
-		public override void Send(string message, string to = "")
+		public override void Send(string message, string to = "") => Send(ClientSocket, message);
+
+		private void Send(Socket clientSocket, string message)
 		{
+			var bytes = Encoding.ASCII.GetBytes(message);
+
+			try
+			{
+				clientSocket.BeginSend(bytes, 0, bytes.Length, 0, OnSendCallback, clientSocket);
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException);
+			}
+			catch (Exception e)
+			{
+				OnCaughtException(e);
+			}
+		}
+
+		private void OnSendCallback(IAsyncResult ar)
+		{
+			try
+			{
+				if (ar.AsyncState is Socket socket)
+				{
+					var _ = socket.EndSend(ar);
+				}
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException);
+			}
+			catch (Exception exception)
+			{
+				OnCaughtException(exception);
+			}
 		}
 
 		public override void Receive()
@@ -101,15 +142,9 @@ namespace NetworkingUtilities.Tcp
 			OnNewMessage((message, from, to).ToTuple());
 		}
 
-		public override void StopService()
-		{
-			Disconnect(ClientSocket);
-		}
+		public override void StopService() => Disconnect(ClientSocket);
 
-		public override void StartService()
-		{
-			Receive();
-		}
+		public override void StartService() => Receive();
 
 		private void Disconnect(Socket clientSocket)
 		{
