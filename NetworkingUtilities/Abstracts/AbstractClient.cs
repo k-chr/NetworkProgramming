@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using NetworkingUtilities.Publishers;
 using NetworkingUtilities.Utilities.Events;
 
 namespace NetworkingUtilities.Abstracts
@@ -16,13 +17,12 @@ namespace NetworkingUtilities.Abstracts
 
 		public ClientEvent WhoAmI { get; }
 
-		protected AbstractClient(Socket clientSocket, IReporter lastException, IReporter lastMessage,
-			IReporter disconnected, bool serverHandler = false)
+		protected AbstractClient(Socket clientSocket,  bool serverHandler = false)
 		{
 			ClientSocket = clientSocket;
-			_lastException = lastException;
-			_lastMessage = lastMessage;
-			_disconnected = disconnected;
+			_lastException = new ExceptionReporter();
+			_lastMessage = new MessageReporter();
+			_disconnected = new ClientReporter();
 			ServerHandler = serverHandler;
 
 			if (ServerHandler)
@@ -56,17 +56,17 @@ namespace NetworkingUtilities.Abstracts
 			_disconnected.AddSubscriber(procedure);
 		}
 
-		public void OnNewMessage(Tuple<string, string, string> messageWithAddresses)
+		protected void OnNewMessage(Tuple<string, string, string> messageWithAddresses)
 		{
 			_lastMessage.Notify(messageWithAddresses);
 		}
 
-		public void OnDisconnect(Tuple<IPAddress, string, int> clientData)
+		protected void OnDisconnect(Tuple<IPAddress, string, int> clientData)
 		{
 			_disconnected.Notify(clientData);
 		}
 
-		public void OnCaughtException(Exception exception)
+		protected void OnCaughtException(Exception exception)
 		{
 			_lastException.Notify(exception);
 		}

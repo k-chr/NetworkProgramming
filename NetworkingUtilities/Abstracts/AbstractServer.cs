@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using NetworkingUtilities.Publishers;
 
 namespace NetworkingUtilities.Abstracts
 {
@@ -14,16 +15,15 @@ namespace NetworkingUtilities.Abstracts
 		private readonly IReporter _disconnected;
 		private readonly IReporter _newClient;
 
-		protected AbstractServer(string ip, int port, string interfaceName, IReporter disconnected,
-			IReporter lastMessage, IReporter lastException, IReporter newClient)
+		protected AbstractServer(string ip, int port, string interfaceName)
 		{
 			Ip = ip;
 			Port = port;
 			InterfaceName = interfaceName;
-			_disconnected = disconnected;
-			_lastMessage = lastMessage;
-			_lastException = lastException;
-			_newClient = newClient;
+			_disconnected = new ClientReporter();
+			_lastMessage = new MessageReporter();
+			_lastException = new ExceptionReporter();
+			_newClient = new ClientReporter();
 			Clients = new List<AbstractClient>();
 		}
 
@@ -35,17 +35,17 @@ namespace NetworkingUtilities.Abstracts
 
 		public abstract void StartService();
 
-		protected void AddExceptionSubscription(Action<object, object> procedure)
+		public void AddExceptionSubscription(Action<object, object> procedure)
 		{
 			_lastException.AddSubscriber(procedure);
 		}
 
-		protected void AddMessageSubscription(Action<object, object> procedure)
+		public void AddMessageSubscription(Action<object, object> procedure)
 		{
 			_lastMessage.AddSubscriber(procedure);
 		}
 
-		protected void AddOnDisconnectedSubscription(Action<object, object> procedure)
+		public void AddOnDisconnectedSubscription(Action<object, object> procedure)
 		{
 			_disconnected.AddSubscriber(procedure);
 		}
@@ -55,22 +55,22 @@ namespace NetworkingUtilities.Abstracts
 			_newClient.AddSubscriber(procedure);
 		}
 
-		public void OnNewMessage(Tuple<string, string, string> messageWithAddresses)
+		protected void OnNewMessage(Tuple<string, string, string> messageWithAddresses)
 		{
 			_lastMessage.Notify(messageWithAddresses);
 		}
 
-		public void OnNewClient(Tuple<IPAddress, string, int> clientData)
+		protected void OnNewClient(Tuple<IPAddress, string, int> clientData)
 		{
 			_newClient.Notify(clientData);
 		}
 
-		public void OnDisconnect(Tuple<IPAddress, string, int> clientData)
+		protected void OnDisconnect(Tuple<IPAddress, string, int> clientData)
 		{
 			_disconnected.Notify(clientData);
 		}
 
-		public void OnCaughtException(Exception exception)
+		protected void OnCaughtException(Exception exception)
 		{
 			_lastException.Notify(exception);
 		}

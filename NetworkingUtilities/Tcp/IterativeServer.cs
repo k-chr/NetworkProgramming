@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security;
 using NetworkingUtilities.Abstracts;
-using NetworkingUtilities.Publishers;
 
 namespace NetworkingUtilities.Tcp
 {
@@ -12,9 +11,7 @@ namespace NetworkingUtilities.Tcp
 	{
 		private Socket _socket;
 
-		public IterativeServer(string ip, int port, string interfaceName, IReporter disconnected, IReporter lastMessage,
-			IReporter lastException, IReporter newClient) : base(ip, port, interfaceName, disconnected, lastMessage,
-			lastException, newClient)
+		public IterativeServer(string ip, int port, string interfaceName) : base(ip, port, interfaceName)
 		{
 		}
 
@@ -120,8 +117,7 @@ namespace NetworkingUtilities.Tcp
 			{
 				if (_socket is null) throw new ArgumentException("Socket is null");
 				var client = _socket.EndAccept(ar);
-				var handler = new Client(client, new ExceptionReporter(), new MessageReporter(), new ClientReporter(),
-					true);
+				var handler = new Client(client, true);
 				var whoAreYou = handler.WhoAmI;
 				OnNewClient((whoAreYou.Ip, whoAreYou.Id, whoAreYou.Port).ToTuple());
 				CleanClients();
@@ -150,9 +146,7 @@ namespace NetworkingUtilities.Tcp
 			handler.AddExceptionSubscription((o, o1) =>
 			{
 				if (o1 is Exception e)
-				{
 					OnCaughtException(e);
-				}
 			});
 
 			handler.AddMessageSubscription((o, o1) =>

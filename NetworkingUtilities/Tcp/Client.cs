@@ -10,15 +10,12 @@ namespace NetworkingUtilities.Tcp
 {
 	public class Client : AbstractClient
 	{
-		public Client(Socket socket, IReporter lastException, IReporter lastMessage, IReporter disconnected,
-			bool serverHandler) : base(
-			socket, lastException, lastMessage, disconnected, serverHandler)
+		public Client(Socket socket, bool serverHandler) : base(socket, serverHandler)
 		{
 		}
 
 		public override void Send(string message, string to = "")
 		{
-			throw new NotImplementedException();
 		}
 
 		public override void Receive()
@@ -99,7 +96,7 @@ namespace NetworkingUtilities.Tcp
 		{
 			using var stream = stateStreamBuffer;
 			stream.Seek(0, SeekOrigin.Begin);
-			var message = Encoding.UTF8.GetString(stream.ToArray());
+			var message = Encoding.UTF8.GetString(stream.ToArray()).Trim();
 			var (from, to) = ServerHandler ? (WhoAmI.Id, "server") : ("server", WhoAmI.Id);
 			OnNewMessage((message, from, to).ToTuple());
 		}
