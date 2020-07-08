@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using Avalonia.Threading;
-using NetworkProgramming.Lab3.Models;
-using NetworkProgramming.Lab3.Services;
+using CustomControls.Models;
+using NetworkingUtilities.Tcp;
+using NetworkingUtilities.Utilities.Events;
 using ReactiveUI;
 
 namespace NetworkProgramming.Lab3.ViewModels
@@ -34,7 +36,7 @@ namespace NetworkProgramming.Lab3.ViewModels
 		public ObservableCollection<NetworkInterfaceModel> AvailableInterfaces { get; }
 		public ObservableCollection<InternalMessageModel> Logs { get; }
 
-		private readonly IterativeServer _server = new IterativeServer();
+		private IterativeServer _server;
 		private bool _menuVisible = true;
 		private bool _mainViewVisible = false;
 		private bool _showPopup;
@@ -67,7 +69,50 @@ namespace NetworkProgramming.Lab3.ViewModels
 			MenuVisible = false;
 			MainViewVisible = true;
 			var port = int.TryParse(Port ?? "", out var num) ? num : 7;
-			_server.StartService(SelectedInterface?.Ip ?? "127.0.0.1", port, SelectedInterface?.Name ?? "localhost");
+			_server = new IterativeServer(SelectedInterface?.Ip ?? "127.0.0.1", port,
+				SelectedInterface?.Name ?? "localhost");
+			RegisterServer();
+			_server.StartService();
+		}
+
+		private void RegisterServer()
+		{
+			_server.AddNewClientSubscription((sender, obj) =>
+			{
+				if (obj is ClientEvent clientEvent)
+				{
+					var model = new ClientModel((clientEvent.Ip.ToString(), clientEvent.Id, clientEvent.Port));
+					AddClient(model);
+				}
+			});
+			_server.AddMessageSubscription((sender, obj) =>
+			{
+				if (obj is MessageEvent messageEvent)
+				{
+					var model = InternalMessageModel.Builder().BuildMessage();
+					AddLog(model);
+				}
+			});
+			_server.AddOnDisconnectedSubscription((sender, args) => ShowPopUp());
+			_server.AddExceptionSubscription((o, o1) =>
+			{
+				if (o1 is ExceptionEvent exceptionEvent)
+				{
+					var message = exceptionEvent.LastErrorCode switch
+								  {
+									  EventCode.Connect => "Issues with connection",
+									  EventCode.Disconnect => "Cannot disconnect properly",
+									  EventCode.Send => "Cannot send message to destination",
+									  EventCode.Receive => "Cannot obtain message from sender",
+									  EventCode.Accept => "Cannot accept client properly",
+									  EventCode.Other => "Unknown error occured",
+									  _ => throw new ArgumentOutOfRangeException()
+								  };
+					var builder = InternalMessageModel.Builder().WithType(InternalMessageType.Error)
+					   .AttachExceptionData(exceptionEvent.LastError).AttachTextMessage(message);
+					AddLog(builder.BuildMessage());
+				}
+			});
 		}
 
 		public MainWindowViewModel()
@@ -76,9 +121,7 @@ namespace NetworkProgramming.Lab3.ViewModels
 			MenuVisible = true;
 			Logs = new ObservableCollection<InternalMessageModel>();
 			Clients = new ObservableCollection<ClientModel>();
-			_server.OnNewClient += (sender, model) => AddClient(model);
-			_server.OnLogEvent += (sender, model) => AddLog(model);
-			_server.OnDisconnect += (sender, args) => ShowPopUp();
+
 			AvailableInterfaces = new ObservableCollection<NetworkInterfaceModel>(GetNetworkInterfaces());
 		}
 

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="**\*.xaml.cs">
@@ -25,10 +25,10 @@
     <None Remove="Views\MenuControl.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.9.7" />
-    <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.9.7" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.9.7" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.7" />
+    <PackageReference Include="Avalonia" Version="0.9.11" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.9.11" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.9.11" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.11" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\ClientsGrid.xaml">
@@ -46,6 +46,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Lab2\NetworkProgramming.Lab2\NetworkProgramming.Lab2.csproj" />
+    <ProjectReference Include="..\..\..\CustomControls\CustomControls.csproj" />
+    <ProjectReference Include="..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
   </ItemGroup>
 </Project>
