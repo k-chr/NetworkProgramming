@@ -28,7 +28,7 @@ namespace NetworkingUtilities.Abstracts
 			Clients = new List<AbstractClient>();
 		}
 
-		public ICollection<AbstractClient> Clients { get; }
+		protected ICollection<AbstractClient> Clients { get; }
 
 		public abstract void Send(string message, string to = "");
 

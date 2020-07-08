@@ -173,7 +173,7 @@ namespace NetworkingUtilities.Tcp
 					}
 					else
 					{
-						throw new Exception("Issues with receiving message from sender");
+						Disconnect(ClientSocket);
 					}
 
 					Receive(clientSocket, state);

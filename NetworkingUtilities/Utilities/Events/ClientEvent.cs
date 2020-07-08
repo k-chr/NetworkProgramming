@@ -16,7 +16,7 @@ namespace NetworkingUtilities.Utilities.Events
 
 			if (string.IsNullOrEmpty(id))
 			{
-				id = $"Client_{new Guid()}";
+				id = $"Client_{Guid.NewGuid()}";
 			}
 
 			Id = id;

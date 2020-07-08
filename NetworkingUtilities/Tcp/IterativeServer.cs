@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -166,9 +167,10 @@ namespace NetworkingUtilities.Tcp
 				if (o1 is ClientEvent @event)
 				{
 					OnDisconnect(@event.Ip, @event.Id, @event.Port);
-					CleanClients();
+					Clients.Remove(Clients.FirstOrDefault());
 				}
 			});
+			handler.StartService();
 		}
 
 		private void InitSocket()
