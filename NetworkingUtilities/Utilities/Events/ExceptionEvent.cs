@@ -6,6 +6,7 @@ namespace NetworkingUtilities.Utilities.Events
 	{
 		public Exception LastError { get; }
 		public EventCode LastErrorCode { get; }
+
 		public ExceptionEvent(Exception happenedException, EventCode code)
 		{
 			LastError = happenedException;

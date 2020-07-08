@@ -51,6 +51,7 @@ namespace NetworkingUtilities.Tcp
 					var socket = state.ClientSocket;
 					socket.EndConnect(ar);
 					state.BlockingEvent.Set();
+					OnConnect(WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port);
 				}
 				catch (ObjectDisposedException)
 				{

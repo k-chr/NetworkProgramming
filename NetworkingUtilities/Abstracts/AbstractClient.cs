@@ -13,6 +13,7 @@ namespace NetworkingUtilities.Abstracts
 		private readonly IReporter _lastException;
 		private readonly IReporter _lastMessage;
 		private readonly IReporter _disconnected;
+		private readonly IReporter _connected;
 		protected readonly bool ServerHandler;
 
 		public ClientEvent WhoAmI { get; }
@@ -23,6 +24,7 @@ namespace NetworkingUtilities.Abstracts
 			_lastException = new ExceptionReporter();
 			_lastMessage = new MessageReporter();
 			_disconnected = new ClientReporter();
+			_connected = new ClientReporter();
 			ServerHandler = serverHandler;
 
 			if (ServerHandler)
@@ -41,35 +43,21 @@ namespace NetworkingUtilities.Abstracts
 			}
 		}
 
-		public void AddExceptionSubscription(Action<object, object> procedure)
-		{
-			_lastException.AddSubscriber(procedure);
-		}
+		public void AddExceptionSubscription(Action<object, object> procedure) => _lastException.AddSubscriber(procedure);
 
-		public void AddMessageSubscription(Action<object, object> procedure)
-		{
-			_lastMessage.AddSubscriber(procedure);
-		}
+		public void AddMessageSubscription(Action<object, object> procedure) => _lastMessage.AddSubscriber(procedure);
 
-		public void AddOnDisconnectedSubscription(Action<object, object> procedure)
-		{
-			_disconnected.AddSubscriber(procedure);
-		}
+		public void AddOnDisconnectedSubscription(Action<object, object> procedure) => _disconnected.AddSubscriber(procedure);
 
-		protected void OnNewMessage(string message, string from ,string to)
-		{
-			_lastMessage.Notify((message, from, to));
-		}
+		public void AddOnConnectedSubscription(Action<object, object> procedure) => _connected.AddSubscriber(procedure);
 
-		protected void OnDisconnect(IPAddress ip, string id, int port)
-		{
-			_disconnected.Notify((ip, id, port));
-		}
+		protected void OnNewMessage(string message, string from, string to) => _lastMessage.Notify((message, @from, to));
 
-		protected void OnCaughtException(Exception exception, EventCode code)
-		{
-			_lastException.Notify((exception, code));
-		}
+		protected void OnDisconnect(IPAddress ip, string id, int port) => _disconnected.Notify((ip, id, port));
+
+		protected void OnConnect(IPAddress ip, string id, int port) => _connected.Notify((ip, id, port));
+
+		protected void OnCaughtException(Exception exception, EventCode code) => _lastException.Notify((exception, code));
 
 		public abstract void Send(string message, string to = "");
 
