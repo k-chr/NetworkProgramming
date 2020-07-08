@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Utilities.StateObjects;
 
@@ -14,16 +15,18 @@ namespace NetworkingUtilities.Tcp
 		{
 		}
 
-		public Client(string address, in int port) : base(new Socket(SocketType.Stream, ProtocolType.Tcp))
+		public Client(string address, in int port, ManualResetEvent manualResetEvent) : base(
+			new Socket(SocketType.Stream, ProtocolType.Tcp))
 		{
-			Connect(address, port);
+			Connect(address, port, manualResetEvent);
 		}
 
-		private void Connect(string address, in int port)
+		private void Connect(string address, in int port, ManualResetEvent manualResetEvent)
 		{
 			try
 			{
-				ClientSocket.BeginConnect(address, port, OnConnectCallback, ClientSocket);
+				ClientSocket.BeginConnect(address, port, OnConnectCallback,
+					new WaitState {ClientSocket = ClientSocket, BlockingEvent = manualResetEvent});
 			}
 			catch (ObjectDisposedException)
 			{
@@ -40,11 +43,13 @@ namespace NetworkingUtilities.Tcp
 
 		private void OnConnectCallback(IAsyncResult ar)
 		{
-			if (ar.AsyncState is Socket socket)
+			if (ar.AsyncState is WaitState state)
 			{
 				try
 				{
-					 socket.EndConnect(ar);
+					var socket = state.ClientSocket;
+					socket.EndConnect(ar);
+					state.BlockingEvent.Set();
 				}
 				catch (ObjectDisposedException)
 				{

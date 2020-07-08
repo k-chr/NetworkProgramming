@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security;
 using NetworkingUtilities.Abstracts;
+using NetworkingUtilities.Utilities.Events;
 
 namespace NetworkingUtilities.Tcp
 {
@@ -28,7 +29,11 @@ namespace NetworkingUtilities.Tcp
 			}
 			catch (SocketException socketException)
 			{
-				OnCaughtException(socketException);
+				OnCaughtException(socketException, EventCode.Disconnect);
+			}
+			catch (Exception e)
+			{
+				OnCaughtException(e, EventCode.Other);
 			}
 		}
 
@@ -70,9 +75,8 @@ namespace NetworkingUtilities.Tcp
 				var endPoint = new IPEndPoint(IPAddress.Parse(Ip), Port);
 				_socket.Bind(endPoint);
 				_socket.Listen(1);
-				OnNewMessage(new Tuple<string, string, string>(
-					$"Server is currently listening on {endPoint.Address} on {endPoint.Port} port", "server",
-					"server"));
+				OnNewMessage($"Server is currently listening on {endPoint.Address} on {endPoint.Port} port", "server",
+					"server");
 				AcceptNextPendingConnection();
 			}
 			catch (ObjectDisposedException)
@@ -80,15 +84,15 @@ namespace NetworkingUtilities.Tcp
 			}
 			catch (SocketException socketException)
 			{
-				OnCaughtException(socketException);
+				OnCaughtException(socketException, EventCode.Connect);
 			}
 			catch (SecurityException securityException)
 			{
-				OnCaughtException(securityException);
+				OnCaughtException(securityException, EventCode.Connect);
 			}
 			catch (Exception e)
 			{
-				OnCaughtException(e);
+				OnCaughtException(e, EventCode.Other);
 			}
 		}
 
@@ -103,11 +107,11 @@ namespace NetworkingUtilities.Tcp
 			}
 			catch (SocketException socketException)
 			{
-				OnCaughtException(socketException);
+				OnCaughtException(socketException, EventCode.Accept);
 			}
 			catch (Exception exception)
 			{
-				OnCaughtException(exception);
+				OnCaughtException(exception, EventCode.Other);
 			}
 		}
 
@@ -119,7 +123,7 @@ namespace NetworkingUtilities.Tcp
 				var client = _socket.EndAccept(ar);
 				var handler = new Client(client, true);
 				var whoAreYou = handler.WhoAmI;
-				OnNewClient((whoAreYou.Ip, whoAreYou.Id, whoAreYou.Port).ToTuple());
+				OnNewClient(whoAreYou.Ip, whoAreYou.Id, whoAreYou.Port);
 				CleanClients();
 				RegisterHandler(handler);
 				Clients.Add(handler);
@@ -129,15 +133,15 @@ namespace NetworkingUtilities.Tcp
 			}
 			catch (SocketException socketException)
 			{
-				OnCaughtException(socketException);
+				OnCaughtException(socketException, EventCode.Accept);
 			}
 			catch (ArgumentException argumentException)
 			{
-				OnCaughtException(argumentException);
+				OnCaughtException(argumentException, EventCode.Accept);
 			}
 			catch (Exception exception)
 			{
-				OnCaughtException(exception);
+				OnCaughtException(exception, EventCode.Other);
 			}
 		}
 
@@ -145,21 +149,21 @@ namespace NetworkingUtilities.Tcp
 		{
 			handler.AddExceptionSubscription((o, o1) =>
 			{
-				if (o1 is Exception e)
-					OnCaughtException(e);
+				if (o1 is ExceptionEvent e)
+					OnCaughtException(e.LastError, e.LastErrorCode);
 			});
 
 			handler.AddMessageSubscription((o, o1) =>
 			{
-				if (o1 is Tuple<string, string, string> tuple)
-					OnNewMessage(tuple);
+				if (o1 is MessageEvent @event)
+					OnNewMessage(@event.Message, @event.From, @event.To);
 			});
 
 			handler.AddOnDisconnectedSubscription((o, o1) =>
 			{
-				if (o1 is Tuple<IPAddress, string, int> tuple)
+				if (o1 is ClientEvent @event)
 				{
-					OnDisconnect(tuple);
+					OnDisconnect(@event.Ip, @event.Id, @event.Port);
 					CleanClients();
 					AcceptNextPendingConnection();
 				}
@@ -174,11 +178,11 @@ namespace NetworkingUtilities.Tcp
 			}
 			catch (SocketException socketException)
 			{
-				OnCaughtException(socketException);
+				OnCaughtException(socketException, EventCode.Connect);
 			}
 			catch (Exception e)
 			{
-				OnCaughtException(e);
+				OnCaughtException(e, EventCode.Other);
 			}
 		}
 	}
