@@ -56,19 +56,19 @@ namespace NetworkingUtilities.Abstracts
 			_disconnected.AddSubscriber(procedure);
 		}
 
-		protected void OnNewMessage(Tuple<string, string, string> messageWithAddresses)
+		protected void OnNewMessage(string message, string from ,string to)
 		{
-			_lastMessage.Notify(messageWithAddresses);
+			_lastMessage.Notify((message, from, to));
 		}
 
-		protected void OnDisconnect(Tuple<IPAddress, string, int> clientData)
+		protected void OnDisconnect(IPAddress ip, string id, int port)
 		{
-			_disconnected.Notify(clientData);
+			_disconnected.Notify((ip, id, port));
 		}
 
-		protected void OnCaughtException(Exception exception)
+		protected void OnCaughtException(Exception exception, EventCode code)
 		{
-			_lastException.Notify(exception);
+			_lastException.Notify((exception, code));
 		}
 
 		public abstract void Send(string message, string to = "");

@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using NetworkingUtilities.Abstracts;
+using NetworkingUtilities.Utilities.Events;
 using NetworkingUtilities.Utilities.StateObjects;
 
 namespace NetworkingUtilities.Tcp
@@ -33,11 +34,11 @@ namespace NetworkingUtilities.Tcp
 			}
 			catch (SocketException socketException)
 			{
-				OnCaughtException(socketException);
+				OnCaughtException(socketException, EventCode.Connect);
 			}
 			catch (Exception exception)
 			{
-				OnCaughtException(exception);
+				OnCaughtException(exception, EventCode.Other);
 			}
 		}
 
@@ -56,11 +57,11 @@ namespace NetworkingUtilities.Tcp
 				}
 				catch (SocketException socketException)
 				{
-					OnCaughtException(socketException);
+					OnCaughtException(socketException, EventCode.Connect);
 				}
 				catch (Exception exception)
 				{
-					OnCaughtException(exception);
+					OnCaughtException(exception, EventCode.Other);
 				}
 			}
 		}
@@ -80,11 +81,11 @@ namespace NetworkingUtilities.Tcp
 			}
 			catch (SocketException socketException)
 			{
-				OnCaughtException(socketException);
+				OnCaughtException(socketException, EventCode.Send);
 			}
 			catch (Exception e)
 			{
-				OnCaughtException(e);
+				OnCaughtException(e, EventCode.Other);
 			}
 		}
 
@@ -102,11 +103,11 @@ namespace NetworkingUtilities.Tcp
 			}
 			catch (SocketException socketException)
 			{
-				OnCaughtException(socketException);
+				OnCaughtException(socketException, EventCode.Send);
 			}
 			catch (Exception exception)
 			{
-				OnCaughtException(exception);
+				OnCaughtException(exception, EventCode.Other);
 			}
 		}
 
@@ -132,11 +133,11 @@ namespace NetworkingUtilities.Tcp
 			}
 			catch (SocketException socketException)
 			{
-				OnCaughtException(socketException);
+				OnCaughtException(socketException, EventCode.Send);
 			}
 			catch (Exception exception)
 			{
-				OnCaughtException(exception);
+				OnCaughtException(exception, EventCode.Other);
 			}
 		}
 
@@ -175,11 +176,11 @@ namespace NetworkingUtilities.Tcp
 				}
 				catch (SocketException socketException)
 				{
-					OnCaughtException(socketException);
+					OnCaughtException(socketException, EventCode.Receive);
 				}
 				catch (Exception exception)
 				{
-					OnCaughtException(exception);
+					OnCaughtException(exception, EventCode.Other);
 				}
 			}
 		}
@@ -190,7 +191,7 @@ namespace NetworkingUtilities.Tcp
 			stream.Seek(0, SeekOrigin.Begin);
 			var message = Encoding.UTF8.GetString(stream.ToArray()).Trim();
 			var (from, to) = ServerHandler ? (WhoAmI.Id, "server") : ("server", WhoAmI.Id);
-			OnNewMessage((message, from, to).ToTuple());
+			OnNewMessage(message, from, to);
 		}
 
 		public override void StopService() => Disconnect(ClientSocket);
@@ -206,17 +207,17 @@ namespace NetworkingUtilities.Tcp
 			}
 			catch (ObjectDisposedException)
 			{
-				OnDisconnect((WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port).ToTuple());
+				OnDisconnect(WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port);
 			}
 			catch (SocketException s)
 			{
-				OnCaughtException(s);
-				OnDisconnect((WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port).ToTuple());
+				OnCaughtException(s, EventCode.Disconnect);
+				OnDisconnect(WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port);
 			}
 			catch (Exception e)
 			{
-				OnCaughtException(e);
-				OnDisconnect((WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port).ToTuple());
+				OnCaughtException(e, EventCode.Other);
+				OnDisconnect(WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port);
 			}
 		}
 
@@ -234,11 +235,15 @@ namespace NetworkingUtilities.Tcp
 				}
 				catch (SocketException socketException)
 				{
-					OnCaughtException(socketException);
+					OnCaughtException(socketException, EventCode.Disconnect);
+				}
+				catch (Exception e)
+				{
+					OnCaughtException(e, EventCode.Other);
 				}
 				finally
 				{
-					OnDisconnect((WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port).ToTuple());
+					OnDisconnect(WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port);
 				}
 			}
 		}
