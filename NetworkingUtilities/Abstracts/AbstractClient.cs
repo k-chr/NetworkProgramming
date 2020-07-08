@@ -17,7 +17,7 @@ namespace NetworkingUtilities.Abstracts
 
 		public ClientEvent WhoAmI { get; }
 
-		protected AbstractClient(Socket clientSocket,  bool serverHandler = false)
+		protected AbstractClient(Socket clientSocket, bool serverHandler = false)
 		{
 			ClientSocket = clientSocket;
 			_lastException = new ExceptionReporter();

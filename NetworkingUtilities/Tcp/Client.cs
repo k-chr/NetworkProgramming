@@ -14,6 +14,52 @@ namespace NetworkingUtilities.Tcp
 		{
 		}
 
+		public Client(string address, in int port) : base(new Socket(SocketType.Stream, ProtocolType.Tcp))
+		{
+			Connect(address, port);
+		}
+
+		private void Connect(string address, in int port)
+		{
+			try
+			{
+				ClientSocket.BeginConnect(address, port, OnConnectCallback, ClientSocket);
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException);
+			}
+			catch (Exception exception)
+			{
+				OnCaughtException(exception);
+			}
+		}
+
+		private void OnConnectCallback(IAsyncResult ar)
+		{
+			if (ar.AsyncState is Socket socket)
+			{
+				try
+				{
+					 socket.EndConnect(ar);
+				}
+				catch (ObjectDisposedException)
+				{
+				}
+				catch (SocketException socketException)
+				{
+					OnCaughtException(socketException);
+				}
+				catch (Exception exception)
+				{
+					OnCaughtException(exception);
+				}
+			}
+		}
+
 		public override void Send(string message, string to = "") => Send(ClientSocket, message);
 
 		private void Send(Socket clientSocket, string message)
