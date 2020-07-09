@@ -45,4 +45,8 @@
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\CustomControls\CustomControls.csproj" />
+    <ProjectReference Include="..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
+  </ItemGroup>
 </Project>

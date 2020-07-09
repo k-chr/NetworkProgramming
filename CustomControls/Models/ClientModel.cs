@@ -7,6 +7,7 @@ namespace CustomControls.Models
 		public string Id { get; set; }
 		public string Ip { get; }
 		public int Port { get; }
+		public string Connected { get; set; }
 		public string Shorten => Id.Substring(0, 1);
 
 		public ClientModel(ValueTuple<string, string, int> info)
