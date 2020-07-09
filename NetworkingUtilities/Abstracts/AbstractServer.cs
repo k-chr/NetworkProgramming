@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Sockets;
 using NetworkingUtilities.Publishers;
 using NetworkingUtilities.Utilities.Events;
 
@@ -15,6 +16,7 @@ namespace NetworkingUtilities.Abstracts
 		protected readonly string InterfaceName;
 		private readonly IReporter _disconnected;
 		private readonly IReporter _newClient;
+		protected Socket ServerSocket;
 
 		protected AbstractServer(string ip, int port, string interfaceName)
 		{

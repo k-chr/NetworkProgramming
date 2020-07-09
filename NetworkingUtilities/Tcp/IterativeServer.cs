@@ -10,8 +10,6 @@ namespace NetworkingUtilities.Tcp
 {
 	public class IterativeServer : AbstractServer
 	{
-		private Socket _socket;
-
 		public IterativeServer(string ip, int port, string interfaceName) : base(ip, port, interfaceName)
 		{
 		}
@@ -22,7 +20,7 @@ namespace NetworkingUtilities.Tcp
 
 			try
 			{
-				_socket?.Close();
+				ServerSocket?.Close();
 			}
 			catch (ObjectDisposedException)
 			{
@@ -73,8 +71,8 @@ namespace NetworkingUtilities.Tcp
 			try
 			{
 				var endPoint = new IPEndPoint(IPAddress.Parse(Ip), Port);
-				_socket.Bind(endPoint);
-				_socket.Listen(1);
+				ServerSocket.Bind(endPoint);
+				ServerSocket.Listen(1);
 				OnNewMessage($"Server is currently listening on {endPoint.Address} on {endPoint.Port} port", "server",
 					"server");
 				AcceptNextPendingConnection();
@@ -100,7 +98,7 @@ namespace NetworkingUtilities.Tcp
 		{
 			try
 			{
-				_socket.BeginAccept(OnAcceptCallback, null);
+				ServerSocket.BeginAccept(OnAcceptCallback, null);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -119,8 +117,8 @@ namespace NetworkingUtilities.Tcp
 		{
 			try
 			{
-				if (_socket is null) throw new ArgumentException("Socket is null");
-				var client = _socket.EndAccept(ar);
+				if (ServerSocket is null) throw new ArgumentException("Socket is null");
+				var client = ServerSocket.EndAccept(ar);
 				var handler = new Client(client, true);
 				var whoAreYou = handler.WhoAmI;
 				OnNewClient(whoAreYou.Ip, whoAreYou.Id, whoAreYou.Port);
@@ -176,7 +174,7 @@ namespace NetworkingUtilities.Tcp
 		{
 			try
 			{
-				_socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+				ServerSocket = new Socket(SocketType.Stream, ProtocolType.Tcp);
 			}
 			catch (SocketException socketException)
 			{
