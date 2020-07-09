@@ -237,8 +237,9 @@ namespace NetworkProgramming.Lab2
 			}
 
 			var message = DisplayMessageDialog();
-
+			
 			_client.Send(message);
+			Logger.LogInfo($"Sent message: {message}");
 		}
 
 		private static void DisconnectProcedure()
