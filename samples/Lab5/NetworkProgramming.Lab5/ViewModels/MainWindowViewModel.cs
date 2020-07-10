@@ -9,7 +9,6 @@ using Avalonia.Threading;
 using CustomControls.Models;
 using NetworkingUtilities.Tcp;
 using NetworkingUtilities.Utilities.Events;
-using NetworkProgramming.Lab4.ViewModels;
 using ReactiveUI;
 
 namespace NetworkProgramming.Lab5.ViewModels
@@ -68,6 +67,7 @@ namespace NetworkProgramming.Lab5.ViewModels
 				if (obj is ClientEvent clientEvent)
 				{
 					var model = new ClientModel((clientEvent.Ip.ToString(), clientEvent.Id, clientEvent.Port));
+					model.Connected = "Online";
 					var messageModel = InternalMessageModel.Builder().WithType(InternalMessageType.Success)
 					   .AttachTimeStamp(true).AttachTextMessage("Successfully accepted new client").BuildMessage();
 					AddClient(model);
@@ -103,6 +103,7 @@ namespace NetworkProgramming.Lab5.ViewModels
 					   .AttachTimeStamp(true)
 					   .AttachTextMessage($"Successfully disconnected client: {@event.Id}").BuildMessage();
 					AddLog(messageModel);
+					UpdateClientStatus(@event.Id, "Offline");
 				}
 			});
 

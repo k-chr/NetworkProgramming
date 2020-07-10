@@ -3,7 +3,7 @@ using System.Reactive;
 using Avalonia.Controls.ApplicationLifetimes;
 using ReactiveUI;
 
-namespace NetworkProgramming.Lab4.ViewModels
+namespace NetworkProgramming.Lab5.ViewModels
 {
 	public class ViewModelBase : ReactiveObject
 	{

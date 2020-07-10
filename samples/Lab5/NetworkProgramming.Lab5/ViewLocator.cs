@@ -1,7 +1,7 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using NetworkProgramming.Lab4.ViewModels;
+using NetworkProgramming.Lab5.ViewModels;
 
 namespace NetworkProgramming.Lab5
 {
@@ -11,8 +11,8 @@ namespace NetworkProgramming.Lab5
 
 		public IControl Build(object data)
 		{
-			var name = data.GetType().FullName.Replace("ViewModel", "View");
-			var type = Type.GetType(name);
+			var name = data.GetType().FullName?.Replace("ViewModel", "View");
+			var type = Type.GetType(name ?? string.Empty);
 
 			if (type != null)
 			{
