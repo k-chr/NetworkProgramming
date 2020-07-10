@@ -184,6 +184,7 @@ namespace NetworkingUtilities.Tcp
 				catch (SocketException socketException)
 				{
 					OnCaughtException(socketException, EventCode.Receive);
+					Disconnect(ClientSocket);
 				}
 				catch (Exception exception)
 				{

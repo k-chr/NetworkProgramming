@@ -170,10 +170,11 @@ namespace NetworkingUtilities.Tcp
 					var handler = new Client(client, true);
 					var whoAreYou = handler.WhoAmI;
 					OnNewClient(whoAreYou.Ip, whoAreYou.Id, whoAreYou.Port);
-					CleanClients();
 					RegisterHandler(handler);
 					Clients.Add(handler);
 				}
+
+				AcceptNextPendingConnection();
 			}
 			catch (ObjectDisposedException)
 			{
