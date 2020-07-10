@@ -160,6 +160,7 @@ namespace NetworkingUtilities.Tcp
 					if (bytesRead > 0)
 					{
 						state.StreamBuffer.Write(state.Buffer, 0, bytesRead);
+						state.Buffer = new byte[MaxBufferSize];
 						if (state.Buffer.Any(@byte => @byte == '\0'))
 						{
 							ProcessMessage(state.StreamBuffer);

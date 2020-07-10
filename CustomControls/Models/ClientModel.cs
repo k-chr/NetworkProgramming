@@ -1,13 +1,21 @@
 ﻿using System;
+using ReactiveUI;
 
 namespace CustomControls.Models
 {
-	public class ClientModel
+	public class ClientModel : ReactiveObject
 	{
+		private string _connected;
 		public string Id { get; set; }
 		public string Ip { get; }
 		public int Port { get; }
-		public string Connected { get; set; }
+
+		public string Connected
+		{
+			get => _connected;
+			set => _connected = this.RaiseAndSetIfChanged(ref _connected, value);
+		}
+
 		public string Shorten => Id.Substring(0, 1);
 
 		public ClientModel(ValueTuple<string, string, int> info)

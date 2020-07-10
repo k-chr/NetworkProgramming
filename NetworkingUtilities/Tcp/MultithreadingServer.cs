@@ -79,6 +79,7 @@ namespace NetworkingUtilities.Tcp
 		{
 			try
 			{
+				OnNewMessage(message, "server", to);
 				if (Clients.Any())
 				{
 					var handler = Clients.First(client => client.WhoAmI.Id.Equals(to));
