@@ -237,7 +237,7 @@ namespace NetworkProgramming.Lab2
 			}
 
 			var message = DisplayMessageDialog();
-			
+
 			_client.Send(message);
 			Logger.LogInfo($"Sent message: {message}");
 		}
@@ -250,6 +250,7 @@ namespace NetworkProgramming.Lab2
 			}
 
 			_client.StopService();
+			_client = null;
 		}
 
 		private static void ConnectProcedure()
@@ -264,6 +265,7 @@ namespace NetworkProgramming.Lab2
 
 			try
 			{
+				ClientEventDone.Reset();
 				var port = int.Parse(portStr);
 				_client = new Client(address, port, ClientEventDone);
 				RegisterClient();

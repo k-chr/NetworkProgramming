@@ -66,8 +66,10 @@ namespace NetworkProgramming.Lab5.ViewModels
 			{
 				if (obj is ClientEvent clientEvent)
 				{
-					var model = new ClientModel((clientEvent.Ip.ToString(), clientEvent.Id, clientEvent.Port));
-					model.Connected = "Online";
+					var model = new ClientModel((clientEvent.Ip.ToString(), clientEvent.Id, clientEvent.Port))
+					{
+						Connected = "Online"
+					};
 					var messageModel = InternalMessageModel.Builder().WithType(InternalMessageType.Success)
 					   .AttachTimeStamp(true).AttachTextMessage("Successfully accepted new client").BuildMessage();
 					AddClient(model);
@@ -83,15 +85,23 @@ namespace NetworkProgramming.Lab5.ViewModels
 					if (messageEvent.From.Equals(messageEvent.To))
 					{
 						builder = builder.WithType(InternalMessageType.Info);
+						var model = builder.BuildMessage();
+						AddLog(model);
 					}
-					else
+					else if (!messageEvent.From.Equals("server"))
 					{
 						builder = builder.WithType(InternalMessageType.Client)
 						   .AttachClientData(Clients.First(clientModel => clientModel.Id.Equals(messageEvent.From)));
+						var model = builder.BuildMessage();
+						AddLog(model);
+						_server.Send(messageEvent.Message, messageEvent.From);
 					}
-
-					var model = builder.BuildMessage();
-					AddLog(model);
+					else
+					{
+						builder = builder.WithType(InternalMessageType.Server);
+						var model = builder.BuildMessage();
+						AddLog(model);
+					}
 				}
 			});
 
