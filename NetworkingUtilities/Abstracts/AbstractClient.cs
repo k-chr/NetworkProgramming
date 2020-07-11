@@ -34,12 +34,20 @@ namespace NetworkingUtilities.Abstracts
 				{
 					WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port);
 				}
+				else
+				{
+					WhoAmI = new ClientEvent(IPAddress.None, -1, "UNDEFINED");
+				}
 			}
 			else
 			{
 				if (clientSocket.LocalEndPoint is IPEndPoint endPoint)
 				{
 					WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port);
+				}
+				else
+				{
+					WhoAmI = new ClientEvent(IPAddress.None, -1, "UNDEFINED");
 				}
 			}
 		}

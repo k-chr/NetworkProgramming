@@ -61,10 +61,11 @@ namespace NetworkProgramming.Lab2
 		public static void LogError(Exception exception, string additionalMessage)
 		{
 			CanWrite?.WaitOne();
+			CanWrite?.Reset();
 			Console.SetCursorPosition(0, LoggerBeginLine);
 			Console.ForegroundColor = ConsoleColor.Red;
 			Console.Write(additionalMessage ?? "");
-			Console.WriteLine(exception.Message + "\n" + exception.Source + "\n" + exception.StackTrace);
+			Console.WriteLine(exception.Message + "\n" + (exception.InnerException is { } e ? $"{e.Message}\n": ""));
 			Console.ForegroundColor = ConsoleColor.White;
 			LoggerBeginLine = Console.CursorTop + 1;
 			Console.SetCursorPosition(0, ReturnLine);
@@ -72,16 +73,15 @@ namespace NetworkProgramming.Lab2
 			recoveredLogs.Append(additionalMessage ?? "")
 			   .Append(exception.Message)
 			   .Append("\n")
-			   .Append(exception.Source)
-			   .Append("\n")
-			   .Append(exception.StackTrace)
-			   .Append("\n");
+			   .Append(exception.InnerException is { } ex ? $"{ex.Message}\n" : "");
 			RecoveredLogs.Add(Tuple.Create(MessageType.Error, recoveredLogs.ToString()));
+			CanWrite?.Set();
 		}
 
 		private static void LogSuccess(string message)
 		{
 			CanWrite?.WaitOne();
+			CanWrite?.Reset();
 			Console.SetCursorPosition(0, LoggerBeginLine);
 			Console.ForegroundColor = ConsoleColor.Green;
 			Console.Write(message ?? "");
@@ -89,11 +89,13 @@ namespace NetworkProgramming.Lab2
 			LoggerBeginLine = Console.CursorTop + 1;
 			Console.SetCursorPosition(0, ReturnLine);
 			RecoveredLogs.Add(Tuple.Create(MessageType.Success, message ?? ""));
+			CanWrite?.Set();
 		}
 
-		private static void LogMsg(string message, bool isServer = false)
+	  private static void LogMsg(string message, bool isServer = false)
 		{
 			CanWrite?.WaitOne();
+			CanWrite?.Reset();
 			Console.SetCursorPosition(0, LoggerBeginLine);
 			Console.ForegroundColor = isServer ? ConsoleColor.DarkMagenta : ConsoleColor.DarkCyan;
 			Console.Write(isServer ? "FROM " : "TO ");
@@ -103,11 +105,13 @@ namespace NetworkProgramming.Lab2
 			Console.SetCursorPosition(0, ReturnLine);
 			RecoveredLogs.Add(Tuple.Create(isServer ? MessageType.Server : MessageType.Client,
 				(isServer ? "FROM " : "TO ") + $"SERVER: {message}\n\tCOUNT:{message.Length} BYTES\n"));
+			CanWrite?.Set();
 		}
 
 		public static void LogInfo(string message)
 		{
 			CanWrite?.WaitOne();
+			CanWrite?.Reset();
 			Console.SetCursorPosition(0, LoggerBeginLine);
 			Console.ForegroundColor = ConsoleColor.Cyan;
 			Console.Write($"Info: {message}");
@@ -119,6 +123,8 @@ namespace NetworkProgramming.Lab2
 			{
 				QuitRequest?.Invoke(GetInstance(), EventArgs.Empty);
 			}
+
+			CanWrite?.Set();
 		}
 
 		private static void ClearLogArea()
