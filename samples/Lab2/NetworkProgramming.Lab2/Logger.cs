@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading;
 
 namespace NetworkProgramming.Lab2
@@ -25,7 +25,7 @@ namespace NetworkProgramming.Lab2
 
 		public static int LoggerBeginLine { get; set; }
 		public static int ReturnLine { get; set; }
-		public static ManualResetEvent CanWrite { get; set; }
+		public static AutoResetEvent CanWrite { get; set; }
 
 		private static readonly IList<Tuple<MessageType, string>>
 			RecoveredLogs = new List<Tuple<MessageType, string>>();
@@ -61,65 +61,61 @@ namespace NetworkProgramming.Lab2
 		public static void LogError(Exception exception, string additionalMessage)
 		{
 			CanWrite?.WaitOne();
-			CanWrite?.Reset();
 			Console.SetCursorPosition(0, LoggerBeginLine);
 			Console.ForegroundColor = ConsoleColor.Red;
-			Console.Write(additionalMessage ?? "");
-			Console.WriteLine(exception.Message + "\n" + (exception.InnerException is { } e ? $"{e.Message}\n": ""));
+			var message = (additionalMessage ?? "") + exception.Message + "\n" +
+						  (exception.InnerException is { } e ? $"{e.Message}\n" : "");
+			Console.Write(message);
 			Console.ForegroundColor = ConsoleColor.White;
 			LoggerBeginLine = Console.CursorTop + 1;
 			Console.SetCursorPosition(0, ReturnLine);
-			var recoveredLogs = new StringBuilder();
-			recoveredLogs.Append(additionalMessage ?? "")
-			   .Append(exception.Message)
-			   .Append("\n")
-			   .Append(exception.InnerException is { } ex ? $"{ex.Message}\n" : "");
-			RecoveredLogs.Add(Tuple.Create(MessageType.Error, recoveredLogs.ToString()));
+			RecoveredLogs.Add(Tuple.Create(MessageType.Error, message));
 			CanWrite?.Set();
 		}
 
 		private static void LogSuccess(string message)
 		{
 			CanWrite?.WaitOne();
-			CanWrite?.Reset();
 			Console.SetCursorPosition(0, LoggerBeginLine);
 			Console.ForegroundColor = ConsoleColor.Green;
 			Console.Write(message ?? "");
+			var overlap = Overlap(message ?? "");
 			Console.ForegroundColor = ConsoleColor.White;
-			LoggerBeginLine = Console.CursorTop + 1;
+			LoggerBeginLine = LoggerBeginLine + overlap + 1;
 			Console.SetCursorPosition(0, ReturnLine);
 			RecoveredLogs.Add(Tuple.Create(MessageType.Success, message ?? ""));
 			CanWrite?.Set();
 		}
 
-	  private static void LogMsg(string message, bool isServer = false)
+		private static void LogMsg(string message, bool isServer = false)
 		{
 			CanWrite?.WaitOne();
-			CanWrite?.Reset();
 			Console.SetCursorPosition(0, LoggerBeginLine);
 			Console.ForegroundColor = isServer ? ConsoleColor.DarkMagenta : ConsoleColor.DarkCyan;
-			Console.Write(isServer ? "FROM " : "TO ");
-			Console.Write($"SERVER: {message}\n\tCOUNT:{message.ToCharArray().Length} BYTES\n");
+			message = (isServer ? "FROM " : "TO ") + $"SERVER: {message}\n\tCOUNT:{message.Length} BYTES\n";
+			var overlap = Overlap(message);
+			Console.Write(message);
 			Console.ForegroundColor = ConsoleColor.White;
-			LoggerBeginLine = Console.CursorTop + 1;
+			LoggerBeginLine = LoggerBeginLine + overlap + 1;
 			Console.SetCursorPosition(0, ReturnLine);
-			RecoveredLogs.Add(Tuple.Create(isServer ? MessageType.Server : MessageType.Client,
-				(isServer ? "FROM " : "TO ") + $"SERVER: {message}\n\tCOUNT:{message.Length} BYTES\n"));
+			RecoveredLogs.Add(Tuple.Create(isServer ? MessageType.Server : MessageType.Client, message));
 			CanWrite?.Set();
 		}
 
 		public static void LogInfo(string message)
 		{
 			CanWrite?.WaitOne();
-			CanWrite?.Reset();
 			Console.SetCursorPosition(0, LoggerBeginLine);
 			Console.ForegroundColor = ConsoleColor.Cyan;
-			Console.Write($"Info: {message}");
+			var baseMessage = message;
+			message = $"Info: {message}";
+			var overlap = Overlap(message);
+			Console.Write(message);
 			Console.ForegroundColor = ConsoleColor.White;
-			LoggerBeginLine = Console.CursorTop + 1;
+			LoggerBeginLine = LoggerBeginLine + 1 + overlap;
 			Console.SetCursorPosition(0, ReturnLine);
-			RecoveredLogs.Add(Tuple.Create(MessageType.Info, $"Info: {message}"));
-			if (message.Equals("Quitting"))
+			RecoveredLogs.Add(Tuple.Create(MessageType.Info, message));
+			if (baseMessage.Equals("Quitting"))
 			{
 				QuitRequest?.Invoke(GetInstance(), EventArgs.Empty);
 			}
@@ -127,8 +123,16 @@ namespace NetworkProgramming.Lab2
 			CanWrite?.Set();
 		}
 
+		private static int Overlap(string message)
+		{
+			var overlap = message.Sum(c => c == '\n' ? 1 : 0);
+			overlap += (int) (Math.Ceiling(overlap / (double) Console.BufferWidth));
+			return overlap;
+		}
+
 		private static void ClearLogArea()
 		{
+			CanWrite?.Reset();
 			Console.SetCursorPosition(0, ReturnLine + 1);
 			Console.Write(new string(' ', Console.WindowWidth));
 			Console.SetCursorPosition(0, ReturnLine + 2);

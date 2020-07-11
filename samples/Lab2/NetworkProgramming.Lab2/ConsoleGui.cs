@@ -35,7 +35,7 @@ namespace NetworkProgramming.Lab2
 		};
 
 		private static readonly ManualResetEvent ClientEventDone = new ManualResetEvent(false);
-		private static readonly ManualResetEvent Done = new ManualResetEvent(false);
+		private static readonly AutoResetEvent Done = new AutoResetEvent(false);
 		private static Client _client;
 
 		private static void ClearInputArea()
@@ -222,7 +222,7 @@ namespace NetworkProgramming.Lab2
 		{
 			_client?.StopService();
 
-			Logger.LogInfo("Shutting down");
+			Logger.LogInfo("Shutting down\n");
 			Console.SetCursorPosition(0, Logger.LoggerBeginLine);
 			Console.ReadKey();
 			Environment.Exit(0);
@@ -239,7 +239,7 @@ namespace NetworkProgramming.Lab2
 			var message = DisplayMessageDialog();
 
 			_client.Send(message);
-			Logger.LogInfo($"Sent message: {message}");
+			Logger.LogInfo($"Sent message: {message}\n");
 		}
 
 		private static void DisconnectProcedure()
