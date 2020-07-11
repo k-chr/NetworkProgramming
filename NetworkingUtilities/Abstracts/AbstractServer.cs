@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Sockets;
+using NetworkingUtilities.Publishers;
+using NetworkingUtilities.Utilities.Events;
 
 namespace NetworkingUtilities.Abstracts
 {
@@ -8,19 +11,26 @@ namespace NetworkingUtilities.Abstracts
 	{
 		private readonly IReporter _lastException;
 		private readonly IReporter _lastMessage;
+		protected readonly string Ip;
+		protected readonly int Port;
+		protected readonly string InterfaceName;
 		private readonly IReporter _disconnected;
 		private readonly IReporter _newClient;
-		protected AbstractServer(IReporter disconnected, IReporter lastMessage, IReporter lastException, IReporter newClient)
-		{
-			_disconnected = disconnected;
-			_lastMessage = lastMessage;
-			_lastException = lastException;
-			_newClient = newClient;
+		protected Socket ServerSocket;
 
+		protected AbstractServer(string ip, int port, string interfaceName)
+		{
+			Ip = ip;
+			Port = port;
+			InterfaceName = interfaceName;
+			_disconnected = new ClientReporter();
+			_lastMessage = new MessageReporter();
+			_lastException = new ExceptionReporter();
+			_newClient = new ClientReporter();
 			Clients = new List<AbstractClient>();
 		}
 
-		public List<AbstractClient> Clients { get; }
+		protected ICollection<AbstractClient> Clients { get; }
 
 		public abstract void Send(string message, string to = "");
 
@@ -28,17 +38,17 @@ namespace NetworkingUtilities.Abstracts
 
 		public abstract void StartService();
 
-		protected void AddExceptionSubscription(Action<object, object> procedure)
+		public void AddExceptionSubscription(Action<object, object> procedure)
 		{
 			_lastException.AddSubscriber(procedure);
 		}
 
-		protected void AddMessageSubscription(Action<object, object> procedure)
+		public void AddMessageSubscription(Action<object, object> procedure)
 		{
 			_lastMessage.AddSubscriber(procedure);
 		}
 
-		protected void AddOnDisconnectedSubscription(Action<object, object> procedure)
+		public void AddOnDisconnectedSubscription(Action<object, object> procedure)
 		{
 			_disconnected.AddSubscriber(procedure);
 		}
@@ -48,24 +58,24 @@ namespace NetworkingUtilities.Abstracts
 			_newClient.AddSubscriber(procedure);
 		}
 
-		public void OnNewMessage(Tuple<string, string, string> messageWithAddresses)
+		protected void OnNewMessage(string message, string from, string to)
 		{
-			_lastMessage.Notify(messageWithAddresses);
+			_lastMessage.Notify((message, from, to));
 		}
 
-		public void OnNewClient(Tuple<IPAddress, string, int> clientData)
+		protected void OnNewClient(IPAddress ip, string id, int port)
 		{
-			_newClient.Notify(clientData);
+			_newClient.Notify((ip, id, port));
 		}
 
-		public void OnDisconnect(Tuple<IPAddress, string, int> clientData)
+		protected void OnDisconnect(IPAddress ip, string id, int port)
 		{
-			_disconnected.Notify(clientData);
+			_disconnected.Notify((ip, id, port));
 		}
 
-		public void OnCaughtException(Exception exception)
+		protected void OnCaughtException(Exception exception, EventCode code)
 		{
-			_lastException.Notify(exception);
+			_lastException.Notify((exception, code));
 		}
 	}
 }

@@ -2,11 +2,22 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
+using NetworkingUtilities.Tcp;
+using NetworkingUtilities.Utilities.Events;
 
 namespace NetworkProgramming.Lab2
 {
 	public static class ConsoleGui
 	{
+		private static string OnSendErrorMessage =>
+			"Cannot send provided message to server due to connection issues!\n";
+
+		private static string OnConnectErrorMessage => "Failed to connect to remote server\n";
+		private static string OnConnectSuccessMessage => "Succeeded in connecting to remote server\n";
+		private static string OnDisconnectSuccessMessage => "Successfully disconnected\n";
+		private static string OnDisconnectErrorMessage => "Can't properly disconnect from host\n";
+		private static string OnReceiveErrorMessage => "Failed to receive message due to connection issues\n";
+
 		private static readonly Dictionary<string, Tuple<int, int>> ConsoleLinePositions =
 			new Dictionary<string, Tuple<int, int>>()
 			{
@@ -24,7 +35,7 @@ namespace NetworkProgramming.Lab2
 		};
 
 		private static readonly ManualResetEvent ClientEventDone = new ManualResetEvent(false);
-		private static readonly ManualResetEvent Done = new ManualResetEvent(false);
+		private static readonly AutoResetEvent Done = new AutoResetEvent(false);
 		private static Client _client;
 
 		private static void ClearInputArea()
@@ -209,12 +220,9 @@ namespace NetworkProgramming.Lab2
 
 		private static void QuitProcedure()
 		{
-			if (_client != null && !_client.IsConnected())
-			{
-				_client?.Disconnect();
-			}
+			_client?.StopService();
 
-			Logger.LogInfo("Shutting down");
+			Logger.LogInfo("Shutting down\n");
 			Console.SetCursorPosition(0, Logger.LoggerBeginLine);
 			Console.ReadKey();
 			Environment.Exit(0);
@@ -231,6 +239,7 @@ namespace NetworkProgramming.Lab2
 			var message = DisplayMessageDialog();
 
 			_client.Send(message);
+			Logger.LogInfo($"Sent message: {message}\n");
 		}
 
 		private static void DisconnectProcedure()
@@ -240,7 +249,8 @@ namespace NetworkProgramming.Lab2
 				throw new InvalidOperationException("Can't disconnect client due to not being currently connected");
 			}
 
-			_client.Disconnect();
+			_client.StopService();
+			_client = null;
 		}
 
 		private static void ConnectProcedure()
@@ -255,17 +265,84 @@ namespace NetworkProgramming.Lab2
 
 			try
 			{
+				ClientEventDone.Reset();
 				var port = int.Parse(portStr);
 				_client = new Client(address, port, ClientEventDone);
-				_client.OnLogEvent += (sender, objects) => Logger.Log(objects);
+				RegisterClient();
+
+				ClientEventDone.WaitOne();
+				ClientEventDone.Reset();
+				_client.StartService();
 			}
 			catch (Exception e)
 			{
 				Logger.LogError(e, "Wrong value of port - provided data cannot be parsed to number of port");
 			}
+		}
 
-			ClientEventDone.WaitOne();
-			ClientEventDone.Reset();
+		private static void RegisterClient()
+		{
+			_client.AddExceptionSubscription((sender, objects) =>
+			{
+				if (objects is ExceptionEvent exceptionEvent)
+				{
+					var message = exceptionEvent.LastErrorCode switch
+								  {
+									  EventCode.Other => "",
+									  EventCode.Receive => OnReceiveErrorMessage,
+									  EventCode.Connect => OnConnectErrorMessage,
+									  EventCode.Send => OnSendErrorMessage,
+									  EventCode.Disconnect => OnDisconnectErrorMessage,
+									  EventCode.Accept => "",
+									  _ => throw new ArgumentOutOfRangeException()
+								  };
+					Logger.LogError(exceptionEvent.LastError, message);
+					ClientEventDone.Set();
+				}
+			});
+
+			_client.AddMessageSubscription((o, o1) =>
+			{
+				if (o1 is MessageEvent messageEvent)
+				{
+					if (messageEvent.From.Equals(messageEvent.To))
+					{
+						Logger.LogInfo(messageEvent.Message);
+					}
+					else
+					{
+						Logger.Log(new object[]
+						{
+							Logger.MessageType.Server,
+							messageEvent.Message
+						});
+					}
+				}
+			});
+
+			_client.AddOnDisconnectedSubscription((o, o1) =>
+			{
+				if (o1 is ClientEvent)
+				{
+					Logger.Log(new object[]
+					{
+						Logger.MessageType.Success,
+						OnDisconnectSuccessMessage
+					});
+				}
+			});
+
+			_client.AddOnConnectedSubscription((o, o1) =>
+			{
+				if (o1 is ClientEvent)
+				{
+					Logger.Log(new object[]
+					{
+						Logger.MessageType.Success,
+						OnConnectSuccessMessage
+					});
+				}
+			});
 		}
 	}
 }

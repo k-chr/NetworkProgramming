@@ -10,15 +10,10 @@ namespace NetworkingUtilities.Publishers
 
 		public void Notify(object obj)
 		{
-			if (obj is Exception exception)
-			{
-				Report?.Invoke(this, new ExceptionEvent(exception));
-			}
+			if (obj is ValueTuple<Exception, EventCode> exceptionData)
+				Report?.Invoke(this, new ExceptionEvent(exceptionData.Item1, exceptionData.Item2));
 		}
 
-		public void AddSubscriber(Action<object, object> procedure)
-		{
-			Report += (s, o) => procedure?.Invoke(s, o);
-		}
+		public void AddSubscriber(Action<object, object> procedure) => Report += (s, o) => procedure?.Invoke(s, o);
 	}
 }
