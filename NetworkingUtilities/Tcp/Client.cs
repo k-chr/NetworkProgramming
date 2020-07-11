@@ -209,6 +209,7 @@ namespace NetworkingUtilities.Tcp
 
 		private void Disconnect(Socket clientSocket)
 		{
+			if(!IsConnected()) return;
 			try
 			{
 				clientSocket.Shutdown(SocketShutdown.Both);
