@@ -164,15 +164,6 @@ namespace NetworkingUtilities.Udp.Unicast
 			}
 		}
 
-		private void ProcessMessage(MemoryStream streamBuffer)
-		{
-			using var stream = streamBuffer;
-			stream.Seek(0, SeekOrigin.Begin);
-			var message = Encoding.UTF8.GetString(stream.ToArray()).Trim();
-			var (from, to) = ServerHandler ? (WhoAmI.Id, "server") : ("server", WhoAmI.Id);
-			OnNewMessage(message, from, to);
-		}
-
 		public override void StopService() => (ClientSocket == null || ClientSocket.IsDisposed()
 			? (Action) (() => { })
 			: ClientSocket.Close)();
