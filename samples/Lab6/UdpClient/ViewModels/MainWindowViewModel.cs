@@ -37,54 +37,6 @@ namespace UdpClient.ViewModels
 			_themeStrongAccentBrush = _lightThemeBrush;
 		}
 
-		private InternalMessageModel Parse(object[] args)
-		{
-			var builder = InternalMessageModel.Builder();
-			try
-			{
-				foreach (var arg in args)
-				{
-					builder = arg switch
-							  {
-								  ClientModel m => builder.AttachClientData(m),
-								  Exception e => builder.AttachExceptionData(e),
-								  string s => builder.AttachTextMessage(s),
-								  int num => builder.WithType((InternalMessageType) num),
-								  _ => throw new ArgumentException("Unrecognized data received from client handler")
-							  };
-				}
-
-				return builder.AttachTimeStamp(true).BuildMessage();
-			}
-			catch (Exception e)
-			{
-				var msg = InternalMessageModel.Builder().AttachExceptionData(e).AttachTimeStamp(true)
-				   .WithType(InternalMessageType.Error)
-				   .AttachTextMessage($"Can't parse provided {args} of length {args?.Length ?? 0}").BuildMessage();
-				AddLog(msg);
-				return null;
-			}
-		}
-
-		private void AddMessage(object[] objects)
-		{
-			var msg = Parse(objects);
-			if (msg != null)
-			{
-				msg.ClientModelData = _server;
-				AddMessage(msg);
-			}
-		}
-
-		private void AddLog(object[] objects)
-		{
-			var log = Parse(objects);
-			if (log != null)
-			{
-				AddLog(log);
-			}
-		}
-
 		public void SendMessage()
 		{
 			if (string.IsNullOrEmpty(InputMessage)) return;
@@ -109,7 +61,7 @@ namespace UdpClient.ViewModels
 		public ObservableCollection<InternalMessageModel> Messages { get; set; }
 		public ObservableCollection<InternalMessageModel> Logs { get; set; }
 
-		public string Version => Assembly.GetAssembly(typeof(MainWindowViewModel)).GetName().Version.ToString();
+		public string Version => Assembly.GetAssembly(typeof(MainWindowViewModel))?.GetName().Version?.ToString();
 
 
 		public IBrush ThemeStrongAccentBrush
@@ -190,7 +142,32 @@ namespace UdpClient.ViewModels
 
 			_clientService.AddMessageSubscription((o, o1) =>
 			{
-
+				if (o1 is MessageEvent messageEvent)
+				{
+					var builder = InternalMessageModel.Builder().AttachTextMessage(messageEvent.Message);
+					if (messageEvent.From.Equals(messageEvent.To))
+					{
+						builder = builder.WithType(InternalMessageType.Info);
+						var model = builder.BuildMessage();
+						AddLog(model);
+					}
+					else if (!messageEvent.From.Equals("server"))
+					{
+						builder = builder.WithType(InternalMessageType.Client).AttachTimeStamp(true)
+						   .AttachClientData(_you);
+						var model = builder.BuildMessage();
+						AddLog(model);
+						AddMessage(model);
+					}
+					else
+					{
+						builder = builder.WithType(InternalMessageType.Server).AttachTimeStamp(true)
+						   .AttachClientData(_server);
+						var model = builder.BuildMessage();
+						AddLog(model);
+						AddMessage(model);
+					}
+				}
 			});
 		}
 
