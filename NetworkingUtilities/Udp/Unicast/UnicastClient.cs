@@ -35,6 +35,7 @@ namespace NetworkingUtilities.Udp.Unicast
 					var ipAddress = IPAddress.Parse(strings[0]);
 					var port = int.Parse(strings[1]);
 					_endPoint = new IPEndPoint(ipAddress, port);
+					_listening = false;
 				}
 				catch (Exception e)
 				{
@@ -64,6 +65,29 @@ namespace NetworkingUtilities.Udp.Unicast
 
 		private void OnSendToCallback(IAsyncResult ar)
 		{
+			try
+			{
+				if (ar.AsyncState is Socket socket)
+				{
+					var _ = socket.EndSendTo(ar);
+					if (!_listening)
+					{
+						Receive();
+						_listening = true;
+					}
+				}
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException, EventCode.Send);
+			}
+			catch (Exception e)
+			{
+				OnCaughtException(e, EventCode.Other);
+			}
 		}
 
 		public override void Receive()
