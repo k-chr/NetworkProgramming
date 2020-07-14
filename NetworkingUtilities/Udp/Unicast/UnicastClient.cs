@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using NetworkingUtilities.Abstracts;
+using NetworkingUtilities.Utilities.Events;
 
 namespace NetworkingUtilities.Udp.Unicast
 {
@@ -10,7 +12,8 @@ namespace NetworkingUtilities.Udp.Unicast
 		private IPEndPoint _endPoint;
 		private bool _listening;
 
-		public UnicastClient(IPEndPoint endPoint, Socket clientSocket, bool serverHandler = false) : base(clientSocket, serverHandler)
+		public UnicastClient(IPEndPoint endPoint, Socket clientSocket, bool serverHandler = false) : base(clientSocket,
+			serverHandler)
 		{
 			_endPoint = endPoint;
 		}
@@ -24,7 +27,43 @@ namespace NetworkingUtilities.Udp.Unicast
 
 		public override void Send(string message, string to = "")
 		{
-			throw new NotImplementedException();
+			if (!string.IsNullOrEmpty(to))
+			{
+				var strings = to.Split(':');
+				try
+				{
+					var ipAddress = IPAddress.Parse(strings[0]);
+					var port = int.Parse(strings[1]);
+					_endPoint = new IPEndPoint(ipAddress, port);
+				}
+				catch (Exception e)
+				{
+					OnCaughtException(e, EventCode.Other);
+					return;
+				}
+			}
+
+			var data = Encoding.ASCII.GetBytes(message);
+
+			try
+			{
+				ClientSocket.BeginSendTo(data, 0, data.Length, 0, _endPoint, OnSendToCallback, ClientSocket);
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException, EventCode.Send);
+			}
+			catch (Exception e)
+			{
+				OnCaughtException(e, EventCode.Other);
+			}
+		}
+
+		private void OnSendToCallback(IAsyncResult ar)
+		{
 		}
 
 		public override void Receive()
