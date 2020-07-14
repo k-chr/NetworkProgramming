@@ -1,11 +1,15 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using NetworkingUtilities.Abstracts;
+using NetworkingUtilities.Extensions;
 using NetworkingUtilities.Utilities.Events;
 using NetworkingUtilities.Utilities.StateObjects;
+using EndPoint = System.Net.EndPoint;
+using Exception = System.Exception;
 
 namespace NetworkingUtilities.Udp.Unicast
 {
@@ -121,16 +125,54 @@ namespace NetworkingUtilities.Udp.Unicast
 
 		private void OnReceiveFromCallback(IAsyncResult ar)
 		{
+			try
+			{
+				if (ar.AsyncState is ControlState state)
+				{
+					var ep = _endPoint as EndPoint;
+					var bytesRead = state.CurrentSocket.EndReceiveFrom(ar, ref ep);
+					if (bytesRead > 0)
+					{
+						state.StreamBuffer.Write(state.Buffer, 0, bytesRead);
+						if (state.Buffer.Any(@byte => @byte == '\0'))
+						{
+							ProcessMessage(state.StreamBuffer);
+							state.StreamBuffer = new MemoryStream();
+						}
+					}
+					else if (state.StreamBuffer.CanWrite && state.StreamBuffer.Length > 0)
+					{
+						ProcessMessage(state.StreamBuffer);
+						state.StreamBuffer = new MemoryStream();
+					}
+				}
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException, EventCode.Receive);
+			}
+			catch (Exception e)
+			{
+				OnCaughtException(e, EventCode.Other);
+			}
 		}
 
-		public override void StopService()
+		private void ProcessMessage(MemoryStream streamBuffer)
 		{
-			throw new NotImplementedException();
+			using var stream = streamBuffer;
+			stream.Seek(0, SeekOrigin.Begin);
+			var message = Encoding.UTF8.GetString(stream.ToArray()).Trim();
+			var (from, to) = ServerHandler ? (WhoAmI.Id, "server") : ("server", WhoAmI.Id);
+			OnNewMessage(message, from, to);
 		}
 
-		public override void StartService()
-		{
-			throw new NotImplementedException();
-		}
+		public override void StopService() => (ClientSocket == null || ClientSocket.IsDisposed()
+			? (Action) (() => { })
+			: ClientSocket.Close)();
+
+		public override void StartService() => Send("");
 	}
 }
