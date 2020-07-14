@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="**\*.xaml.cs">
@@ -38,6 +38,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\CustomControls\CustomControls.csproj" />
-    <ProjectReference Include="..\..\..\UdpNetworking\UdpNetworking.csproj" />
+    <ProjectReference Include="..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
   </ItemGroup>
 </Project>

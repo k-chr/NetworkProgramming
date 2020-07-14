@@ -13,7 +13,7 @@ using Exception = System.Exception;
 
 namespace NetworkingUtilities.Udp.Unicast
 {
-	class UnicastClient : AbstractClient
+	public class UnicastClient : AbstractClient
 	{
 		private IPEndPoint _endPoint;
 		private bool _listening;
