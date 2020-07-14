@@ -134,6 +134,8 @@ namespace NetworkingUtilities.Udp.Unicast
 					if (bytesRead > 0)
 					{
 						state.StreamBuffer.Write(state.Buffer, 0, bytesRead);
+						state.Buffer = new byte[MaxBufferSize];
+
 						if (state.Buffer.Any(@byte => @byte == '\0'))
 						{
 							ProcessMessage(state.StreamBuffer);
@@ -145,6 +147,8 @@ namespace NetworkingUtilities.Udp.Unicast
 						ProcessMessage(state.StreamBuffer);
 						state.StreamBuffer = new MemoryStream();
 					}
+
+					Receive();
 				}
 			}
 			catch (ObjectDisposedException)
