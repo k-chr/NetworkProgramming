@@ -112,14 +112,17 @@ namespace NetworkingUtilities.Udp.Unicast
 			}
 			catch (ObjectDisposedException)
 			{
+				_listening = false;
 			}
 			catch (SocketException socketException)
 			{
 				OnCaughtException(socketException, EventCode.Receive);
+				_listening = false;
 			}
 			catch (Exception e)
 			{
 				OnCaughtException(e, EventCode.Other);
+				_listening = false;
 			}
 		}
 
@@ -153,14 +156,17 @@ namespace NetworkingUtilities.Udp.Unicast
 			}
 			catch (ObjectDisposedException)
 			{
+				_listening = false;
 			}
 			catch (SocketException socketException)
 			{
 				OnCaughtException(socketException, EventCode.Receive);
+				_listening = false;
 			}
 			catch (Exception e)
 			{
 				OnCaughtException(e, EventCode.Other);
+				_listening = false;
 			}
 		}
 
