@@ -3,17 +3,16 @@ using Avalonia.Controls;
 
 namespace CustomControls.Controls
 {
-   public class RoundedButton:Button
-   {
+	public class RoundedButton : Button
+	{
+		public static readonly StyledProperty<CornerRadius> RadiusProperty =
+			AvaloniaProperty.Register<Button, CornerRadius>(nameof(Radius));
 
-      public static readonly StyledProperty<CornerRadius> RadiusProperty = AvaloniaProperty.Register<Button, CornerRadius>(nameof(Radius));
 
-
-      public CornerRadius Radius
-      {
-         get => GetValue(RadiusProperty);
-         set => SetValue(RadiusProperty, value);
-      }
-      
-   }
+		public CornerRadius Radius
+		{
+			get => GetValue(RadiusProperty);
+			set => SetValue(RadiusProperty, value);
+		}
+	}
 }
