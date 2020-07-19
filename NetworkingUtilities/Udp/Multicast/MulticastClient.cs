@@ -26,12 +26,40 @@ namespace NetworkingUtilities.Udp.Multicast
 
 		public override void Send(string message, string to = "")
 		{
-			throw new NotImplementedException();
+			try
+			{
+				throw new NotImplementedException();
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException, EventCode.Send);
+			}
+			catch (Exception exception)
+			{
+				OnCaughtException(exception, EventCode.Other);
+			}
 		}
 
 		public override void Receive()
 		{
-			throw new NotImplementedException();
+			try
+			{
+				throw new NotImplementedException();
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException, EventCode.Receive);
+			}
+			catch (Exception exception)
+			{
+				OnCaughtException(exception, EventCode.Other);
+			}
 		}
 
 		public override void StopService() => (ClientSocket == null || ClientSocket.IsDisposed()
