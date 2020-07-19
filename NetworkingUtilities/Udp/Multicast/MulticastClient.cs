@@ -153,6 +153,12 @@ namespace NetworkingUtilities.Udp.Multicast
 			{
 				ClientSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 32);
 				ClientSocket.Bind(new IPEndPoint(_ipAddress, _localPort));
+
+				if (ClientSocket.LocalEndPoint is IPEndPoint endPoint)
+				{
+					WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port, WhoAmI.Id);
+				}
+
 				Receive();
 			}
 			catch (ObjectDisposedException)
