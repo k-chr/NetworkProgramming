@@ -1,10 +1,13 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Extensions;
 using NetworkingUtilities.Utilities.Events;
+using NetworkingUtilities.Utilities.StateObjects;
 
 namespace NetworkingUtilities.Udp.Multicast
 {
@@ -73,7 +76,15 @@ namespace NetworkingUtilities.Udp.Multicast
 		{
 			try
 			{
-				throw new NotImplementedException();
+				var state = new ControlState
+				{
+					CurrentSocket = ClientSocket,
+					Buffer = new byte[MaxBufferSize],
+					BufferSize = MaxBufferSize,
+					StreamBuffer = new MemoryStream()
+				};
+				var ep = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
+				ClientSocket.BeginReceiveFrom(state.Buffer, 0, MaxBufferSize, 0, ref ep, OnReceiveFromCallback, state);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -82,9 +93,51 @@ namespace NetworkingUtilities.Udp.Multicast
 			{
 				OnCaughtException(socketException, EventCode.Receive);
 			}
-			catch (Exception exception)
+			catch (Exception e)
 			{
-				OnCaughtException(exception, EventCode.Other);
+				OnCaughtException(e, EventCode.Other);
+			}
+		}
+
+		private void OnReceiveFromCallback(IAsyncResult ar)
+		{
+			try
+			{
+				if (ar.AsyncState is ControlState state)
+				{
+					var ep = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
+
+					var bytesRead = state.CurrentSocket.EndReceiveFrom(ar, ref ep);
+					if (bytesRead > 0)
+					{
+						state.StreamBuffer.Write(state.Buffer, 0, bytesRead);
+						state.Buffer = new byte[MaxBufferSize];
+
+						if (state.Buffer.Any(@byte => @byte == '\0'))
+						{
+							ProcessMessage(state.StreamBuffer);
+							state.StreamBuffer = new MemoryStream();
+						}
+					}
+					else if (state.StreamBuffer.CanWrite && state.StreamBuffer.Length > 0)
+					{
+						ProcessMessage(state.StreamBuffer);
+						state.StreamBuffer = new MemoryStream();
+					}
+
+					Receive();
+				}
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException, EventCode.Receive);
+			}
+			catch (Exception e)
+			{
+				OnCaughtException(e, EventCode.Other);
 			}
 		}
 
