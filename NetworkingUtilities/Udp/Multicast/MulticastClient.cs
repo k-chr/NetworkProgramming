@@ -151,6 +151,7 @@ namespace NetworkingUtilities.Udp.Multicast
 			{
 				ClientSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 32);
 				ClientSocket.Bind(new IPEndPoint(_ipAddress, _localPort));
+				Receive();
 			}
 			catch (ObjectDisposedException)
 			{
