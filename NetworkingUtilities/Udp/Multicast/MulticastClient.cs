@@ -22,7 +22,9 @@ namespace NetworkingUtilities.Udp.Multicast
 			string ipAddress = null, int localPort = 0) : base(
 			new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp), serverHandler)
 		{
-			_multicastAddress = IPAddress.Parse(multicastAddress);
+			_multicastAddress = multicastAddress.IsMulticastAddress()
+				? IPAddress.Parse(multicastAddress)
+				: throw new ArgumentException("Provided address is not in multicast addresses range!");
 			_multicastPort = multicastPort;
 			_ipAddress = string.IsNullOrEmpty(ipAddress) ? IPAddress.Any : IPAddress.Parse(ipAddress);
 			_localPort = localPort;
@@ -54,7 +56,7 @@ namespace NetworkingUtilities.Udp.Multicast
 		private void OnSendToCallback(IAsyncResult ar)
 		{
 			if (!(ar.AsyncState is Socket socket)) return;
-			
+
 			try
 			{
 				var _ = socket.EndSendTo(ar);
