@@ -3,6 +3,7 @@
 	public enum EventCode
 	{
 		Connect,
+		Bind,
 		Disconnect,
 		Send,
 		Receive,

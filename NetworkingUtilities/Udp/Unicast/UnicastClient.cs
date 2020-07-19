@@ -107,7 +107,7 @@ namespace NetworkingUtilities.Udp.Unicast
 					BufferSize = MaxBufferSize,
 					StreamBuffer = new MemoryStream()
 				};
-				var ep = _endPoint as EndPoint;
+				var ep = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
 				ClientSocket.BeginReceiveFrom(state.Buffer, 0, MaxBufferSize, 0, ref ep, OnReceiveFromCallback, state);
 			}
 			catch (ObjectDisposedException)
@@ -132,7 +132,8 @@ namespace NetworkingUtilities.Udp.Unicast
 			{
 				if (ar.AsyncState is ControlState state)
 				{
-					var ep = _endPoint as EndPoint;
+					var ep = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
+
 					var bytesRead = state.CurrentSocket.EndReceiveFrom(ar, ref ep);
 					if (bytesRead > 0)
 					{

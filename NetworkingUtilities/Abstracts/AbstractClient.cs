@@ -69,7 +69,7 @@ namespace NetworkingUtilities.Abstracts
 		public void AddOnConnectedSubscription(Action<object, object> procedure) => _connected.AddSubscriber(procedure);
 
 		protected void OnNewMessage(string message, string from, string to) =>
-			_lastMessage.Notify((message, @from, to));
+			_lastMessage.Notify((message, from, to));
 
 		protected void OnDisconnect(IPAddress ip, string id, int port) => _disconnected.Notify((ip, id, port));
 
