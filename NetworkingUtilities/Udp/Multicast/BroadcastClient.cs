@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Extensions;
 using NetworkingUtilities.Utilities.Events;
@@ -30,7 +31,46 @@ namespace NetworkingUtilities.Udp.Multicast
 
 		public override void Send(string message, string to = "")
 		{
-			throw new NotImplementedException();
+			try
+			{
+				var data = Encoding.ASCII.GetBytes(message);
+				var endpoint = new IPEndPoint(_address, _port);
+
+				ClientSocket.BeginSendTo(data, 0, data.Length, SocketFlags.None, endpoint, OnSendToCallback,
+					ClientSocket);
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException, EventCode.Send);
+			}
+			catch (Exception exception)
+			{
+				OnCaughtException(exception, EventCode.Other);
+			}
+		}
+
+		private void OnSendToCallback(IAsyncResult ar)
+		{
+			if (!(ar.AsyncState is Socket socket)) return;
+
+			try
+			{
+				var _ = socket.EndSendTo(ar);
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException, EventCode.Send);
+			}
+			catch (Exception exception)
+			{
+				OnCaughtException(exception, EventCode.Other);
+			}
 		}
 
 		public override void Receive()
