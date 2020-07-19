@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Extensions;
 using NetworkingUtilities.Utilities.Events;
@@ -9,18 +10,18 @@ namespace NetworkingUtilities.Udp.Multicast
 {
 	public class MulticastClient : AbstractClient
 	{
-		private readonly string _multicastAddress;
+		private readonly IPAddress _multicastAddress;
 		private readonly int _multicastPort;
-		private readonly string _ipAddress;
+		private readonly IPAddress _ipAddress;
 		private readonly int _localPort;
 
 		public MulticastClient(string multicastAddress, int multicastPort, bool serverHandler = false,
 			string ipAddress = null, int localPort = 0) : base(
 			new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp), serverHandler)
 		{
-			_multicastAddress = multicastAddress;
+			_multicastAddress = IPAddress.Parse(multicastAddress);
 			_multicastPort = multicastPort;
-			_ipAddress = ipAddress;
+			_ipAddress = string.IsNullOrEmpty(ipAddress) ? IPAddress.Any : IPAddress.Parse(ipAddress);
 			_localPort = localPort;
 		}
 
@@ -28,7 +29,32 @@ namespace NetworkingUtilities.Udp.Multicast
 		{
 			try
 			{
-				throw new NotImplementedException();
+				var data = Encoding.ASCII.GetBytes(message);
+				var endpoint = new IPEndPoint(_multicastAddress, _multicastPort);
+
+				ClientSocket.BeginSendTo(data, 0, data.Length, SocketFlags.None, endpoint, OnSendToCallback,
+					ClientSocket);
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException, EventCode.Send);
+			}
+			catch (Exception exception)
+			{
+				OnCaughtException(exception, EventCode.Other);
+			}
+		}
+
+		private void OnSendToCallback(IAsyncResult ar)
+		{
+			if (!(ar.AsyncState is Socket socket)) return;
+			
+			try
+			{
+				var _ = socket.EndSendTo(ar);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -71,8 +97,7 @@ namespace NetworkingUtilities.Udp.Multicast
 			try
 			{
 				ClientSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 32);
-				ClientSocket.Bind(new IPEndPoint(
-					string.IsNullOrEmpty(_ipAddress) ? IPAddress.Any : IPAddress.Parse(_ipAddress), _localPort));
+				ClientSocket.Bind(new IPEndPoint(_ipAddress, _localPort));
 			}
 			catch (ObjectDisposedException)
 			{
