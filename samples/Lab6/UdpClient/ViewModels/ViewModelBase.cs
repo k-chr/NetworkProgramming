@@ -5,19 +5,19 @@ using ReactiveUI;
 
 namespace UdpClient.ViewModels
 {
-   public class ViewModelBase : ReactiveObject
-   {
-      public ReactiveCommand<CancelEventArgs, Unit> ClosingCommand { get; }
-      
-      public ViewModelBase()
-      {
-         ClosingCommand = ReactiveCommand.Create<CancelEventArgs>(ExecuteClosing);
-      }
+	public class ViewModelBase : ReactiveObject
+	{
+		public ReactiveCommand<CancelEventArgs, Unit> ClosingCommand { get; }
 
-      protected virtual void ExecuteClosing(CancelEventArgs args)
-      {
-         args.Cancel = false;
-         ((ClassicDesktopStyleApplicationLifetime)Avalonia.Application.Current.ApplicationLifetime).Shutdown(0);
-      }
-   }
+		public ViewModelBase()
+		{
+			ClosingCommand = ReactiveCommand.Create<CancelEventArgs>(ExecuteClosing);
+		}
+
+		protected virtual void ExecuteClosing(CancelEventArgs args)
+		{
+			args.Cancel = false;
+			((ClassicDesktopStyleApplicationLifetime)Avalonia.Application.Current.ApplicationLifetime).Shutdown(0);
+		}
+	}
 }
