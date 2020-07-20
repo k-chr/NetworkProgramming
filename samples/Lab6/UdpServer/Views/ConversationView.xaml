@@ -11,7 +11,7 @@
       <conv:ConvertToDynamicDock x:Key="myDockConverter"/>
    </UserControl.Resources>
    <Grid RowDefinitions="13*,4*" >
-      <ScrollViewer  VerticalScrollBarVisibility="Visible">
+      <ScrollViewer >
          <ItemsControl Items="{Binding Messages}" MinHeight="240" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Margin="0 0 0 2">
             <ItemsControl.ItemTemplate >
                <DataTemplate>
