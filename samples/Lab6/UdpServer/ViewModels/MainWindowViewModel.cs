@@ -116,7 +116,7 @@ namespace UdpServer.ViewModels
 
 			return conversation.Client;
 		}
-		
+
 		public void SendMessage(string message, string ip, int port)
 		{
 			if (string.IsNullOrEmpty(message)) return;
