@@ -11,6 +11,7 @@ namespace NetworkingUtilities.Abstracts
 	{
 		private readonly IReporter _lastException;
 		private readonly IReporter _lastMessage;
+		protected const int MaxBufferSize = 4096;
 		protected readonly string Ip;
 		protected readonly int Port;
 		protected readonly string InterfaceName;
