@@ -19,13 +19,44 @@ namespace NetworkingUtilities.Udp.Unicast
 		public UnicastServer(string ip, int port, string interfaceName) : base(ip, port, interfaceName)
 		{
 			_clientsBuffers = new Dictionary<EndPoint, ControlState>();
+			ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 		}
 
 		public override void Send(string message, string to = "")
 		{
 			try
 			{
-				throw new NotImplementedException();
+				var data = Encoding.ASCII.GetBytes(message);
+				var endpoint = IPEndPoint.Parse(to);
+				var state = new ReceiverState
+				{
+					Port = endpoint.Port,
+					Socket = ServerSocket,
+					Ip = endpoint.Address.ToString()
+				};
+
+				ServerSocket.BeginSendTo(data, 0, data.Length, SocketFlags.None, endpoint, OnSendToCallback, state);
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException, EventCode.Send);
+			}
+			catch (Exception e)
+			{
+				OnCaughtException(e, EventCode.Other);
+			}
+		}
+
+		private void OnSendToCallback(IAsyncResult ar)
+		{
+			try
+			{
+				if (!(ar.AsyncState is ReceiverState state)) return;
+				var _ = state.Socket.EndSendTo(ar);
+				OnNewMessage($"Data were successfully sent to {state.Ip}:{state.Port}", "server", "server");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -46,7 +77,22 @@ namespace NetworkingUtilities.Udp.Unicast
 
 		public override void StartService()
 		{
-			throw new NotImplementedException();
+			try
+			{
+				ServerSocket.Bind(new IPEndPoint(IPAddress.Parse(Ip), Port));
+				Receive();
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException, EventCode.Bind);
+			}
+			catch (Exception e)
+			{
+				OnCaughtException(e, EventCode.Other);
+			}
 		}
 
 		public void Receive()
@@ -137,7 +183,7 @@ namespace NetworkingUtilities.Udp.Unicast
 			using var stream = state.StreamBuffer;
 			stream.Seek(0, SeekOrigin.Begin);
 			var message = Encoding.UTF8.GetString(stream.ToArray());
-			OnNewMessage(message, ((IPEndPoint)end).ToString(), "server");
+			OnNewMessage(message, ((IPEndPoint) end).ToString(), "server");
 		}
 	}
 }
