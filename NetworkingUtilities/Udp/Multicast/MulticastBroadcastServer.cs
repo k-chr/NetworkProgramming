@@ -1,11 +1,24 @@
-﻿using NetworkingUtilities.Abstracts;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using NetworkingUtilities.Abstracts;
+using NetworkingUtilities.Utilities.Events;
+using NetworkingUtilities.Utilities.StateObjects;
 
 namespace NetworkingUtilities.Udp.Multicast
 {
 	class MulticastBroadcastServer : AbstractServer, IReceiver
 	{
-		public MulticastBroadcastServer(string ip, int port, string interfaceName) : base(ip, port, interfaceName)
+		private readonly bool _acceptBroadcast;
+		private readonly Dictionary<EndPoint, ControlState> _clientsBuffers;
+
+		public MulticastBroadcastServer(string ip, int port, string interfaceName, bool acceptBroadcast = false) : base(
+			ip, port, interfaceName)
 		{
+			_acceptBroadcast = acceptBroadcast;
+			ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			_clientsBuffers = new Dictionary<EndPoint, ControlState>();
 		}
 
 		public override void Send(string message, string to = "")
@@ -18,6 +31,43 @@ namespace NetworkingUtilities.Udp.Multicast
 
 		public override void StartService()
 		{
+			InitializeSocket();
+		}
+
+		private void InitializeSocket()
+		{
+			try
+			{
+				var localAdd = IPAddress.Any;
+				var groupAddress = IPAddress.Parse(Ip);
+
+				if (!_acceptBroadcast)
+				{
+					ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, false);
+					ServerSocket.EnableBroadcast = false;
+					ServerSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership,
+						new MulticastOption(groupAddress, localAdd));
+				}
+				else
+				{
+					ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
+					ServerSocket.EnableBroadcast = true;
+					ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+				}
+
+				ServerSocket.Bind(new IPEndPoint(localAdd, Port));
+			}
+			catch (ObjectDisposedException)
+			{
+			}
+			catch (SocketException socketException)
+			{
+				OnCaughtException(socketException, EventCode.Bind);
+			}
+			catch (Exception e)
+			{
+				OnCaughtException(e, EventCode.Other);
+			}
 		}
 
 		public void Receive()
