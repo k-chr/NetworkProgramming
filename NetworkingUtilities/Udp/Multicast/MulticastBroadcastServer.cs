@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using NetworkingUtilities.Abstracts;
+using NetworkingUtilities.Extensions;
 using NetworkingUtilities.Utilities.Events;
 using NetworkingUtilities.Utilities.StateObjects;
 
@@ -25,13 +26,22 @@ namespace NetworkingUtilities.Udp.Multicast
 		{
 		}
 
-		public override void StopService()
-		{
-		}
+		public override void StopService() =>
+			(ServerSocket == null || ServerSocket.IsDisposed()
+				? (Action) (() => { })
+				: () =>
+				{
+					if (!_acceptBroadcast)
+						ServerSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DropMembership,
+							new MulticastOption(IPAddress.Parse(Ip)));
+					ServerSocket.Close();
+				})();
+
 
 		public override void StartService()
 		{
 			InitializeSocket();
+			Receive();
 		}
 
 		private void InitializeSocket()
