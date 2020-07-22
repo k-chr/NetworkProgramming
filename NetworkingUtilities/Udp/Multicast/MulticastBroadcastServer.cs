@@ -12,7 +12,7 @@ using NetworkingUtilities.Utilities.StateObjects;
 
 namespace NetworkingUtilities.Udp.Multicast
 {
-	class MulticastBroadcastServer : AbstractServer, IReceiver
+	public class MulticastBroadcastServer : AbstractServer, IReceiver
 	{
 		private readonly bool _acceptBroadcast;
 		private readonly Dictionary<EndPoint, ControlState> _clientsBuffers;
@@ -59,9 +59,9 @@ namespace NetworkingUtilities.Udp.Multicast
 				}
 				else
 				{
+					ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 					ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
 					ServerSocket.EnableBroadcast = true;
-					ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 				}
 
 				ServerSocket.Bind(new IPEndPoint(localAdd, Port));
