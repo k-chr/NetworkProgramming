@@ -10,8 +10,4 @@
     <EmbeddedResource Include="Http\ErrorPages\404.html" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Udp\" />
-  </ItemGroup>
-
 </Project>

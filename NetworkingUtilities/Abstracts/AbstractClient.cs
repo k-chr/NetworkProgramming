@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using NetworkingUtilities.Extensions;
 using NetworkingUtilities.Publishers;
 using NetworkingUtilities.Utilities.Events;
@@ -67,7 +69,7 @@ namespace NetworkingUtilities.Abstracts
 		public void AddOnConnectedSubscription(Action<object, object> procedure) => _connected.AddSubscriber(procedure);
 
 		protected void OnNewMessage(string message, string from, string to) =>
-			_lastMessage.Notify((message, @from, to));
+			_lastMessage.Notify((message, from, to));
 
 		protected void OnDisconnect(IPAddress ip, string id, int port) => _disconnected.Notify((ip, id, port));
 
@@ -83,5 +85,14 @@ namespace NetworkingUtilities.Abstracts
 		public abstract void StopService();
 
 		public abstract void StartService();
+
+		protected void ProcessMessage(MemoryStream streamBuffer)
+		{
+			using var stream = streamBuffer;
+			stream.Seek(0, SeekOrigin.Begin);
+			var message = Encoding.UTF8.GetString(stream.ToArray()).Trim();
+			var (from, to) = ServerHandler ? (WhoAmI.Id, "server") : ("server", WhoAmI.Id);
+			OnNewMessage(message, @from, to);
+		}
 	}
 }

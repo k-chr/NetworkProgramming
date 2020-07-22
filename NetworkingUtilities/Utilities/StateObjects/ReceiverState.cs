@@ -2,10 +2,10 @@
 
 namespace NetworkingUtilities.Utilities.StateObjects
 {
-   public class ReceiverState
-   {
-      public Socket Socket;
-      public string Ip;
-      public int Port;
-   }
+	public class ReceiverState
+	{
+		public Socket Socket;
+		public string Ip;
+		public int Port;
+	}
 }

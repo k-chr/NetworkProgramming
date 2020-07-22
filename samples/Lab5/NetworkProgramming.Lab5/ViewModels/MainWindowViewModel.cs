@@ -169,7 +169,8 @@ namespace NetworkProgramming.Lab5.ViewModels
 
 		private List<NetworkInterfaceModel> GetNetworkInterfaces()
 		{
-			var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+			var interfaces = NetworkInterface.GetAllNetworkInterfaces().Where(networkInterface =>
+				networkInterface.OperationalStatus == OperationalStatus.Up);
 			var output = new List<NetworkInterfaceModel>();
 
 			foreach (var @interface in interfaces)
