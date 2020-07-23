@@ -10,7 +10,7 @@ namespace TimeServer.Views
 		{
 			InitializeComponent();
 #if DEBUG
-            this.AttachDevTools();
+           // this.AttachDevTools();
 #endif
 		}
 
