@@ -19,4 +19,8 @@
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview1" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview1" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\CustomControls\CustomControls.csproj" />
+    <ProjectReference Include="..\..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
+  </ItemGroup>
 </Project>
