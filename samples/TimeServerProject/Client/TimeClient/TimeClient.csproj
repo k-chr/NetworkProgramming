@@ -15,14 +15,19 @@
   </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Remove="Views\ConfigView.xaml" />
+    <AvaloniaResource Remove="Views\MainView.xaml" />
     <AvaloniaResource Remove="Views\ServerSelectionView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Views\ConfigView.xaml" />
+    <None Remove="Views\MainView.xaml" />
     <None Remove="Views\ServerSelectionView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <AvaloniaXaml Include="Views\ConfigView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaXaml>
+    <AvaloniaXaml Include="Views\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaXaml>
     <AvaloniaXaml Include="Views\ServerSelectionView.xaml">
@@ -42,6 +47,9 @@
   <ItemGroup>
     <Compile Update="Views\ConfigView.xaml.cs">
       <DependentUpon>ConfigView.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\ServerSelectionView.xaml.cs">
       <DependentUpon>ServerSelectionView.xaml</DependentUpon>
