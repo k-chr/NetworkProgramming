@@ -19,6 +19,7 @@
     <AvaloniaResource Remove="Views\ServerSelectionView.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Assets\SideBar.xaml" />
     <None Remove="Views\ConfigView.xaml" />
     <None Remove="Views\MainView.xaml" />
     <None Remove="Views\ServerSelectionView.xaml" />
@@ -43,6 +44,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\CustomControls\CustomControls.csproj" />
     <ProjectReference Include="..\..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Update="Assets\SideBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Views\ConfigView.xaml.cs">

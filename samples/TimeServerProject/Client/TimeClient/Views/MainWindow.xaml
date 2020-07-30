@@ -1,144 +1,81 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:TimeClient.ViewModels;assembly=TimeClient"
+		xmlns:views="clr-namespace:TimeClient.Views;assembly=TimeClient"
         x:Class="TimeClient.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="TimeClient">
+        Title="TimeClient"
+		MinWidth="300"
+		MinHeight="300"
+		WindowStartupLocation="CenterScreen"
+        FontSize="14"
+        Foreground="{StaticResource SystemChromeHighColor}"
+        Background="{x:Null}"
+		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaChromeHints="SystemChrome"
+		ExtendClientAreaTitleBarHeightHint="-1"
+		TransparencyLevelHint="AcrylicBlur">
 
-   <Design.DataContext>
+
+   <Window.DataContext>
 	  <vm:MainWindowViewModel/>
-   </Design.DataContext>
-
-   <Border Padding="20" HorizontalAlignment="Center">
-	  <StackPanel Spacing="20">
-
-		 <ExperimentalAcrylicBorder Width="660" CornerRadius="5">
-			<ExperimentalAcrylicBorder.Material>
-			   <ExperimentalAcrylicMaterial
-				 TintColor="White"
-				 BackgroundSource="Digger" />
-			</ExperimentalAcrylicBorder.Material>
-			<StackPanel Spacing="5" Margin="40 10">
-			   <StackPanel Orientation="Horizontal">
-				  <TextBlock Text="TintOpacity" Foreground="Black" />
-				  <Slider Name="TintOpacitySlider" Minimum="0" Maximum="1" Value="0.9" Width="400" />
-				  <TextBlock Text="{Binding #TintOpacitySlider.Value}" Foreground="Black" />
-			   </StackPanel>
-			   <StackPanel Orientation="Horizontal">
-				  <TextBlock Text="MaterialOpacity" Foreground="Black" />
-				  <Slider Name="MaterialOpacitySlider" Minimum="0" Maximum="1" Value="0.8" Width="400" />
-				  <TextBlock Text="{Binding #MaterialOpacitySlider.Value}" Foreground="Black" />
-			   </StackPanel>
-			</StackPanel>
-		 </ExperimentalAcrylicBorder>
-
-
-		 <StackPanel Orientation="Horizontal" Spacing="20">
-			<ExperimentalAcrylicBorder Height="200" Width="200" CornerRadius="5">
+   </Window.DataContext>
+   <Window.Styles>
+	  <Style Selector="TitleBar:fullscreen > Panel > Panel > Border">
+		 <Setter Property="Background" Value="{DynamicResource SystemChromeLowColor}" />
+	  </Style>
+   </Window.Styles>
+   <Panel>
+	  <Panel Margin="{Binding #MainWindow.OffScreenMargin}">
+		 <DockPanel HorizontalAlignment="Stretch">
+			<ExperimentalAcrylicBorder DockPanel.Dock="Left" Width="240">
 			   <ExperimentalAcrylicBorder.Material>
-				  <ExperimentalAcrylicMaterial
-					TintColor="#FF0000"
-					TintOpacity="{Binding #TintOpacitySlider.Value}"
-					MaterialOpacity="{Binding #MaterialOpacitySlider.Value}"
-					BackgroundSource="Digger" />
+				  <ExperimentalAcrylicMaterial TintColor="{DynamicResource SystemChromeLowColor}" MaterialOpacity="0.85" TintOpacity="0.5" />
 			   </ExperimentalAcrylicBorder.Material>
 			</ExperimentalAcrylicBorder>
-
-			<ExperimentalAcrylicBorder Height="200" Width="200" CornerRadius="5">
+			<ExperimentalAcrylicBorder IsHitTestVisible="False">
 			   <ExperimentalAcrylicBorder.Material>
-				  <ExperimentalAcrylicMaterial
-					TintColor="#00FF00"
-					TintOpacity="{Binding #TintOpacitySlider.Value}"
-					MaterialOpacity="{Binding #MaterialOpacitySlider.Value}"
-					BackgroundSource="Digger" />
+				  <ExperimentalAcrylicMaterial TintColor="{DynamicResource SystemChromeHighColor}" MaterialOpacity="0.55" TintOpacity="0.5" />
 			   </ExperimentalAcrylicBorder.Material>
+			   <TextBlock Text="{Binding #TabControl.SelectedItem.Header}" Margin="40 20" FontSize="32" FontWeight="Light" />
 			</ExperimentalAcrylicBorder>
+		 </DockPanel>
 
-			<ExperimentalAcrylicBorder Height="200" Width="200" CornerRadius="5">
-			   <ExperimentalAcrylicBorder.Material>
-				  <ExperimentalAcrylicMaterial
-					TintColor="#000000"
-					TintOpacity="{Binding #TintOpacitySlider.Value}"
-					MaterialOpacity="{Binding #MaterialOpacitySlider.Value}"
-					BackgroundSource="Digger" />
-			   </ExperimentalAcrylicBorder.Material>
-			</ExperimentalAcrylicBorder>
-		 </StackPanel>
+		 <TabControl x:Name="TabControl" Classes="sidebar" Margin="0 40 0 20">
+			<TabItem Header="Overview">
 
+			</TabItem>
+			<TabItem Header="Basic Input"  >
 
-		 <StackPanel Orientation="Horizontal" Spacing="20">
-			<ExperimentalAcrylicBorder Height="200" Width="200" CornerRadius="5">
-			   <ExperimentalAcrylicBorder.Material>
-				  <ExperimentalAcrylicMaterial
-					TintColor="#0000FF"
-					TintOpacity="{Binding #TintOpacitySlider.Value}"
-					MaterialOpacity="{Binding #MaterialOpacitySlider.Value}"
-					BackgroundSource="Digger" />
-			   </ExperimentalAcrylicBorder.Material>
-			</ExperimentalAcrylicBorder>
+			</TabItem>
+			<TabItem Header="Collections">
 
-			<ExperimentalAcrylicBorder Height="200" Width="200" CornerRadius="5">
-			   <ExperimentalAcrylicBorder.Material>
-				  <ExperimentalAcrylicMaterial
-					TintColor="#FFFF00"
-					TintOpacity="{Binding #TintOpacitySlider.Value}"
-					MaterialOpacity="{Binding #MaterialOpacitySlider.Value}"
-					BackgroundSource="Digger" />
-			   </ExperimentalAcrylicBorder.Material>
-			</ExperimentalAcrylicBorder>
+			</TabItem>
+			<TabItem Header="Date and Time">
+			</TabItem>
+			<TabItem Header="Layout">
+			</TabItem>
+			<TabItem Header="Media">
+			</TabItem>
+			<TabItem Header="Menus">
+			</TabItem>
+			<TabItem Header="Navigation">
 
-			<ExperimentalAcrylicBorder Height="200" Width="200" CornerRadius="5">
-			   <ExperimentalAcrylicBorder.Material>
-				  <ExperimentalAcrylicMaterial
-					TintColor="#000000"
-					TintOpacity="{Binding #TintOpacitySlider.Value}"
-					MaterialOpacity="{Binding #MaterialOpacitySlider.Value}"
-					BackgroundSource="Digger" />
-			   </ExperimentalAcrylicBorder.Material>
-			</ExperimentalAcrylicBorder>
-		 </StackPanel>
+			</TabItem>
+			<TabItem Header="Scrolling">
 
-		 <StackPanel Orientation="Horizontal" Spacing="20">
-			<ExperimentalAcrylicBorder Height="200" Width="200" CornerRadius="5">
-			   <ExperimentalAcrylicBorder.Material>
-				  <ExperimentalAcrylicMaterial
-					TintColor="White"
-					TintOpacity="{Binding #TintOpacitySlider.Value}"
-					MaterialOpacity="{Binding #MaterialOpacitySlider.Value}"
-					BackgroundSource="Digger" />
-			   </ExperimentalAcrylicBorder.Material>
-			</ExperimentalAcrylicBorder>
+			</TabItem>
+			<TabItem Header="Status and Info">
 
-			<ExperimentalAcrylicBorder Height="200" Width="200" CornerRadius="5">
-			   <ExperimentalAcrylicBorder.Material>
-				  <ExperimentalAcrylicMaterial
-					TintColor="#3c3c3c"
-					TintOpacity="{Binding #TintOpacitySlider.Value}"
-					MaterialOpacity="{Binding #MaterialOpacitySlider.Value}"
-					BackgroundSource="Digger" />
-			   </ExperimentalAcrylicBorder.Material>
-			</ExperimentalAcrylicBorder>
+			</TabItem>
+			<TabItem Header="Styles">
 
-			<ExperimentalAcrylicBorder Height="200" Width="200" CornerRadius="5">
-			   <ExperimentalAcrylicBorder.Material>
-				  <ExperimentalAcrylicMaterial
-					TintColor="White"
-					TintOpacity="{Binding #TintOpacitySlider.Value}"
-					MaterialOpacity="{Binding #MaterialOpacitySlider.Value}"
-					BackgroundSource="Digger" />
-			   </ExperimentalAcrylicBorder.Material>
-			</ExperimentalAcrylicBorder>
-		 </StackPanel>
+			</TabItem>
+			<TabItem Header="Text">
 
-		 <ExperimentalAcrylicBorder Height="200" Width="660" CornerRadius="5">
-			<ExperimentalAcrylicBorder.Material>
-			   <ExperimentalAcrylicMaterial
-				 TintColor="Red"
-				 TintOpacity="{Binding #TintOpacitySlider.Value}"
-				 MaterialOpacity="{Binding #MaterialOpacitySlider.Value}"
-				 BackgroundSource="Digger" />
-			</ExperimentalAcrylicBorder.Material>
-		 </ExperimentalAcrylicBorder>
-	  </StackPanel>
-   </Border>
+			</TabItem>
+		 </TabControl>
+	  </Panel>
+   </Panel>
+
 </Window>
