@@ -30,7 +30,7 @@ namespace TimeClient.Views
 			
 			_light = light;
 			_dark = dark;
-			Styles.Add(dark);
+			Styles.Add(light);
 		}
 
 		protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
