@@ -12,7 +12,7 @@ namespace TimeClient.Services
 	{
 		private MulticastClient _discoveryClient;
 		private Client _tcpClient;
-		
+
 		public TimeClient(Socket clientSocket, bool serverHandler = false) : base(clientSocket, serverHandler)
 		{
 		}

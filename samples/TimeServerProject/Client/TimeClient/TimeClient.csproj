@@ -1,64 +1,51 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-  </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Compile Update="**\*.xaml.cs">
-	    <DependentUpon>%(Filename)</DependentUpon>
-    </Compile>
-    <AvaloniaResource Include="**\*.xaml">
-	    <SubType>Designer</SubType>
-    </AvaloniaResource>
-    <AvaloniaResource Include="Assets\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <AvaloniaResource Remove="Views\ConfigView.xaml" />
-    <AvaloniaResource Remove="Views\MainView.xaml" />
-    <AvaloniaResource Remove="Views\ServerSelectionView.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Assets\SideBar.xaml" />
-    <None Remove="Views\ConfigView.xaml" />
-    <None Remove="Views\MainView.xaml" />
-    <None Remove="Views\ServerSelectionView.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AvaloniaXaml Include="Views\ConfigView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </AvaloniaXaml>
-    <AvaloniaXaml Include="Views\MainView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </AvaloniaXaml>
-    <AvaloniaXaml Include="Views\ServerSelectionView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </AvaloniaXaml>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.0-preview1" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview1" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview1" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview1" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\CustomControls\CustomControls.csproj" />
-    <ProjectReference Include="..\..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <AvaloniaResource Update="Assets\SideBar.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </AvaloniaResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Views\ConfigView.xaml.cs">
-      <DependentUpon>ConfigView.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\MainView.xaml.cs">
-      <DependentUpon>MainView.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\ServerSelectionView.xaml.cs">
-      <DependentUpon>ServerSelectionView.xaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<Platforms>AnyCPU;x64;x86</Platforms>
+		<PublishTrimmed>True</PublishTrimmed>
+	</PropertyGroup>
+	<PropertyGroup>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Update="**\*.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<AvaloniaResource Include="**\*.xaml">
+			<SubType>Designer</SubType>
+		</AvaloniaResource>
+		<AvaloniaResource Include="Assets\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <AvaloniaResource Remove="Views\ConfigView.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Views\ConfigView.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+	  <AvaloniaXaml Include="Views\ConfigView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </AvaloniaXaml>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Assets\teapot.bin" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="0.10.0-preview2" />
+		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview2" />
+		<PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview2" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview2" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Models\" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Views\ConfigView.xaml.cs">
+	    <DependentUpon>ConfigView.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
 </Project>
