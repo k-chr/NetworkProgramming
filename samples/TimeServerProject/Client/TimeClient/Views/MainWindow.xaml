@@ -1,61 +1,89 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:TimeClient.ViewModels;assembly=TimeClient"
-		xmlns:views="clr-namespace:TimeClient.Views;assembly=TimeClient"
-        x:Class="TimeClient.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="TimeClient"
-		MinWidth="300"
-		MinHeight="300"
-		WindowStartupLocation="CenterScreen"
-        FontSize="14"
-        Foreground="{StaticResource SystemChromeHighColor}"
-        Background="{x:Null}"
-		ExtendClientAreaToDecorationsHint="True"
-		ExtendClientAreaChromeHints="SystemChrome"
-		ExtendClientAreaTitleBarHeightHint="-1"
-		TransparencyLevelHint="AcrylicBlur">
-   <Window.DataContext>
-	  <vm:MainWindowViewModel/>
-   </Window.DataContext>
-   <Window.Styles>
+﻿<FluentWindow xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:vm="clr-namespace:TimeClient.ViewModels;assembly=TimeClient"
+			  xmlns:ctrl="clr-namespace:TimeClient.CustomControls;assembly=TimeClient"
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              mc:Ignorable="d" d:DesignWidth="1350" d:DesignHeight="700" Height="800" Width="1400"
+              xmlns:views="clr-namespace:TimeClient.Views;assembly=TimeClient"
+              x:Class="TimeClient.Views.MainWindow"
+              Icon="{x:Null}"
+              x:Name="MainWindow"
+			  MinWidth="330"
+			  MinHeight="165"
+              WindowStartupLocation="CenterScreen"
+              FontSize="14"
+              Foreground="{StaticResource SystemBaseHighColor}"
+              Background="{x:Null}"
+              Title="TimeClient">
+   <FluentWindow.Styles>
 	  <Style Selector="TitleBar:fullscreen > Panel > Panel > Border">
 		 <Setter Property="Background" Value="{DynamicResource SystemChromeLowColor}" />
 	  </Style>
-   </Window.Styles>
-   <Panel>
-	  <Panel Margin="{Binding #MainWindow.OffScreenMargin}">
+   </FluentWindow.Styles>
 
-		 <DockPanel HorizontalAlignment="Stretch">
-			<ExperimentalAcrylicBorder DockPanel.Dock="Left" Width="240">
-			   <ExperimentalAcrylicBorder.Material>
-				  <ExperimentalAcrylicMaterial TintColor="{DynamicResource SystemChromeLowColor}" MaterialOpacity="0.85" TintOpacity="1" />
-			   </ExperimentalAcrylicBorder.Material>
-			</ExperimentalAcrylicBorder>
-			<ExperimentalAcrylicBorder IsHitTestVisible="False">
-			   <ExperimentalAcrylicBorder.Material>
-				  <ExperimentalAcrylicMaterial TintColor="{DynamicResource SystemChromeHighColor}" MaterialOpacity="0.55" TintOpacity="0.5" />
-			   </ExperimentalAcrylicBorder.Material>
-			   <Panel>
-				  <TextBlock Text="{Binding #TabControl.SelectedItem.Header}" Margin="40 20" FontSize="32" FontWeight="Light"  Foreground="{DynamicResource SystemChromeLowColor}"/>
-				  <ToggleSwitch HorizontalAlignment="Right" VerticalAlignment="Bottom">
-					 
-				  </ToggleSwitch>
-			   </Panel>
-			</ExperimentalAcrylicBorder>
-		 </DockPanel>
-		 <TabControl x:Name="TabControl" Classes="sidebar" Margin="0 40 0 20">
-			<TabItem Header="Start" Foreground="{DynamicResource SystemBaseHighColor}">
-			   <views:ServerSelectionView></views:ServerSelectionView>
-			</TabItem>
-			<TabItem Header="Server selection"  Foreground="{DynamicResource SystemBaseHighColor}" >
+   <Design.DataContext>
+	  <vm:MainWindowViewModel />
+   </Design.DataContext>
 
-			</TabItem>
-			<TabItem Header="Time communication" Foreground="{DynamicResource SystemBaseHighColor}">
-			</TabItem>
-		 </TabControl>
+   <Panel Margin="{Binding #MainWindow.OffScreenMargin}">
+	  <Grid HorizontalAlignment="Stretch" ColumnDefinitions="Auto,*">
+		 <ExperimentalAcrylicBorder Grid.Column="0" Width="240">
+			<ExperimentalAcrylicBorder.Material>
+			   <ExperimentalAcrylicMaterial TintColor="{DynamicResource SystemAltHighColor}" MaterialOpacity="0.88"
+											TintOpacity="1" />
+			</ExperimentalAcrylicBorder.Material>
 
-	  </Panel>
+			<StackPanel Width="120" Margin="60 60 60 60" VerticalAlignment="Top" HorizontalAlignment="Left">
+			   <ctrl:ClockControl Radius="60" Foreground="{DynamicResource SystemBaseHighColor}"/>
+			</StackPanel>
+		 </ExperimentalAcrylicBorder>
+		 <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.Column="1" >
+			<ExperimentalAcrylicBorder.Material>
+			   <ExperimentalAcrylicMaterial TintColor="{DynamicResource SystemAltMediumColor}" MaterialOpacity="0.35"
+											TintOpacity="1" />
+			</ExperimentalAcrylicBorder.Material>
+			<TextBlock Text="{Binding #TabControl.SelectedItem.Header}" Foreground="{DynamicResource SystemBaseHighColor}" Margin="40 20" FontSize="32" FontWeight="Light" />
+		 </ExperimentalAcrylicBorder>
+	  </Grid>
+
+	  <TabControl x:Name="TabControl" TabStripPlacement="Left" Classes="sidebar" Margin="0 100 0 40" >
+		 <TabItem Header="Start">
+			<views:ConfigView></views:ConfigView>
+
+		 </TabItem>
+		 <TabItem Header="Server Selection" >
+		 </TabItem>
+		 <TabItem Header="Time Protocol Communication">
+		 </TabItem>
+		 <TabItem Header="Logs">
+		 </TabItem>
+		 <TabItem Header="Config" IsVisible="{Binding ConfigurationOpened}">
+			<views:ConfigView></views:ConfigView>
+		 </TabItem>
+		 <TabControl.Tag>
+			<ToggleSwitch x:Name="Themes" Margin="0,17,0,17" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
+			   <ToggleSwitch.OnContent>
+				  <Panel Width="20" Height="20">
+					 <Viewbox>
+						<Path HorizontalAlignment="Center" VerticalAlignment="Center" StrokeJoin="Round" StrokeLineCap="Round"
+							  Stroke="{DynamicResource SystemBaseMediumColor}" StrokeThickness="4"
+							  Data="M4,4L17,17M4,17L17,4M0,10.5L20,10.5M10.5,0L10.5,20" />
+					 </Viewbox>
+				  </Panel>
+			   </ToggleSwitch.OnContent>
+			   <ToggleSwitch.OffContent>
+				  <Panel Width="20" Height="20">
+					 <Viewbox>
+						<Path StrokeJoin="Round" StrokeLineCap="Round"
+							  Fill="{DynamicResource SystemBaseMediumColor}" StrokeThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"
+							  Data="M10,0L10,20 A5,5 0 1 1 10,0 Z" />
+					 </Viewbox>
+				  </Panel>
+			   </ToggleSwitch.OffContent>
+			</ToggleSwitch>
+
+		 </TabControl.Tag>
+	  </TabControl>
    </Panel>
-
-</Window>
+</FluentWindow>
