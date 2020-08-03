@@ -3,7 +3,6 @@ using System.Timers;
 using Avalonia;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
-using Avalonia.Styling;
 using Avalonia.Threading;
 
 namespace TimeClient.CustomControls
@@ -11,12 +10,6 @@ namespace TimeClient.CustomControls
 	public class ClockControl : TemplatedControl
 	{
 		private const int Interval = 1000;
-
-		public Thickness TickOffset
-		{
-			get => GetValue(TickOffsetProperty);
-			set => SetValue(TickOffsetProperty, value);
-		}
 
 		public double HoursAngle
 		{
@@ -54,65 +47,27 @@ namespace TimeClient.CustomControls
 			set => SetValue(SecondsProperty, value);
 		}
 
-		public double HoursLength
-		{
-			get => GetValue(HoursLengthProperty);
-			set => SetValue(HoursLengthProperty, value);
-		}
-
-		public double MinutesLength
-		{
-			get => GetValue(MinutesLengthProperty);
-			set => SetValue(MinutesLengthProperty, value);
-		}
-
-		public double SecondsLength
-		{
-			get => GetValue(SecondsLengthProperty);
-			set => SetValue(SecondsLengthProperty, value);
-		}
-
-		public double TickWidth
-		{
-			get => GetValue(TickWidthProperty);
-			set => SetValue(TickWidthProperty, value);
-		}
-
-		public double SecondTickWidth
-		{
-			get => GetValue(SecondTickWidthProperty);
-			set => SetValue(SecondTickWidthProperty, value);
-		}
-
 		public double Radius
 		{
 			get => GetValue(RadiusProperty);
-			set
-			{
-				SetValue(RadiusProperty, value);
-				TickOffset = new Thickness(0, 0, 0, value / 2);
-				TickWidth = value / 40;
-				SecondTickWidth = value / 60;
-				HoursLength = 0.8 * value;
-				MinutesLength = 0.4 * value;
-				SecondsLength = 0.9 * value;
-			}
+			set => SetValue(RadiusProperty, value);
 		}
 
-		public static readonly StyledProperty<Thickness> TickOffsetProperty;
+		public static readonly DirectProperty<ClockControl, Thickness> TickOffsetProperty;
 
 		public static readonly StyledProperty<double> RadiusProperty;
+		public static readonly DirectProperty<ClockControl, double> DiameterProperty;
 
 		public static readonly StyledProperty<string> HoursProperty;
 		public static readonly StyledProperty<string> MinutesProperty;
 		public static readonly StyledProperty<string> SecondsProperty;
 
-		public static readonly StyledProperty<double> HoursLengthProperty;
-		public static readonly StyledProperty<double> MinutesLengthProperty;
-		public static readonly StyledProperty<double> SecondsLengthProperty;
+		public static readonly DirectProperty<ClockControl, double> HoursLengthProperty;
+		public static readonly DirectProperty<ClockControl, double> MinutesLengthProperty;
+		public static readonly DirectProperty<ClockControl, double> SecondsLengthProperty;
 
-		public static readonly StyledProperty<double> TickWidthProperty;
-		public static readonly StyledProperty<double> SecondTickWidthProperty;
+		public static readonly DirectProperty<ClockControl, double> TickWidthProperty;
+		public static readonly DirectProperty<ClockControl, double> SecondTickWidthProperty;
 
 		public static readonly StyledProperty<double> HoursAngleProperty;
 		public static readonly StyledProperty<double> SecondsAngleProperty;
@@ -142,19 +97,24 @@ namespace TimeClient.CustomControls
 
 			RadiusProperty = AvaloniaProperty.Register<ClockControl, double>(nameof(Radius), 0, false,
 				BindingMode.TwoWay);
+			DiameterProperty =
+				AvaloniaProperty.RegisterDirect<ClockControl, double>("Diameter", control => control.Radius * 2);
 
-			TickOffsetProperty = AvaloniaProperty.Register<ClockControl, Thickness>(nameof(TickOffset),
-				Thickness.Parse("0 0 0 60"), false,
-				BindingMode.TwoWay);
+			TickOffsetProperty = AvaloniaProperty.RegisterDirect<ClockControl, Thickness>("TickOffset",
+				control => new Thickness(0, 0, 0, control.Radius / 2));
 
 			TickWidthProperty =
-				AvaloniaProperty.Register<ClockControl, double>(nameof(TickWidth), 0, false, BindingMode.TwoWay);
+				AvaloniaProperty.RegisterDirect<ClockControl, double>("TickWidth", control => control.Radius / 40);
 			SecondTickWidthProperty =
-				AvaloniaProperty.Register<ClockControl, double>(nameof(SecondTickWidth), 0, false, BindingMode.TwoWay);
+				AvaloniaProperty.RegisterDirect<ClockControl, double>("SecondTickWidth",
+					control => control.Radius / 60);
 
-			HoursLengthProperty = AvaloniaProperty.Register<ClockControl, double>(nameof(HoursLength), 0, false, BindingMode.TwoWay);
-			MinutesLengthProperty = AvaloniaProperty.Register<ClockControl, double>(nameof(MinutesLength), 0, false, BindingMode.TwoWay);
-			SecondsLengthProperty = AvaloniaProperty.Register<ClockControl, double>(nameof(SecondsLength), 0, false, BindingMode.TwoWay);
+			HoursLengthProperty =
+				AvaloniaProperty.RegisterDirect<ClockControl, double>("HoursLength", control => control.Radius * 0.5);
+			MinutesLengthProperty =
+				AvaloniaProperty.RegisterDirect<ClockControl, double>("MinutesLength", control => control.Radius * 0.8);
+			SecondsLengthProperty =
+				AvaloniaProperty.RegisterDirect<ClockControl, double>("SecondsLength", control => control.Radius * 0.9);
 		}
 
 		public ClockControl()

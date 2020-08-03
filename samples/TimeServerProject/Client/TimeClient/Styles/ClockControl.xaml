@@ -6,7 +6,7 @@
    <Design.PreviewWith>
 	  <ScrollViewer VerticalScrollBarVisibility="Visible" Height="150" Background="{x:Null}">
 		 <StackPanel Width="200">
-			<local:ClockControl Radius="60" Foreground="White" TickOffset="0 0 0 0" />
+			<local:ClockControl Radius="60" Foreground="White"  />
 		 </StackPanel>
 	  </ScrollViewer>
 
@@ -18,8 +18,8 @@
 			<Grid RowDefinitions="Auto,*">
 			   <Ellipse  Grid.Row="0" Stroke="{TemplateBinding Foreground}"
 				StrokeThickness="3"
-				Width="{TemplateBinding Radius}"
-				Height="{TemplateBinding Radius}"/>
+				Width="{Binding $parent[local:ClockControl].Diameter}"
+				Height="{Binding $parent[local:ClockControl].Diameter}"/>
 			   <Rectangle Grid.Row="0" Margin="{Binding $parent[local:ClockControl].TickOffset}" 
 						  Width="{Binding $parent[local:ClockControl].TickWidth}" 
 						  Height="{Binding $parent[local:ClockControl].HoursLength}"
