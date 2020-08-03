@@ -36,19 +36,19 @@ namespace TimeClient.CustomControls
 			set => SetValue(SecondsAngleProperty, value);
 		}
 
-		public double Hours
+		public string Hours
 		{
 			get => GetValue(HoursProperty);
 			set => SetValue(HoursProperty, value);
 		}
 
-		public double Minutes
+		public string Minutes
 		{
 			get => GetValue(MinutesProperty);
 			set => SetValue(MinutesProperty, value);
 		}
 
-		public double Seconds
+		public string Seconds
 		{
 			get => GetValue(SecondsProperty);
 			set => SetValue(SecondsProperty, value);
@@ -78,6 +78,12 @@ namespace TimeClient.CustomControls
 			set => SetValue(TickWidthProperty, value);
 		}
 
+		public double SecondTickWidth
+		{
+			get => GetValue(SecondTickWidthProperty);
+			set => SetValue(SecondTickWidthProperty, value);
+		}
+
 		public double Radius
 		{
 			get => GetValue(RadiusProperty);
@@ -85,7 +91,8 @@ namespace TimeClient.CustomControls
 			{
 				SetValue(RadiusProperty, value);
 				TickOffset = new Thickness(0, 0, 0, value / 2);
-				TickWidth = value / 50;
+				TickWidth = value / 40;
+				SecondTickWidth = value / 60;
 				HoursLength = 0.8 * value;
 				MinutesLength = 0.4 * value;
 				SecondsLength = 0.9 * value;
@@ -96,14 +103,17 @@ namespace TimeClient.CustomControls
 
 		public static readonly StyledProperty<double> RadiusProperty;
 
-		public static readonly StyledProperty<double> HoursProperty;
-		public static readonly StyledProperty<double> MinutesProperty;
-		public static readonly StyledProperty<double> SecondsProperty;
+		public static readonly StyledProperty<string> HoursProperty;
+		public static readonly StyledProperty<string> MinutesProperty;
+		public static readonly StyledProperty<string> SecondsProperty;
 
 		public static readonly StyledProperty<double> HoursLengthProperty;
 		public static readonly StyledProperty<double> MinutesLengthProperty;
 		public static readonly StyledProperty<double> SecondsLengthProperty;
+
 		public static readonly StyledProperty<double> TickWidthProperty;
+		public static readonly StyledProperty<double> SecondTickWidthProperty;
+
 		public static readonly StyledProperty<double> HoursAngleProperty;
 		public static readonly StyledProperty<double> SecondsAngleProperty;
 		public static readonly StyledProperty<double> MinutesAngleProperty;
@@ -121,23 +131,27 @@ namespace TimeClient.CustomControls
 					BindingMode.TwoWay);
 
 			SecondsProperty =
-				AvaloniaProperty.Register<ClockControl, double>(nameof(Seconds), 0, false,
+				AvaloniaProperty.Register<ClockControl, string>(nameof(Seconds), "00", false,
 					BindingMode.TwoWay);
 			HoursProperty =
-				AvaloniaProperty.Register<ClockControl, double>(nameof(Hours), 0, false,
+				AvaloniaProperty.Register<ClockControl, string>(nameof(Hours), "00", false,
 					BindingMode.TwoWay);
 			MinutesProperty =
-				AvaloniaProperty.Register<ClockControl, double>(nameof(Minutes), 0, false,
+				AvaloniaProperty.Register<ClockControl, string>(nameof(Minutes), "00", false,
 					BindingMode.TwoWay);
 
 			RadiusProperty = AvaloniaProperty.Register<ClockControl, double>(nameof(Radius), 0, false,
 				BindingMode.TwoWay);
 
 			TickOffsetProperty = AvaloniaProperty.Register<ClockControl, Thickness>(nameof(TickOffset),
-				Thickness.Parse("0 0 0 0"), false,
+				Thickness.Parse("0 0 0 60"), false,
 				BindingMode.TwoWay);
+
 			TickWidthProperty =
 				AvaloniaProperty.Register<ClockControl, double>(nameof(TickWidth), 0, false, BindingMode.TwoWay);
+			SecondTickWidthProperty =
+				AvaloniaProperty.Register<ClockControl, double>(nameof(SecondTickWidth), 0, false, BindingMode.TwoWay);
+
 			HoursLengthProperty = AvaloniaProperty.Register<ClockControl, double>(nameof(HoursLength), 0, false, BindingMode.TwoWay);
 			MinutesLengthProperty = AvaloniaProperty.Register<ClockControl, double>(nameof(MinutesLength), 0, false, BindingMode.TwoWay);
 			SecondsLengthProperty = AvaloniaProperty.Register<ClockControl, double>(nameof(SecondsLength), 0, false, BindingMode.TwoWay);
@@ -154,9 +168,9 @@ namespace TimeClient.CustomControls
 					SecondsAngle = date.Second * 6;
 					MinutesAngle = date.Minute * 6;
 					HoursAngle = date.Hour * 30 + date.Minute * 0.5;
-					Hours = date.Hour;
-					Seconds = date.Second;
-					Minutes = date.Minute;
+					Hours = $"{date.Hour:00}";
+					Seconds = $"{date.Second:00}";
+					Minutes = $"{date.Minute:00}";
 				});
 			};
 			clockTimer.Start();
