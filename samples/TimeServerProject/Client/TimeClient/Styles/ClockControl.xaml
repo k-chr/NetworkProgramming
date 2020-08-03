@@ -1,0 +1,51 @@
+﻿<Styles xmlns:local="clr-namespace:TimeClient.CustomControls;assembly=TimeClient"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+   <Design.PreviewWith>
+	  <ScrollViewer VerticalScrollBarVisibility="Visible" Height="150" Background="{x:Null}">
+		 <StackPanel Width="200">
+			<local:ClockControl Radius="120" Foreground="White" TickOffset="0 0 0 0" />
+		 </StackPanel>
+	  </ScrollViewer>
+
+   </Design.PreviewWith>
+   <Style Selector="local|ClockControl">
+	  <Setter Property="Template">
+		 <ControlTemplate>
+
+			<Grid RowDefinitions="Auto,*">
+			   <Ellipse  Grid.Row="0" Stroke="{TemplateBinding Foreground}"
+				StrokeThickness="3"
+				Width="{TemplateBinding Radius}"
+				Height="{TemplateBinding Radius}"/>
+			   <Rectangle Grid.Row="0" Margin="{Binding $parent[local:ClockControl].TickOffset}" Width="3" Height="60" Fill="{TemplateBinding Foreground}" RenderTransformOrigin="1.5 60">
+				  <Rectangle.RenderTransform>
+					 <RotateTransform Angle="{Binding $parent[local:ClockControl].HoursAngle}"></RotateTransform>
+				  </Rectangle.RenderTransform>
+			   </Rectangle>
+			   <Rectangle Grid.Row="0" Margin="{Binding $parent[local:ClockControl].TickOffset}" Width="3" Height="60" Fill="{TemplateBinding Foreground}" RenderTransformOrigin="1.5 60">
+				  <Rectangle.RenderTransform>
+					 <RotateTransform Angle="{Binding $parent[local:ClockControl].MinutesAngle}"></RotateTransform>
+				  </Rectangle.RenderTransform>
+			   </Rectangle>
+			   <Rectangle Grid.Row="0" Margin="{Binding $parent[local:ClockControl].TickOffset}"  Width="3" Height="60" Fill="{TemplateBinding Foreground}" RenderTransformOrigin="1.5 60">
+				  <Rectangle.RenderTransform>
+					 <RotateTransform Angle="{Binding $parent[local:ClockControl].SecondsAngle}"></RotateTransform>
+				  </Rectangle.RenderTransform>
+			   </Rectangle>
+			   <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
+				  <TextBlock Text="11"></TextBlock>				  
+				  <TextBlock Text=":"></TextBlock>				  
+				  <TextBlock Text="{Binding $parent[local:ClockControl].Minutes}"></TextBlock>				  
+				  <TextBlock Text=":"></TextBlock>				  
+				  <TextBlock Text="{Binding $parent[local:ClockControl].Seconds}"></TextBlock>				  
+			   </StackPanel>
+			</Grid>
+
+		 </ControlTemplate>
+	  </Setter>
+   </Style>
+
+</Styles>
