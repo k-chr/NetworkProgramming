@@ -18,18 +18,7 @@
 		<AvaloniaResource Include="Assets\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <AvaloniaResource Remove="Views\ConfigView.xaml" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="Views\ConfigView.xaml" />
-	</ItemGroup>
-	<ItemGroup>
-	  <AvaloniaXaml Include="Views\ConfigView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </AvaloniaXaml>
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Include="Assets\teapot.bin" />
+	  <None Remove="Styles\ClockControl.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="0.10.0-preview2" />
@@ -44,8 +33,8 @@
 		<ProjectReference Include="..\..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Compile Update="Views\ConfigView.xaml.cs">
-	    <DependentUpon>ConfigView.xaml</DependentUpon>
-	  </Compile>
+	  <AvaloniaResource Update="Styles\ClockControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </AvaloniaResource>
 	</ItemGroup>
 </Project>

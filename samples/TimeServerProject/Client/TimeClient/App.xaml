@@ -9,5 +9,6 @@
 	<Application.Styles>
 		<StyleInclude Source="/Styles/Styles.xaml" />
 		<StyleInclude Source="/Styles/SideBar.xaml" />
+	   <StyleInclude Source="/Styles/ClockControl.xaml" />
 	</Application.Styles>
 </Application>
