@@ -27,9 +27,6 @@
 		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview2" />
 	</ItemGroup>
 	<ItemGroup>
-		<Folder Include="Models\" />
-	</ItemGroup>
-	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
 	</ItemGroup>
 	<ItemGroup>

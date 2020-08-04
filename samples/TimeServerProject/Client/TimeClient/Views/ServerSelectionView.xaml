@@ -3,10 +3,22 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:ctrl="clr-namespace:CustomControls.Controls;assembly=CustomControls"
              x:Class="TimeClient.Views.ServerSelectionView">
-   <Panel>
-	  <TextBlock>Welcome to Avalonia!</TextBlock>
-	  <ToggleSwitch></ToggleSwitch>
-   </Panel>
+   <StackPanel Margin="{StaticResource PageMargin}"			   
+			   Background="Transparent"
+			   Orientation="Vertical"
+			   Spacing="40">
+	  <StackPanel.Styles>
+		 <Style Selector="TextBlock.header">
+			<Setter Property="Margin" Value="0 30 0 20" />
+			<Setter Property="Foreground" Value="{DynamicResource SystemBaseHighColor}"/>
+		 </Style>
+	  </StackPanel.Styles>
+	  <TextBlock Text="Server List" Classes="header"></TextBlock>
+      <ListBox SelectedItem="{Binding SelectedServer, Mode=TwoWay}" Items="{Binding AccessibleServers}" >
+		 
+	  </ListBox>
+   </StackPanel>
 	
 </UserControl>
