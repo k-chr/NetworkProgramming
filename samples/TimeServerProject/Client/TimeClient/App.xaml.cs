@@ -1,5 +1,6 @@
 ﻿using System;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
@@ -34,15 +35,26 @@ namespace TimeClient
 			Styles.Insert(0, FluentDark);
 		}
 
-
 		public override void OnFrameworkInitializationCompleted()
 		{
 			if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 			{
-				desktop.MainWindow = new MainWindow
+				var mainWindow = new MainWindow();
+				var viewModel = new MainWindowViewModel(mainWindow.NotificationArea);
+				
+				mainWindow.DataContext = viewModel;
+				desktop.MainWindow = mainWindow;
+
+				Window.WindowClosedEvent.AddClassHandler(typeof(MainWindow), (sender, args) =>
 				{
-					DataContext = new MainWindowViewModel(),
-				};
+					if (sender is MainWindow window)
+					{
+						var mainWindowViewModel = window.DataContext as MainWindowViewModel;
+						mainWindowViewModel?.OnClosing();
+					}
+				});
+				
+			
 			}
 
 			base.OnFrameworkInitializationCompleted();
