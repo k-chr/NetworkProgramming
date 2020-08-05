@@ -1,19 +1,12 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
 namespace TimeClient.Views
 {
 	public class ConfigView : UserControl
 	{
-		public ConfigView()
-		{
-			this.InitializeComponent();
-		}
+		public ConfigView() => InitializeComponent();
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-		}
+		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 	}
 }
