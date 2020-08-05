@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Notifications;
 using Avalonia.Markup.Xaml;
 using Avalonia.VisualTree;
 
@@ -7,6 +8,8 @@ namespace TimeClient.Views
 {
 	public class MainWindow : FluentWindow
 	{
+		public WindowNotificationManager NotificationArea { get; }
+
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -15,6 +18,7 @@ namespace TimeClient.Views
 			themes.Checked += (sender, args) => Application.Current.Styles[0] = App.FluentLight;
 			themes.Unchecked += (sender, args) => Application.Current.Styles[0] = App.FluentDark;
 			var tabControl = this.Find<TabControl>("TabControl");
+
 			tabControl.SelectionChanged += (sender, args) =>
 			{
 				var key = "PART_ItemsContentPresenter";
@@ -31,6 +35,12 @@ namespace TimeClient.Views
 					scrollViewer.ScrollToHome();
 					break;
 				}
+			};
+
+			NotificationArea = new WindowNotificationManager(this)
+			{
+				Position = NotificationPosition.TopRight,
+				MaxItems = 3
 			};
 		}
 
@@ -51,9 +61,6 @@ namespace TimeClient.Views
 			return result;
 		}
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-		}
+		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 	}
 }
