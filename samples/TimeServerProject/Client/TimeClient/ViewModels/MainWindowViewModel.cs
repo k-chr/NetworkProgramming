@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Net;
-using System.Reactive.Linq;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Avalonia.Controls.Notifications;
-using NetworkingUtilities.Extensions;
 using ReactiveUI;
+using TimeClient.Models;
 
 namespace TimeClient.ViewModels
 {
-	public class MainWindowViewModel : ViewModelBase, INotifyDataErrorInfo
+	public class MainWindowViewModel : ViewModelBase
 	{
 		private readonly IManagedNotificationManager _managedNotificationManager;
+
 		private Services.TimeClient _client;
+
 		private string _selectedServer;
 		private bool _isValid;
 
@@ -42,6 +40,8 @@ namespace TimeClient.ViewModels
 
 		public void OnClosing()
 		{
+			_client?.StopService();
+			AccessibleServers?.Clear();
 		}
 
 		public MainWindowViewModel(IManagedNotificationManager managedNotificationManager)
@@ -50,21 +50,7 @@ namespace TimeClient.ViewModels
 			ConfigViewModel = new ConfigViewModel();
 		}
 
-		public List<string> AccessibleServers { get; } = new List<string>
-		{
-			"TextBlock",
-			"CheckBox",
-			"ComboBox",
-			"TextBox",
-			"Calendar"
-		};
+		public ObservableCollection<ServerModel> AccessibleServers { get; } = new ObservableCollection<ServerModel>();
 
-		public IEnumerable GetErrors(string propertyName)
-		{
-			
-		}
-
-		public bool HasErrors { get; }
-		public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 	}
 }

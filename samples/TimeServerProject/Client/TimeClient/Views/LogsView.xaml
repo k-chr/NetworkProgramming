@@ -4,5 +4,37 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TimeClient.Views.LogsView">
-    Welcome to Avalonia!
+   <StackPanel Margin="{StaticResource PageMargin}"
+			 Background="Transparent"
+			 Orientation="Vertical"
+			 Spacing="40">
+	  <StackPanel.Styles>
+		 <Style Selector="TextBlock.header">
+			<Setter Property="Margin" Value="0 30 0 20" />
+			<Setter Property="Foreground" Value="{DynamicResource SystemBaseHighColor}"/>
+		 </Style>
+	  </StackPanel.Styles>
+	  <TextBlock Text="Application logs:" Classes="header"></TextBlock>
+	  <ScrollViewer VerticalScrollBarVisibility="Visible">
+		 <ItemsControl Items="{Binding Logs}" VerticalAlignment="Top">
+			<ItemsControl.ItemTemplate>
+			   <DataTemplate>
+				  <ListBoxItem>
+					 <TextBox CaretBrush="Transparent"
+					 IsReadOnly="True" Background="Transparent"
+					 BorderThickness="0" AcceptsReturn="True"
+					 Text="{Binding}" Foreground="{Binding ColorBrush}"
+					 TextWrapping="Wrap" MaxWidth="275">
+						<TextBox.Styles>
+						   <Style Selector="TextBox:pointerover">
+							  <Setter Property="Background" Value="Transparent"/>
+						   </Style>
+						</TextBox.Styles>
+					 </TextBox>
+				  </ListBoxItem>
+			   </DataTemplate>
+			</ItemsControl.ItemTemplate>
+		 </ItemsControl>
+	  </ScrollViewer>
+   </StackPanel>
 </UserControl>
