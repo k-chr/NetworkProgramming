@@ -49,14 +49,16 @@
 
 	  <TabControl x:Name="TabControl" TabStripPlacement="Left" Classes="sidebar" Margin="0 100 0 40" >
 		 <TabItem Header="Start">
-			<views:ConfigView></views:ConfigView>
-
+			<views:ConfigView DataContext="{Binding ConfigViewModel}"></views:ConfigView>
 		 </TabItem>
 		 <TabItem Header="Server Selection" >
+			<views:ServerSelectionView></views:ServerSelectionView>
 		 </TabItem>
 		 <TabItem Header="Time Protocol Communication">
+			<views:MainView></views:MainView>
 		 </TabItem>
 		 <TabItem Header="Logs">
+			<views:LogsView></views:LogsView>
 		 </TabItem>
 		 <TabItem Header="Config" IsVisible="{Binding ConfigurationOpened}">
 			<views:ConfigView></views:ConfigView>

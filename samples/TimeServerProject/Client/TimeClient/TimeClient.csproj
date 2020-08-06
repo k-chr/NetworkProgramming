@@ -18,9 +18,6 @@
 		<AvaloniaResource Include="Assets\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Remove="Styles\ClockControl.xaml" />
-	</ItemGroup>
-	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="0.10.0-preview2" />
 		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview2" />
 		<PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview2" />
@@ -30,8 +27,8 @@
 		<ProjectReference Include="..\..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <AvaloniaResource Update="Styles\ClockControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </AvaloniaResource>
+	  <Compile Update="Views\LogsView.xaml.cs">
+	    <DependentUpon>LogsView.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 </Project>

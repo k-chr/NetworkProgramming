@@ -54,7 +54,6 @@ namespace TimeClient
 					}
 				});
 				
-			
 			}
 
 			base.OnFrameworkInitializationCompleted();

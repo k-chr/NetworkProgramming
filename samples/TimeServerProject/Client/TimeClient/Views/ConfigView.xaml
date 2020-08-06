@@ -33,7 +33,7 @@
 
 	  <StackPanel>
 		 <TextBlock Classes="header" Text="Default local port"/>
-		 <TextBox Watermark="Local port, default random"
+		 <TextBox Watermark="Local port, default random or loaded"
 				  UseFloatingWatermark="True"
 				  Text="{Binding LocalPort, Mode=TwoWay}" />
 	  </StackPanel>
@@ -42,9 +42,9 @@
 		 <TextBlock Classes="header" Text="Multicast group address"/>
 		 <DataValidationErrors>
 			<TextBox Watermark="Address, default 224.0.0.0"
-			 UseFloatingWatermark="True"
+					 UseFloatingWatermark="True"
 					 Name="MulticastAddr"
-			 Text="{Binding MulticastAddress, Mode=TwoWay, Priority=TemplatedParent}">
+					 Text="{Binding MulticastAddress, Mode=TwoWay, Priority=TemplatedParent}">
 			</TextBox>
 		 </DataValidationErrors>
 	  </StackPanel>
@@ -52,9 +52,9 @@
 	  <StackPanel>
 		 <TextBlock Classes="header" Text="Multicast group port"/>
 		 <DataValidationErrors>
-			<TextBox Watermark="Port, default 7"
-			 UseFloatingWatermark="True"
-			 Text="{Binding MulticastPort, Mode=TwoWay}">
+			<TextBox Watermark="Port, default 7 or loaded"
+					 UseFloatingWatermark="True"
+					 Text="{Binding MulticastPort, Mode=TwoWay}">
 			</TextBox>
 		 </DataValidationErrors>
 	  </StackPanel>

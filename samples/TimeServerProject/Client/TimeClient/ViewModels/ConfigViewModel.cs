@@ -26,7 +26,7 @@ namespace TimeClient.ViewModels
 			{nameof(TimeQueryPeriod), "Time query period should be in range <10, 1000>"}
 		};
 
-		private Dictionary<string, string> _propertiesErrors = new Dictionary<string, string>();
+		private readonly Dictionary<string, string> _propertiesErrors = new Dictionary<string, string>();
 
 		public ConfigViewModel()
 		{
@@ -73,7 +73,6 @@ namespace TimeClient.ViewModels
 				}
 			}
 		}
-
 
 		public string MulticastAddress
 		{
