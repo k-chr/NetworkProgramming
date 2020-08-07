@@ -14,27 +14,30 @@
 			<Setter Property="Foreground" Value="{DynamicResource SystemBaseHighColor}"/>
 		 </Style>
 	  </StackPanel.Styles>
-	  <TextBlock Text="Application logs:" Classes="header"></TextBlock>
-	  <ScrollViewer VerticalScrollBarVisibility="Visible">
-		 <ItemsControl Items="{Binding Logs}" VerticalAlignment="Top">
-			<ItemsControl.ItemTemplate>
-			   <DataTemplate>
-				  <ListBoxItem>
-					 <TextBox CaretBrush="Transparent"
-					 IsReadOnly="True" Background="Transparent"
-					 BorderThickness="0" AcceptsReturn="True"
-					 Text="{Binding}" Foreground="{Binding ColorBrush}"
-					 TextWrapping="Wrap" MaxWidth="275">
-						<TextBox.Styles>
-						   <Style Selector="TextBox:pointerover">
-							  <Setter Property="Background" Value="Transparent"/>
-						   </Style>
-						</TextBox.Styles>
-					 </TextBox>
-				  </ListBoxItem>
-			   </DataTemplate>
-			</ItemsControl.ItemTemplate>
-		 </ItemsControl>
-	  </ScrollViewer>
+	  <TextBlock Text="Application logs:" Classes="header" ></TextBlock>
+	  <Grid>
+		 <ScrollViewer VerticalScrollBarVisibility="Visible" IsVisible="{Binding !!Logs.Count}" Grid.Row="0" Grid.Column="0">
+			<ItemsControl Items="{Binding Logs}" VerticalAlignment="Top">
+			   <ItemsControl.ItemTemplate>
+				  <DataTemplate>
+					 <ListBoxItem>
+						<TextBox CaretBrush="Transparent"
+						IsReadOnly="True" Background="Transparent"
+						BorderThickness="0" AcceptsReturn="True"
+						Text="{Binding}" Foreground="{Binding ColorBrush}"
+						TextWrapping="Wrap" MaxWidth="275">
+						   <TextBox.Styles>
+							  <Style Selector="TextBox:pointerover">
+								 <Setter Property="Background" Value="Transparent"/>
+							  </Style>
+						   </TextBox.Styles>
+						</TextBox>
+					 </ListBoxItem>
+				  </DataTemplate>
+			   </ItemsControl.ItemTemplate>
+			</ItemsControl>
+		 </ScrollViewer>
+		 <TextBlock  Grid.Row="0" Grid.Column="0" IsVisible="{Binding !Logs.Count}">No logs found</TextBlock>
+	  </Grid>
    </StackPanel>
 </UserControl>

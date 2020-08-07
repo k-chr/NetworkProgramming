@@ -16,9 +16,12 @@
 		 </Style>
 	  </StackPanel.Styles>
 	  <TextBlock Text="Server List" Classes="header"></TextBlock>
-      <ListBox SelectedItem="{Binding SelectedServer, Mode=TwoWay}" Items="{Binding AccessibleServers}" >
-		 
-	  </ListBox>
+	  <Grid>
+		 <ListBox Grid.Row="0" Grid.Column="0" SelectedItem="{Binding SelectedServer, Mode=TwoWay}" Items="{Binding AccessibleServers}" IsVisible="{Binding !!AccessibleServers.Count}" >
+
+		 </ListBox>
+		 <TextBlock Grid.Row="0" Grid.Column="0" Background="Transparent" IsVisible="{Binding !AccessibleServers.Count}">Currently we can't find any suitable server</TextBlock>
+	  </Grid>
    </StackPanel>
 	
 </UserControl>
