@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Extensions;
 using NetworkingUtilities.Utilities.Events;
@@ -22,11 +21,10 @@ namespace NetworkingUtilities.Udp.Unicast
 			ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 		}
 
-		public override void Send(string message, string to = "")
+		public override void Send(byte[] data, string to = "")
 		{
 			try
 			{
-				var data = Encoding.ASCII.GetBytes(message);
 				var endpoint = IPEndPoint.Parse(to);
 				var state = new ReceiverState
 				{
@@ -36,6 +34,7 @@ namespace NetworkingUtilities.Udp.Unicast
 				};
 
 				ServerSocket.BeginSendTo(data, 0, data.Length, SocketFlags.None, endpoint, OnSendToCallback, state);
+				OnReportingStatus(StatusCode.Info, $"Started sending {data.Length} bytes to {endpoint} via UDP socket");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -56,7 +55,7 @@ namespace NetworkingUtilities.Udp.Unicast
 			{
 				if (!(ar.AsyncState is ReceiverState state)) return;
 				var _ = state.Socket.EndSendTo(ar);
-				OnNewMessage($"Data were successfully sent to {state.Ip}:{state.Port}", "server", "server");
+				OnReportingStatus(StatusCode.Success, $"Successfully send {_} bytes to {state.Ip}:{state.Port} via UDP socket");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -80,6 +79,7 @@ namespace NetworkingUtilities.Udp.Unicast
 			try
 			{
 				ServerSocket.Bind(new IPEndPoint(IPAddress.Parse(Ip), Port));
+				OnReportingStatus(StatusCode.Success, $"Successfully bound to {ServerSocket.LocalEndPoint}");
 				Receive();
 			}
 			catch (ObjectDisposedException)
@@ -111,6 +111,7 @@ namespace NetworkingUtilities.Udp.Unicast
 
 				ServerSocket.BeginReceiveFrom(state.Buffer, 0, MaxBufferSize, SocketFlags.None, ref endpoint,
 					OnReceiveFromCallback, state);
+				OnReportingStatus(StatusCode.Info, "Started receiving bytes via UDP socket");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -132,7 +133,7 @@ namespace NetworkingUtilities.Udp.Unicast
 				var end = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
 				if (!(ar.AsyncState is ControlState state)) return;
 				var bytesRead = state.CurrentSocket.EndReceiveFrom(ar, ref end);
-
+				OnReportingStatus(StatusCode.Success, $"Successfully received {bytesRead} bytes from {end} via UDP socket");
 				if (!_clientsBuffers.ContainsKey(end))
 				{
 					var s = new ControlState
@@ -182,8 +183,7 @@ namespace NetworkingUtilities.Udp.Unicast
 			var state = _clientsBuffers[end];
 			using var stream = state.StreamBuffer;
 			stream.Seek(0, SeekOrigin.Begin);
-			var message = Encoding.UTF8.GetString(stream.ToArray());
-			OnNewMessage(message, ((IPEndPoint) end).ToString(), "server");
+			OnNewMessage(stream.ToArray(), ((IPEndPoint) end).ToString(), "server");
 		}
 	}
 }

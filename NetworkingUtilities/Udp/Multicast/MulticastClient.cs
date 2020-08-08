@@ -37,7 +37,8 @@ namespace NetworkingUtilities.Udp.Multicast
 
 				ClientSocket.BeginSendTo(data, 0, data.Length, SocketFlags.None, endpoint, OnSendToCallback,
 					ClientSocket);
-				OnReportingStatus(StatusCode.Info, $"Started sending {data.Length} bytes via UDP socket in multicast mode");
+				OnReportingStatus(StatusCode.Info,
+					$"Started sending {data.Length} bytes via UDP socket in multicast mode");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -59,7 +60,7 @@ namespace NetworkingUtilities.Udp.Multicast
 			try
 			{
 				var _ = socket.EndSendTo(ar);
-				OnReportingStatus(StatusCode.Success, "Successfully sent multicast message via UDP socket");
+				OnReportingStatus(StatusCode.Success, $"Successfully sent {_} bytes multicast via UDP socket");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -161,6 +162,7 @@ namespace NetworkingUtilities.Udp.Multicast
 				{
 					WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port, WhoAmI.Id);
 				}
+
 				OnReportingStatus(StatusCode.Success, $"Successfully bound to {WhoAmI.Ip}:{WhoAmI.Port}");
 				Receive();
 			}
