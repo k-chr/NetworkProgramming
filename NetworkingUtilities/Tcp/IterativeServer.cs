@@ -45,7 +45,7 @@ namespace NetworkingUtilities.Tcp
 			Clients.Clear();
 		}
 
-		public override void Send(string message, string to = "")
+		public override void Send(byte[] message, string to = "")
 		{
 			if (Clients.Any())
 			{
@@ -72,9 +72,9 @@ namespace NetworkingUtilities.Tcp
 			{
 				var endPoint = new IPEndPoint(IPAddress.Parse(Ip), Port);
 				ServerSocket.Bind(endPoint);
+				OnReportingStatus(StatusCode.Success, $"Successfully bound to {endPoint}");
 				ServerSocket.Listen(1);
-				OnNewMessage($"Server is currently listening on {endPoint.Address} on {endPoint.Port} port", "server",
-					"server");
+				OnReportingStatus(StatusCode.Info, $"Started iterative TCP listening on {endPoint}");
 				AcceptNextPendingConnection();
 			}
 			catch (ObjectDisposedException)
@@ -99,6 +99,7 @@ namespace NetworkingUtilities.Tcp
 			try
 			{
 				ServerSocket.BeginAccept(OnAcceptCallback, null);
+				OnReportingStatus(StatusCode.Info, "Started accepting new TCP connection");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -119,6 +120,7 @@ namespace NetworkingUtilities.Tcp
 			{
 				if (ServerSocket is null) throw new ArgumentException("Socket is null");
 				var client = ServerSocket.EndAccept(ar);
+				OnReportingStatus(StatusCode.Success, $"Successfully accepted new TCP connection");
 				var handler = new Client(client, true);
 				var whoAreYou = handler.WhoAmI;
 				OnNewClient(whoAreYou.Ip, whoAreYou.Id, whoAreYou.Port);
@@ -167,6 +169,13 @@ namespace NetworkingUtilities.Tcp
 					Clients.Remove(Clients.FirstOrDefault());
 				}
 			});
+
+			handler.AddStatusSubscription((o, o1) =>
+			{
+				if (o1 is StatusEvent @event)
+					OnReportingStatus(@event.StatusCode, @event.StatusMessage);
+			});
+
 			handler.StartService();
 		}
 
