@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Utilities.Events;
@@ -18,15 +17,14 @@ namespace NetworkingUtilities.Tcp
 		}
 
 		public Client(string address, in int port, ManualResetEvent manualResetEvent) : base(
-			new Socket(SocketType.Stream, ProtocolType.Tcp))
-		{
+			new Socket(SocketType.Stream, ProtocolType.Tcp)) =>
 			Connect(address, port, manualResetEvent);
-		}
 
 		private void Connect(string address, in int port, ManualResetEvent manualResetEvent)
 		{
 			try
 			{
+				OnReportingStatus(StatusCode.Info, $"Attempt to create TCP connection to {address}:{port} host");
 				ClientSocket.BeginConnect(address, port, OnConnectCallback,
 					new WaitState {ClientSocket = ClientSocket, BlockingEvent = manualResetEvent});
 			}
@@ -57,6 +55,8 @@ namespace NetworkingUtilities.Tcp
 						WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port);
 					}
 
+					OnReportingStatus(StatusCode.Success,
+						$"Successfully created TCP connection to {ClientSocket.RemoteEndPoint}");
 					OnConnect(WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port);
 				}
 				catch (ObjectDisposedException)
@@ -73,15 +73,14 @@ namespace NetworkingUtilities.Tcp
 			}
 		}
 
-		public override void Send(string message, string to = "") => Send(ClientSocket, message);
+		public override void Send(byte[] message, string to = "") => Send(ClientSocket, message);
 
-		private void Send(Socket clientSocket, string message)
+		private void Send(Socket clientSocket, byte[] bytes)
 		{
-			var bytes = Encoding.ASCII.GetBytes(message);
-
 			try
 			{
 				clientSocket.BeginSend(bytes, 0, bytes.Length, 0, OnSendCallback, clientSocket);
+				OnReportingStatus(StatusCode.Info, $"Started sending {bytes.Length} bytes to remote TCP end-point");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -103,6 +102,7 @@ namespace NetworkingUtilities.Tcp
 				if (ar.AsyncState is Socket socket)
 				{
 					var _ = socket.EndSend(ar);
+					OnReportingStatus(StatusCode.Success, $"Successfully send bytes to remote TCP end-point");
 				}
 			}
 			catch (ObjectDisposedException)
@@ -134,6 +134,7 @@ namespace NetworkingUtilities.Tcp
 			try
 			{
 				clientSocket.BeginReceive(state.Buffer, 0, state.Buffer.Length, 0, OnReceiveCallback, state);
+				OnReportingStatus(StatusCode.Info, "Started receiving bytes from remote TCP end-point");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -157,6 +158,8 @@ namespace NetworkingUtilities.Tcp
 				try
 				{
 					var bytesRead = clientSocket.EndReceive(ar);
+					OnReportingStatus(StatusCode.Success,
+						$"Successfully received {bytesRead} bytes from remote TCP end-point");
 					if (bytesRead > 0)
 					{
 						state.StreamBuffer.Write(state.Buffer, 0, bytesRead);
@@ -193,18 +196,19 @@ namespace NetworkingUtilities.Tcp
 				}
 			}
 		}
-		
+
 		public override void StopService() => Disconnect(ClientSocket);
 
 		public override void StartService() => Receive();
 
 		private void Disconnect(Socket clientSocket)
 		{
-			if(!IsConnected()) return;
+			if (!IsConnected()) return;
 			try
 			{
 				clientSocket.Shutdown(SocketShutdown.Both);
 				clientSocket.BeginDisconnect(true, OnDisconnectCallback, clientSocket);
+				OnReportingStatus(StatusCode.Info, "Attempt to disconnect from remote TCP end-point");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -229,7 +233,9 @@ namespace NetworkingUtilities.Tcp
 				try
 				{
 					socket.EndDisconnect(ar);
+					OnReportingStatus(StatusCode.Success, "Disconnected successfully from remote end-point");
 					socket.Close(2000);
+					OnReportingStatus(StatusCode.Success, "Successfully disposed TCP socket");
 				}
 				catch (ObjectDisposedException)
 				{

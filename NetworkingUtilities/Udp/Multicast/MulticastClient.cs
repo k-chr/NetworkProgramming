@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Extensions;
 using NetworkingUtilities.Utilities.Events;
@@ -30,15 +29,15 @@ namespace NetworkingUtilities.Udp.Multicast
 			_localPort = localPort;
 		}
 
-		public override void Send(string message, string to = "")
+		public override void Send(byte[] data, string to = "")
 		{
 			try
 			{
-				var data = Encoding.ASCII.GetBytes(message);
 				var endpoint = new IPEndPoint(_multicastAddress, _multicastPort);
 
 				ClientSocket.BeginSendTo(data, 0, data.Length, SocketFlags.None, endpoint, OnSendToCallback,
 					ClientSocket);
+				OnReportingStatus(StatusCode.Info, $"Started sending {data.Length} bytes via UDP socket in multicast mode");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -60,6 +59,7 @@ namespace NetworkingUtilities.Udp.Multicast
 			try
 			{
 				var _ = socket.EndSendTo(ar);
+				OnReportingStatus(StatusCode.Success, "Successfully sent multicast message via UDP socket");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -86,7 +86,9 @@ namespace NetworkingUtilities.Udp.Multicast
 					StreamBuffer = new MemoryStream()
 				};
 				var ep = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
+
 				ClientSocket.BeginReceiveFrom(state.Buffer, 0, MaxBufferSize, 0, ref ep, OnReceiveFromCallback, state);
+				OnReportingStatus(StatusCode.Info, "Started receiving bytes via UDP socket");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -110,6 +112,7 @@ namespace NetworkingUtilities.Udp.Multicast
 					var ep = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
 
 					var bytesRead = state.CurrentSocket.EndReceiveFrom(ar, ref ep);
+					OnReportingStatus(StatusCode.Success, $"Successfully received {bytesRead} bytes via UDP socket");
 					if (bytesRead > 0)
 					{
 						state.StreamBuffer.Write(state.Buffer, 0, bytesRead);
@@ -158,7 +161,7 @@ namespace NetworkingUtilities.Udp.Multicast
 				{
 					WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port, WhoAmI.Id);
 				}
-
+				OnReportingStatus(StatusCode.Success, $"Successfully bound to {WhoAmI.Ip}:{WhoAmI.Port}");
 				Receive();
 			}
 			catch (ObjectDisposedException)
