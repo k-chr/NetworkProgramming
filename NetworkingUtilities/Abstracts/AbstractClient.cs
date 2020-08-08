@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using NetworkingUtilities.Extensions;
 using NetworkingUtilities.Publishers;
 using NetworkingUtilities.Utilities.Events;
@@ -17,6 +16,7 @@ namespace NetworkingUtilities.Abstracts
 		private readonly IReporter _lastMessage;
 		private readonly IReporter _disconnected;
 		private readonly IReporter _connected;
+		private readonly IReporter _statusReporter;
 		protected readonly bool ServerHandler;
 
 		public ClientEvent WhoAmI { get; protected set; }
@@ -24,6 +24,7 @@ namespace NetworkingUtilities.Abstracts
 		protected AbstractClient(Socket clientSocket, bool serverHandler = false)
 		{
 			ClientSocket = clientSocket;
+			_statusReporter = new StatusReporter();
 			_lastException = new ExceptionReporter();
 			_lastMessage = new MessageReporter();
 			_disconnected = new ClientReporter();
@@ -68,7 +69,9 @@ namespace NetworkingUtilities.Abstracts
 
 		public void AddOnConnectedSubscription(Action<object, object> procedure) => _connected.AddSubscriber(procedure);
 
-		protected void OnNewMessage(string message, string from, string to) =>
+		public void AddStatusSubscription(Action<object, object> procedure) => _statusReporter.AddSubscriber(procedure);
+
+		protected void OnNewMessage(byte[] message, string from, string to) =>
 			_lastMessage.Notify((message, from, to));
 
 		protected void OnDisconnect(IPAddress ip, string id, int port) => _disconnected.Notify((ip, id, port));
@@ -78,7 +81,10 @@ namespace NetworkingUtilities.Abstracts
 		protected void OnCaughtException(Exception exception, EventCode code) =>
 			_lastException.Notify((exception, code));
 
-		public abstract void Send(string message, string to = "");
+		protected void OnReportingStatus(StatusCode code, string statusInfo) =>
+			_statusReporter.Notify((code, statusInfo));
+
+		public abstract void Send(byte[] data, string to = "");
 
 		public abstract void Receive();
 
@@ -90,7 +96,7 @@ namespace NetworkingUtilities.Abstracts
 		{
 			using var stream = streamBuffer;
 			stream.Seek(0, SeekOrigin.Begin);
-			var message = Encoding.UTF8.GetString(stream.ToArray()).Trim();
+			var message = stream.ToArray();
 			var (from, to) = ServerHandler ? (WhoAmI.Id, "server") : ("server", WhoAmI.Id);
 			OnNewMessage(message, @from, to);
 		}
