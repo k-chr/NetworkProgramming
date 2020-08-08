@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using Avalonia.Controls.Notifications;
 using ReactiveUI;
 using TimeClient.Models;
@@ -12,12 +11,12 @@ namespace TimeClient.ViewModels
 
 		private Services.TimeClient _client;
 
-		private string _selectedServer;
+		private ServerModel _selectedServer;
 		private bool _isValid;
 
 		public ConfigViewModel ConfigViewModel { get; }
 
-		public string SelectedServer
+		public ServerModel SelectedServer
 		{
 			get => _selectedServer;
 			set
@@ -34,7 +33,7 @@ namespace TimeClient.ViewModels
 			set => this.RaiseAndSetIfChanged(ref _isValid, value);
 		}
 
-		private void OnSelectedServerChanged(string old, string selectedServer)
+		private void OnSelectedServerChanged(ServerModel old, ServerModel selectedServer)
 		{
 		}
 
@@ -42,6 +41,7 @@ namespace TimeClient.ViewModels
 		{
 			_client?.StopService();
 			AccessibleServers?.Clear();
+			ConfigViewModel?.Save();
 		}
 
 		public MainWindowViewModel(IManagedNotificationManager managedNotificationManager)

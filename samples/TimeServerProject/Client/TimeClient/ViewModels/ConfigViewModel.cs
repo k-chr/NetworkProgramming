@@ -109,5 +109,10 @@ namespace TimeClient.ViewModels
 		public bool HasErrors => _propertiesErrors.Any();
 
 		public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+
+		public void Save()
+		{
+			
+		}
 	}
 }
