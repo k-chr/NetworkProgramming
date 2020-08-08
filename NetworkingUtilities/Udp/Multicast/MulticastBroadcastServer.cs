@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Extensions;
 using NetworkingUtilities.Utilities.Events;
@@ -49,22 +48,32 @@ namespace NetworkingUtilities.Udp.Multicast
 			{
 				var localAdd = IPAddress.Any;
 				var groupAddress = IPAddress.Parse(Ip);
+				OnReportingStatus(StatusCode.Info, $"Started configuring socket for {(_acceptBroadcast ? "broadcast" : "multicast")} communication");
 
 				if (!_acceptBroadcast)
 				{
 					ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, false);
 					ServerSocket.EnableBroadcast = false;
+					OnReportingStatus(StatusCode.Success, "Successfully unset Broadcast option");
+
 					ServerSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership,
 						new MulticastOption(groupAddress, localAdd));
+					OnReportingStatus(StatusCode.Success, $"Successfully set AddMembership multicast option ({groupAddress})");
 				}
 				else
 				{
 					ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+					OnReportingStatus(StatusCode.Success, "Successfully set ReuseAddress option");
+
 					ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
+					OnReportingStatus(StatusCode.Success, "Successfully set Broadcast option");
+
 					ServerSocket.EnableBroadcast = true;
 				}
 
-				ServerSocket.Bind(new IPEndPoint(localAdd, Port));
+				var endpoint = new IPEndPoint(localAdd, Port);
+				ServerSocket.Bind(endpoint);
+				OnReportingStatus(StatusCode.Success, $"Successfully bound to {endpoint}");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -93,6 +102,7 @@ namespace NetworkingUtilities.Udp.Multicast
 				var endPoint = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
 				ServerSocket.BeginReceiveFrom(state.Buffer, 0, state.Buffer.Length, 0, ref endPoint,
 					OnReceiveFromCallback, state);
+				OnReportingStatus(StatusCode.Info, $"Stared receiving {(_acceptBroadcast ? "broadcast" : "multicast")} bytes via UDP socket");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -114,6 +124,8 @@ namespace NetworkingUtilities.Udp.Multicast
 				var end = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
 				if (!(ar.AsyncState is ControlState state)) return;
 				var bytesRead = state.CurrentSocket.EndReceiveFrom(ar, ref end);
+				OnReportingStatus(StatusCode.Success,
+					$"Successfully received {bytesRead} bytes by {(_acceptBroadcast ? "broadcast" : "multicast")} via UDP socket");
 
 				if (!_clientsBuffers.ContainsKey(end))
 				{
@@ -160,15 +172,13 @@ namespace NetworkingUtilities.Udp.Multicast
 			var state = _clientsBuffers[end];
 			using var stream = state.StreamBuffer;
 			stream.Seek(0, SeekOrigin.Begin);
-			var message = Encoding.UTF8.GetString(stream.ToArray());
-			OnNewMessage(message, ((IPEndPoint) end).ToString(), "server");
+			OnNewMessage(stream.ToArray(), ((IPEndPoint) end).ToString(), "server");
 		}
 
-		public override void Send(string message, string to = "")
+		public override void Send(byte[] data, string to = "")
 		{
 			try
 			{
-				var data = Encoding.ASCII.GetBytes(message);
 				var endpoint = IPEndPoint.Parse(to);
 				var state = new ReceiverState
 				{
@@ -178,6 +188,7 @@ namespace NetworkingUtilities.Udp.Multicast
 				};
 
 				ServerSocket.BeginSendTo(data, 0, data.Length, SocketFlags.None, endpoint, OnSendToCallback, state);
+				OnReportingStatus(StatusCode.Info, $"Started sending bytes to {endpoint} via UDP socket");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -198,7 +209,7 @@ namespace NetworkingUtilities.Udp.Multicast
 			{
 				if (!(ar.AsyncState is ReceiverState state)) return;
 				var _ = state.Socket.EndSendTo(ar);
-				OnNewMessage($"Data were successfully sent to {state.Ip}:{state.Port}", "server", "server");
+				OnReportingStatus(StatusCode.Success, $"Successfully sent {_} bytes to {state.Ip}:{state.Port}");
 			}
 			catch (ObjectDisposedException)
 			{

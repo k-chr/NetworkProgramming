@@ -155,8 +155,10 @@ namespace NetworkingUtilities.Udp.Multicast
 				OnReportingStatus(StatusCode.Info, "Started configuring socket for broadcast communication");
 
 				ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
+				OnReportingStatus(StatusCode.Success, "Successfully set Broadcast option");
+
 				ClientSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 32);
-				OnReportingStatus(StatusCode.Success, "Successfully set Broadcast option and Multicast TTL option");
+				OnReportingStatus(StatusCode.Success, "Successfully set Multicast TTL option");
 
 				ClientSocket.Bind(new IPEndPoint(_ipAddress, _localPort));
 				OnReportingStatus(StatusCode.Success, $"Successfully bound to {ClientSocket.LocalEndPoint}");
