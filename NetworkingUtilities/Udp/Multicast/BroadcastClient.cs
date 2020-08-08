@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Extensions;
 using NetworkingUtilities.Utilities.Events;
@@ -29,15 +28,15 @@ namespace NetworkingUtilities.Udp.Multicast
 			SetBroadcastIp(interfaceIp);
 		}
 
-		public override void Send(string message, string to = "")
+		public override void Send(byte[] data, string to = "")
 		{
 			try
 			{
-				var data = Encoding.ASCII.GetBytes(message);
 				var endpoint = new IPEndPoint(_address, _port);
 
 				ClientSocket.BeginSendTo(data, 0, data.Length, SocketFlags.None, endpoint, OnSendToCallback,
 					ClientSocket);
+				OnReportingStatus(StatusCode.Info, "Started sending UDP broadcast message");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -59,6 +58,7 @@ namespace NetworkingUtilities.Udp.Multicast
 			try
 			{
 				var _ = socket.EndSendTo(ar);
+				OnReportingStatus(StatusCode.Success, $"Successfully broadcast {_} bytes");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -86,6 +86,7 @@ namespace NetworkingUtilities.Udp.Multicast
 				};
 				var ep = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
 				ClientSocket.BeginReceiveFrom(state.Buffer, 0, MaxBufferSize, 0, ref ep, OnReceiveFromCallback, state);
+				OnReportingStatus(StatusCode.Info, "Started receiving bytes via UDP socket");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -109,6 +110,7 @@ namespace NetworkingUtilities.Udp.Multicast
 					var ep = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
 
 					var bytesRead = state.CurrentSocket.EndReceiveFrom(ar, ref ep);
+					OnReportingStatus(StatusCode.Success, $"Successfully received {bytesRead} bytes via UDP socket");
 					if (bytesRead > 0)
 					{
 						state.StreamBuffer.Write(state.Buffer, 0, bytesRead);
@@ -150,9 +152,14 @@ namespace NetworkingUtilities.Udp.Multicast
 		{
 			try
 			{
+				OnReportingStatus(StatusCode.Info, "Started configuring socket for broadcast communication");
+
 				ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
 				ClientSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 32);
+				OnReportingStatus(StatusCode.Success, "Successfully set Broadcast option and Multicast TTL option");
+
 				ClientSocket.Bind(new IPEndPoint(_ipAddress, _localPort));
+				OnReportingStatus(StatusCode.Success, $"Successfully bound to {ClientSocket.LocalEndPoint}");
 
 				if (ClientSocket.LocalEndPoint is IPEndPoint endPoint)
 				{

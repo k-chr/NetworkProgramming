@@ -22,7 +22,7 @@ namespace TimeClient.ViewModels
 			set
 			{
 				var old = _selectedServer;
-				_selectedServer = value;
+				this.RaiseAndSetIfChanged(ref _selectedServer, value);
 				OnSelectedServerChanged(old, _selectedServer);
 			}
 		}
@@ -35,6 +35,8 @@ namespace TimeClient.ViewModels
 
 		private void OnSelectedServerChanged(ServerModel old, ServerModel selectedServer)
 		{
+			if(!old.Equals(selectedServer))
+				ConfigViewModel.SelectedServer = selectedServer;
 		}
 
 		public void OnClosing()

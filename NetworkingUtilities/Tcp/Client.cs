@@ -102,7 +102,7 @@ namespace NetworkingUtilities.Tcp
 				if (ar.AsyncState is Socket socket)
 				{
 					var _ = socket.EndSend(ar);
-					OnReportingStatus(StatusCode.Success, $"Successfully send bytes to remote TCP end-point");
+					OnReportingStatus(StatusCode.Success, $"Successfully send {_} bytes to remote TCP end-point");
 				}
 			}
 			catch (ObjectDisposedException)

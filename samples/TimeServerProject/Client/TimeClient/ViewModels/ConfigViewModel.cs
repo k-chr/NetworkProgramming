@@ -6,6 +6,7 @@ using System.Linq;
 using NetworkingUtilities.Extensions;
 using ReactiveUI;
 using TimeClient.Exceptions;
+using TimeClient.Models;
 
 namespace TimeClient.ViewModels
 {
@@ -16,6 +17,8 @@ namespace TimeClient.ViewModels
 		private int _localPort;
 		private int _discoveryQueryPeriod;
 		private int _timeQueryPeriod;
+
+		public ServerModel SelectedServer { get; set; }
 
 		private static readonly Dictionary<string, string> DefaultPropertiesErrors = new Dictionary<string, string>
 		{
