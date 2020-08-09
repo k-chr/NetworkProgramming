@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using NetworkingUtilities.Tcp;
 using NetworkingUtilities.Utilities.Events;
@@ -40,7 +41,6 @@ namespace NetworkProgramming.Lab2
 
 		private static void ClearInputArea()
 		{
-			Done.Reset();
 			var (inputBegin, inputEnd) = ConsoleLinePositions["INPUT"];
 
 			for (var i = inputBegin; i <= inputEnd; ++i)
@@ -54,34 +54,31 @@ namespace NetworkProgramming.Lab2
 
 		private static void DisplayMenu()
 		{
+			Done.WaitOne();
 			ClearInputArea();
 			var (begin, _) = ConsoleLinePositions["INPUT"];
-			Console.SetCursorPosition(0, begin);
+			var builder = new StringBuilder();
+			var lines = 2;
+			builder.Append("Type number of operation:\n").Append("__________________\n");
 			Console.ForegroundColor = ConsoleColor.DarkYellow;
-			Console.Write("Type number of operation:");
-			++begin;
-			Console.SetCursorPosition(0, begin);
-			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.Write("__________________");
-			++begin;
 
 			foreach (var (key, value) in Menu)
 			{
-				Console.SetCursorPosition(0, begin);
-				Console.Write($"| {key} | {value,10} |");
-				++begin;
+				builder.Append($"| {key} | {value,10} |\n");
+				++lines;
 			}
 
+			builder.Append("------------------\n");
+
 			Console.SetCursorPosition(0, begin);
-			Console.Write("------------------");
-			++begin;
-			Console.SetCursorPosition(0, begin);
+			Console.Write(builder.ToString());
+			Console.SetCursorPosition(0, begin + lines + 1);
 			Console.ForegroundColor = ConsoleColor.White;
 			Console.SetCursorPosition(0, ConsoleLinePositions["Info"].Item1 - 1);
 			Console.Write(new string(' ', Console.WindowWidth));
 			Console.SetCursorPosition(0, ConsoleLinePositions["Info"].Item1);
 			Console.Write("Log: ");
-			Console.SetCursorPosition(0, begin);
+			Console.SetCursorPosition(0, begin + lines + 1);
 			Done.Set();
 		}
 
@@ -94,6 +91,7 @@ namespace NetworkProgramming.Lab2
 
 		private static Tuple<string, string> DisplayIPv4PortDialog()
 		{
+			Done.WaitOne();
 			ClearInputArea();
 			var (begin, _) = ConsoleLinePositions["INPUT"];
 			Console.SetCursorPosition(0, begin);
@@ -113,11 +111,13 @@ namespace NetworkProgramming.Lab2
 			++begin;
 			Console.SetCursorPosition(0, begin);
 			Done.Set();
+
 			return Tuple.Create(address, portStr);
 		}
 
 		private static string DisplayMessageDialog()
 		{
+			Done.WaitOne();
 			ClearInputArea();
 			var (begin, _) = ConsoleLinePositions["INPUT"];
 			Console.SetCursorPosition(0, begin);
@@ -141,6 +141,7 @@ namespace NetworkProgramming.Lab2
 			Logger.LoggerBeginLine = ConsoleLinePositions["LOG"].Item1;
 			Logger.ReturnLine = ConsoleLinePositions["INPUT"].Item2;
 			Logger.CanWrite = Done;
+			Done.Set();
 			var numStr = DisplayMenuFeed();
 			while (true)
 			{
@@ -160,6 +161,7 @@ namespace NetworkProgramming.Lab2
 				}
 				finally
 				{
+					Done.Set();
 					numStr = DisplayMenuFeed();
 				}
 			}
@@ -238,7 +240,7 @@ namespace NetworkProgramming.Lab2
 
 			var message = DisplayMessageDialog();
 
-			_client.Send(message);
+			_client.Send(Encoding.ASCII.GetBytes(message));
 			Logger.LogInfo($"Sent message: {message}\n");
 		}
 
@@ -288,12 +290,13 @@ namespace NetworkProgramming.Lab2
 				{
 					var message = exceptionEvent.LastErrorCode switch
 								  {
-									  EventCode.Other => "",
+									  EventCode.Other => "Other error occurred\n",
 									  EventCode.Receive => OnReceiveErrorMessage,
 									  EventCode.Connect => OnConnectErrorMessage,
 									  EventCode.Send => OnSendErrorMessage,
 									  EventCode.Disconnect => OnDisconnectErrorMessage,
 									  EventCode.Accept => "",
+									  EventCode.Bind => "",
 									  _ => throw new ArgumentOutOfRangeException()
 								  };
 					Logger.LogError(exceptionEvent.LastError, message);
@@ -305,18 +308,11 @@ namespace NetworkProgramming.Lab2
 			{
 				if (o1 is MessageEvent messageEvent)
 				{
-					if (messageEvent.From.Equals(messageEvent.To))
+					Logger.Log(new object[]
 					{
-						Logger.LogInfo(messageEvent.Message);
-					}
-					else
-					{
-						Logger.Log(new object[]
-						{
-							Logger.MessageType.Server,
-							messageEvent.Message
-						});
-					}
+						Logger.MessageType.Server,
+						Encoding.ASCII.GetString(messageEvent.Message)
+					});
 				}
 			});
 
@@ -340,6 +336,26 @@ namespace NetworkProgramming.Lab2
 					{
 						Logger.MessageType.Success,
 						OnConnectSuccessMessage
+					});
+				}
+			});
+
+			_client.AddStatusSubscription((o, o1) =>
+			{
+				if (o1 is StatusEvent status)
+				{
+					var messageType = status.StatusCode switch
+									  {
+										  StatusCode.Error => Logger.MessageType.Error,
+										  StatusCode.Success => Logger.MessageType.Success,
+										  StatusCode.Info => Logger.MessageType.Info,
+										  _ => throw new ArgumentOutOfRangeException()
+									  };
+
+					Logger.Log(new object[]
+					{
+						messageType, 
+						status.StatusMessage
 					});
 				}
 			});

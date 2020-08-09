@@ -67,7 +67,7 @@ namespace NetworkProgramming.Lab2
 						  (exception.InnerException is { } e ? $"{e.Message}\n" : "");
 			Console.Write(message);
 			Console.ForegroundColor = ConsoleColor.White;
-			LoggerBeginLine = Console.CursorTop + 1;
+			LoggerBeginLine = LoggerBeginLine + Overlap(message) + 1;
 			Console.SetCursorPosition(0, ReturnLine);
 			RecoveredLogs.Add(Tuple.Create(MessageType.Error, message));
 			CanWrite?.Set();
@@ -125,8 +125,9 @@ namespace NetworkProgramming.Lab2
 
 		private static int Overlap(string message)
 		{
-			var overlap = message.Sum(c => c == '\n' ? 1 : 0);
-			overlap += (int) (Math.Ceiling(overlap / (double) Console.BufferWidth));
+			var strings = message.Split('\n');
+			var overlap = (int) strings.Sum(s =>
+				Math.Ceiling(s.Sum(c => c == '\t' ? 3 : 1) / (double) Console.BufferWidth));
 			return overlap;
 		}
 

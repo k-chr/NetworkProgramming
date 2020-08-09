@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Text;
 using Avalonia.Threading;
 using CustomControls.Models;
 using NetworkingUtilities.Tcp;
@@ -93,19 +94,13 @@ namespace NetworkProgramming.Lab3.ViewModels
 			{
 				if (obj is MessageEvent messageEvent)
 				{
-					var builder = InternalMessageModel.Builder().AttachTextMessage(messageEvent.Message);
-					if (messageEvent.From.Equals(messageEvent.To))
-					{
-						builder = builder.WithType(InternalMessageType.Info);
-					}
-					else
-					{
-						builder = builder.WithType(InternalMessageType.Client)
+					var builder = InternalMessageModel.Builder().AttachTextMessage(Encoding.ASCII.GetString(messageEvent.Message));
+					builder = builder.WithType(InternalMessageType.Client)
 						   .AttachClientData(Clients.First(clientModel => clientModel.Id.Equals(messageEvent.From)));
-					}
 
 					var model = builder.BuildMessage();
 					AddLog(model);
+					_server.Send(messageEvent.Message);
 				}
 			});
 
@@ -122,6 +117,24 @@ namespace NetworkProgramming.Lab3.ViewModels
 				ShowPopUp();
 			});
 
+			_server.AddStatusSubscription((o, o1) =>
+			{
+				if (o1 is StatusEvent status)
+				{
+					var type = status.StatusCode switch
+							   {
+								   StatusCode.Error => InternalMessageType.Error,
+								   StatusCode.Success => InternalMessageType.Success,
+								   StatusCode.Info => InternalMessageType.Info,
+								   _ => throw new ArgumentOutOfRangeException()
+							   };
+					var messageModel = InternalMessageModel.Builder().WithType(type).AttachTimeStamp(true)
+					   .AttachTextMessage(status.StatusMessage).BuildMessage();
+
+					AddLog(messageModel);
+				}
+			});
+
 			_server.AddExceptionSubscription((o, o1) =>
 			{
 				if (o1 is ExceptionEvent exceptionEvent)
@@ -134,6 +147,7 @@ namespace NetworkProgramming.Lab3.ViewModels
 									  EventCode.Receive => "Cannot obtain message from sender",
 									  EventCode.Accept => "Cannot accept client properly",
 									  EventCode.Other => "Unknown error occured",
+									  EventCode.Bind => "Cannot bind socket to specified address",
 									  _ => throw new ArgumentOutOfRangeException()
 								  };
 					var builder = InternalMessageModel.Builder().WithType(InternalMessageType.Error)
