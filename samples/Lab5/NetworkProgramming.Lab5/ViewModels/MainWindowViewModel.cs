@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Text;
 using Avalonia.Threading;
 using CustomControls.Models;
 using NetworkingUtilities.Tcp;
@@ -81,14 +82,9 @@ namespace NetworkProgramming.Lab5.ViewModels
 			{
 				if (obj is MessageEvent messageEvent)
 				{
-					var builder = InternalMessageModel.Builder().AttachTextMessage(messageEvent.Message);
-					if (messageEvent.From.Equals(messageEvent.To))
-					{
-						builder = builder.WithType(InternalMessageType.Info);
-						var model = builder.BuildMessage();
-						AddLog(model);
-					}
-					else if (!messageEvent.From.Equals("server"))
+					var builder = InternalMessageModel.Builder()
+					   .AttachTextMessage(Encoding.ASCII.GetString(messageEvent.Message));
+					if (!messageEvent.From.Equals("server"))
 					{
 						builder = builder.WithType(InternalMessageType.Client)
 						   .AttachClientData(Clients.First(clientModel => clientModel.Id.Equals(messageEvent.From)));
