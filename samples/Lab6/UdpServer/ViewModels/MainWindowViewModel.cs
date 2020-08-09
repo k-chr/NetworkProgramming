@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using Avalonia.Media;
 using Avalonia.Threading;
@@ -120,7 +121,7 @@ namespace UdpServer.ViewModels
 		public void SendMessage(string message, string ip, int port)
 		{
 			if (string.IsNullOrEmpty(message)) return;
-			_udpServer.Send(message, $"{ip}:{port}");
+			_udpServer.Send(Encoding.ASCII.GetBytes(message), $"{ip}:{port}");
 			var builder = InternalMessageModel.Builder();
 			foreach (var model in Conversations)
 			{
@@ -167,20 +168,22 @@ namespace UdpServer.ViewModels
 			{
 				if (o1 is MessageEvent message)
 				{
+					var textMessage = Encoding.ASCII.GetString(message.Message);
 					if (message.From.Equals(message.To))
 					{
 						var builder = InternalMessageModel.Builder().AttachTimeStamp(true)
-						   .WithType(InternalMessageType.Info).AttachTextMessage(message.Message);
+						   .WithType(InternalMessageType.Info).AttachTextMessage(textMessage);
 						AddLog(builder.BuildMessage());
 					}
 					else
 					{
 						var client = FindClientModel(IPEndPoint.Parse(message.From));
 						var builder = InternalMessageModel.Builder().AttachTimeStamp(true)
-						   .WithType(InternalMessageType.Client).AttachTextMessage(message.Message)
+						   .WithType(InternalMessageType.Client).AttachTextMessage(textMessage)
 						   .AttachClientData(client);
 						AddMessage(builder.BuildMessage());
-						SendMessage(message.Message, client.Ip, client.Port);
+						AddLog(builder.BuildMessage());
+						SendMessage(textMessage, client.Ip, client.Port);
 					}
 				}
 			});

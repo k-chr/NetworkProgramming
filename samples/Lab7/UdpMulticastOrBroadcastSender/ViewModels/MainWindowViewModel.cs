@@ -12,6 +12,7 @@ using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Udp.Multicast;
 using NetworkingUtilities.Utilities.Events;
 using ReactiveUI;
+using Encoding = System.Text.Encoding;
 
 namespace UdpMulticastOrBroadcastSender.ViewModels
 {
@@ -102,7 +103,7 @@ namespace UdpMulticastOrBroadcastSender.ViewModels
 		public void Send()
 		{
 			if (string.IsNullOrEmpty(MessageToSend)) return;
-			_service.Send(MessageToSend);
+			_service.Send(Encoding.ASCII.GetBytes(MessageToSend));
 			MessageToSend = "";
 		}
 

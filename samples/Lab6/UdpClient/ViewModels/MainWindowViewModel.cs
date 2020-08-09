@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reflection;
+using System.Text;
 using Avalonia.Media;
 using Avalonia.Threading;
 using CustomControls.Models;
@@ -44,7 +45,7 @@ namespace UdpClient.ViewModels
 			   .AttachTextMessage(InputMessage)
 			   .AttachTimeStamp(true).AttachClientData(_you).BuildMessage();
 			AddMessage(msg);
-			_clientService.Send(InputMessage);
+			_clientService.Send(Encoding.ASCII.GetBytes(InputMessage));
 			InputMessage = "";
 		}
 
@@ -144,7 +145,7 @@ namespace UdpClient.ViewModels
 			{
 				if (o1 is MessageEvent messageEvent)
 				{
-					var builder = InternalMessageModel.Builder().AttachTextMessage(messageEvent.Message);
+					var builder = InternalMessageModel.Builder().AttachTextMessage(Encoding.ASCII.GetString(messageEvent.Message));
 					if (messageEvent.From.Equals(messageEvent.To))
 					{
 						builder = builder.WithType(InternalMessageType.Info);
