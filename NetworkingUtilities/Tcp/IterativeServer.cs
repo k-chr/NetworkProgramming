@@ -3,6 +3,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Security;
+using System.Threading;
+using System.Threading.Tasks;
 using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Utilities.Events;
 
@@ -37,9 +39,12 @@ namespace NetworkingUtilities.Tcp
 
 		private void CleanClients()
 		{
-			foreach (var abstractClient in Clients)
+			lock (Lock)
 			{
-				abstractClient.StopService();
+				foreach (var abstractClient in Clients)
+				{
+					abstractClient.StopService();
+				}
 			}
 
 			Clients.Clear();
@@ -126,7 +131,10 @@ namespace NetworkingUtilities.Tcp
 				OnNewClient(whoAreYou.Ip, whoAreYou.Id, whoAreYou.Port);
 				CleanClients();
 				RegisterHandler(handler);
-				Clients.Add(handler);
+				lock (Lock)
+				{
+					Clients.Add(handler);
+				}
 			}
 			catch (ObjectDisposedException)
 			{
@@ -165,8 +173,21 @@ namespace NetworkingUtilities.Tcp
 			{
 				if (o1 is ClientEvent @event)
 				{
-					OnDisconnect(@event.Ip, @event.Id, @event.Port);
-					Clients.Remove(Clients.FirstOrDefault());
+					try
+					{
+						Task.Run(() =>
+						{
+							lock (Lock)
+							{
+								Clients.Remove(Clients.FirstOrDefault());
+								OnDisconnect(@event.Ip, @event.Id, @event.Port);
+							}
+						});
+					}
+					catch (Exception)
+					{
+						//ignored
+					}
 				}
 			});
 

@@ -10,7 +10,7 @@ namespace NetworkingUtilities.Publishers
 
 		public void Notify(object obj)
 		{
-			if (obj is ValueTuple<string, string, string> message)
+			if (obj is ValueTuple<byte[], string, string> message)
 				Report?.Invoke(this, new MessageEvent(message.Item1, message.Item2, message.Item3));
 		}
 

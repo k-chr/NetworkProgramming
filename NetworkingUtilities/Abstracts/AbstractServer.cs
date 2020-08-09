@@ -19,6 +19,7 @@ namespace NetworkingUtilities.Abstracts
 		private readonly IReporter _disconnected;
 		private readonly IReporter _newClient;
 		protected Socket ServerSocket;
+		protected static readonly object Lock = new object();
 
 		protected AbstractServer(string ip, int port, string interfaceName)
 		{

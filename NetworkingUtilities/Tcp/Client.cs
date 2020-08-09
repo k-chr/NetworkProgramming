@@ -79,8 +79,8 @@ namespace NetworkingUtilities.Tcp
 		{
 			try
 			{
-				clientSocket.BeginSend(bytes, 0, bytes.Length, 0, OnSendCallback, clientSocket);
 				OnReportingStatus(StatusCode.Info, $"Started sending {bytes.Length} bytes to remote TCP end-point");
+				clientSocket.BeginSend(bytes, 0, bytes.Length, 0, OnSendCallback, clientSocket);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -133,8 +133,8 @@ namespace NetworkingUtilities.Tcp
 		{
 			try
 			{
-				clientSocket.BeginReceive(state.Buffer, 0, state.Buffer.Length, 0, OnReceiveCallback, state);
 				OnReportingStatus(StatusCode.Info, "Started receiving bytes from remote TCP end-point");
+				clientSocket.BeginReceive(state.Buffer, 0, state.Buffer.Length, 0, OnReceiveCallback, state);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -177,10 +177,11 @@ namespace NetworkingUtilities.Tcp
 					}
 					else
 					{
-						Disconnect(ClientSocket);
+						Disconnect(clientSocket);
+						return;
 					}
-
 					Receive(clientSocket, state);
+
 				}
 				catch (ObjectDisposedException)
 				{
@@ -203,12 +204,19 @@ namespace NetworkingUtilities.Tcp
 
 		private void Disconnect(Socket clientSocket)
 		{
-			if (!IsConnected()) return;
 			try
 			{
-				clientSocket.Shutdown(SocketShutdown.Both);
-				clientSocket.BeginDisconnect(true, OnDisconnectCallback, clientSocket);
 				OnReportingStatus(StatusCode.Info, "Attempt to disconnect from remote TCP end-point");
+				clientSocket.Shutdown(SocketShutdown.Both);
+				if (ServerHandler)
+				{
+					clientSocket.Close();
+					OnDisconnect(WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port);
+				}
+				else
+				{
+					clientSocket.BeginDisconnect(false, OnDisconnectCallback, clientSocket);
+				}
 			}
 			catch (ObjectDisposedException)
 			{
@@ -234,7 +242,7 @@ namespace NetworkingUtilities.Tcp
 				{
 					socket.EndDisconnect(ar);
 					OnReportingStatus(StatusCode.Success, "Disconnected successfully from remote end-point");
-					socket.Close(2000);
+					socket.Close(1000);
 					OnReportingStatus(StatusCode.Success, "Successfully disposed TCP socket");
 				}
 				catch (ObjectDisposedException)
