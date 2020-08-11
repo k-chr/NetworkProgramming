@@ -18,28 +18,48 @@ namespace TimeClient.Services
 
 		public IObservable<object> LoadState()
 		{
-			var bytes = File.ReadAllBytes(_path);
-			var discoverPeriod = bytes[..4];
-			var timePeriod = bytes[4..8];
-			var localPort = bytes[8..12];
-			var multicastPort = bytes[12..16];
-			var multicastAddress = bytes[16..20];
-			var selectedServerAddress = bytes[20..24];
-			var selectedServerPort = bytes[24..28];
-			var selectedServerName = bytes[28..];
-
-			var configViewModel = new ConfigViewModel
+			ConfigViewModel configViewModel;
+			try
 			{
-				DiscoveryQueryPeriod = BitConverter.ToInt32(discoverPeriod),
-				TimeQueryPeriod = BitConverter.ToInt32(timePeriod),
-				LocalPort = BitConverter.ToInt32(localPort),
-				MulticastPort = BitConverter.ToInt32(multicastPort),
-				MulticastAddress = new IPAddress(multicastAddress).ToString(),
-				SelectedServer =
-					ServerModel.Create(
-						new IPEndPoint(new IPAddress(selectedServerAddress), BitConverter.ToInt32(selectedServerPort)),
-						Encoding.ASCII.GetString(selectedServerName))
-			};
+				var bytes = File.ReadAllBytes(_path);
+				var discoverPeriod = bytes[..4];
+				var timePeriod = bytes[4..8];
+				var localPort = bytes[8..12];
+				var multicastPort = bytes[12..16];
+				var multicastAddress = bytes[16..20];
+				var selectedServerAddress = bytes[20..24];
+				var selectedServerPort = bytes[24..28];
+				var selectedServerName = bytes[28..];
+				var server = ServerModel.Create(
+					new IPEndPoint(new IPAddress(selectedServerAddress),
+						BitConverter.ToInt32(selectedServerPort)), Encoding.ASCII.GetString(selectedServerName));
+
+				if (server.Ip.Address.Equals(IPAddress.None))
+					server = null;
+
+				configViewModel = new ConfigViewModel
+				{
+					DiscoveryQueryPeriod = BitConverter.ToInt32(discoverPeriod),
+					TimeQueryPeriod = BitConverter.ToInt32(timePeriod),
+					LocalPort = BitConverter.ToInt32(localPort),
+					MulticastPort = BitConverter.ToInt32(multicastPort),
+					MulticastAddress = new IPAddress(multicastAddress).ToString(),
+					SelectedServer = server
+				};
+			}
+			catch (Exception)
+			{
+				var r = new Random();
+				configViewModel = new ConfigViewModel
+				{
+					DiscoveryQueryPeriod = 10,
+					LocalPort = r.Next(0, ushort.MaxValue),
+					TimeQueryPeriod = 10,
+					MulticastPort = 7,
+					MulticastAddress = "224.0.0.0"
+				};
+			}
+
 
 			return Observable.Return(configViewModel);
 		}
@@ -54,9 +74,10 @@ namespace TimeClient.Services
 				stream.Write(BitConverter.GetBytes(model.LocalPort), 0, 4);
 				stream.Write(BitConverter.GetBytes(model.MulticastPort), 0, 4);
 				stream.Write(IPAddress.Parse(model.MulticastAddress).GetAddressBytes(), 0, 4);
-				stream.Write(model.SelectedServer.Ip.Address.GetAddressBytes(), 0, 4);
-				stream.Write(BitConverter.GetBytes(model.SelectedServer.Ip.Port), 0, 4);
-				var name = Encoding.ASCII.GetBytes(model.SelectedServer.Name);
+				stream.Write(model.SelectedServer?.Ip.Address.GetAddressBytes() ??
+							 IPAddress.None.GetAddressBytes(), 0, 4);
+				stream.Write(BitConverter.GetBytes(model.SelectedServer?.Ip.Port ?? 0), 0, 4);
+				var name = Encoding.ASCII.GetBytes(model.SelectedServer?.Name ?? "");
 				stream.Write(name, 0, name.Length);
 				stream.Seek(0, SeekOrigin.Begin);
 				File.WriteAllBytes(_path, stream.ToArray());
@@ -67,7 +88,7 @@ namespace TimeClient.Services
 
 		public IObservable<Unit> InvalidateState()
 		{
-			if(File.Exists(_path))
+			if (File.Exists(_path))
 				File.Delete(_path);
 			return Observable.Return(Unit.Default);
 		}

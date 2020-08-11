@@ -4,7 +4,10 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
+using Avalonia.ReactiveUI;
 using Avalonia.Styling;
+using ReactiveUI;
+using TimeClient.Services;
 using TimeClient.ViewModels;
 using TimeClient.Views;
 
@@ -12,6 +15,8 @@ namespace TimeClient
 {
 	public class App : Application
 	{
+		private AutoSuspendHelper _suspendHelper;
+
 		public static readonly Styles FluentDark = new Styles
 		{
 			new StyleInclude(new Uri("resm:Styles?assembly=TimeClient"))
@@ -31,7 +36,9 @@ namespace TimeClient
 		public override void Initialize()
 		{
 			AvaloniaXamlLoader.Load(this);
-
+			_suspendHelper = new AutoSuspendHelper(ApplicationLifetime);
+			RxApp.SuspensionHost.CreateNewAppState = () => new ConfigViewModel();
+			RxApp.SuspensionHost.SetupDefaultSuspendResume(new BinaryConfigurationSuspensionDriver("Config.bin"));
 			Styles.Insert(0, FluentDark);
 		}
 
@@ -39,8 +46,10 @@ namespace TimeClient
 		{
 			if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 			{
+				_suspendHelper.OnFrameworkInitializationCompleted();
 				var mainWindow = new MainWindow();
-				var viewModel = new MainWindowViewModel(mainWindow.NotificationArea);
+
+				var viewModel = new MainWindowViewModel(mainWindow.NotificationArea, RxApp.SuspensionHost.GetAppState<ConfigViewModel>());
 				
 				mainWindow.DataContext = viewModel;
 				desktop.MainWindow = mainWindow;

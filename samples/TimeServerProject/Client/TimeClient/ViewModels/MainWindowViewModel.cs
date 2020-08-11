@@ -35,7 +35,7 @@ namespace TimeClient.ViewModels
 
 		private void OnSelectedServerChanged(ServerModel old, ServerModel selectedServer)
 		{
-			if(!old.Equals(selectedServer))
+			if (!(selectedServer is null) && !old.Equals(selectedServer))
 				ConfigViewModel.SelectedServer = selectedServer;
 		}
 
@@ -43,16 +43,15 @@ namespace TimeClient.ViewModels
 		{
 			_client?.StopService();
 			AccessibleServers?.Clear();
-			ConfigViewModel?.Save();
 		}
 
-		public MainWindowViewModel(IManagedNotificationManager managedNotificationManager)
+		public MainWindowViewModel(IManagedNotificationManager managedNotificationManager,
+			ConfigViewModel configViewModel)
 		{
 			_managedNotificationManager = managedNotificationManager;
-			ConfigViewModel = new ConfigViewModel();
+			ConfigViewModel = configViewModel;
 		}
 
 		public ObservableCollection<ServerModel> AccessibleServers { get; } = new ObservableCollection<ServerModel>();
-
 	}
 }
