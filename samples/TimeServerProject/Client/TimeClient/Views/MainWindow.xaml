@@ -22,10 +22,6 @@
 	  </Style>
    </FluentWindow.Styles>
 
-   <Design.DataContext>
-	  <vm:MainWindowViewModel />
-   </Design.DataContext>
-
    <Panel Margin="{Binding #MainWindow.OffScreenMargin}">
 	  <Grid HorizontalAlignment="Stretch" ColumnDefinitions="Auto,*">
 		 <ExperimentalAcrylicBorder Grid.Column="0" Width="240">
@@ -49,7 +45,6 @@
 
 	  <TabControl x:Name="TabControl" TabStripPlacement="Left" Classes="sidebar" Margin="0 100 0 40" >
 		 <TabItem Header="Start">
-			<views:ConfigView DataContext="{Binding ConfigViewModel}"></views:ConfigView>
 		 </TabItem>
 		 <TabItem Header="Server Selection" >
 			<views:ServerSelectionView></views:ServerSelectionView>
@@ -61,25 +56,37 @@
 			<views:LogsView></views:LogsView>
 		 </TabItem>
 		 <TabItem Header="Config" IsVisible="{Binding ConfigurationOpened}">
-			<views:ConfigView></views:ConfigView>
+			<views:ConfigView DataContext="{Binding ConfigViewModel}"></views:ConfigView>
 		 </TabItem>
 		 <TabControl.Tag>
-			<ToggleSwitch x:Name="Themes" Margin="0,17,0,17" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
+			<ToggleSwitch x:Name="Themes" IsChecked="False" Margin="0,17,0,17" 
+						  HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
 			   <ToggleSwitch.OnContent>
-				  <Panel Width="20" Height="20">
+				  <Panel Width="40" Height="40">
 					 <Viewbox>
-						<Path HorizontalAlignment="Center" VerticalAlignment="Center" StrokeJoin="Round" StrokeLineCap="Round"
-							  Stroke="{DynamicResource SystemBaseMediumColor}" StrokeThickness="4"
-							  Data="M4,4L17,17M4,17L17,4M0,10.5L20,10.5M10.5,0L10.5,20" />
+						<Path HorizontalAlignment="Center" VerticalAlignment="Center"
+							  Stretch="Uniform"
+							  Fill="{DynamicResource SystemBaseMediumColor}" 
+							  Data="M10,0 V10 A5,5 0 1 1 10,0M10,0 V10 A5,5 0 1 0 10,0z
+							  M0,4.75V5.25H4V4.75H4z
+							  M16,4.75V5.25H20V4.75H16z
+							  M9.75,-1H10.25V-5H9.75V-1z
+							  M9.75,11H10.25V15H9.75V11z
+							  M5.85,1.15 L2.85,-1.85 L3.15,-2.15 L6.15,0.85z
+							  M16.85,12.15 L13.85, 9.15 L14.15, 8.85 L17.15,11.85z
+							  M13.85,0.85 L16.85,-2.15 L17.15,-1.85 L14.15,1.15z
+							  M2.85,11.85 L5.85,8.85 L6.15,9.15 L3.15,12.15"/>
 					 </Viewbox>
 				  </Panel>
 			   </ToggleSwitch.OnContent>
 			   <ToggleSwitch.OffContent>
-				  <Panel Width="20" Height="20">
+				  <Panel Width="40" Height="40">
 					 <Viewbox>
 						<Path StrokeJoin="Round" StrokeLineCap="Round"
-							  Fill="{DynamicResource SystemBaseMediumColor}" StrokeThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"
-							  Data="M10,0L10,20 A5,5 0 1 1 10,0 Z" />
+							  Fill="{DynamicResource SystemBaseMediumColor}"
+							  Stretch="Uniform" StrokeThickness="1"
+							  HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0"
+							  Data="M10,0 V10 A5,5 0 1 1 10,0Z" />
 					 </Viewbox>
 				  </Panel>
 			   </ToggleSwitch.OffContent>
