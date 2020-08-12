@@ -1,0 +1,10 @@
+﻿using Avalonia.Controls.Shapes;
+
+namespace TimeClient.ViewModels
+{
+	class InfoNotificationViewModel : NotificationViewModel
+	{
+		public override Path Path { get; set; }
+		public override string Message { get; set; }
+	}
+}
