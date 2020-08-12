@@ -18,6 +18,17 @@
 		<AvaloniaResource Include="Assets\**" />
 	</ItemGroup>
 	<ItemGroup>
+	  <AvaloniaResource Remove="Views\NotificationView.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Views\NotificationView.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+	  <AvaloniaXaml Include="Views\NotificationView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </AvaloniaXaml>
+	</ItemGroup>
+	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="0.10.0-preview2" />
 		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview2" />
 		<PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview2" />
@@ -29,6 +40,9 @@
 	<ItemGroup>
 	  <Compile Update="Views\LogsView.xaml.cs">
 	    <DependentUpon>LogsView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\NotificationView.xaml.cs">
+	    <DependentUpon>NotificationView.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 </Project>
