@@ -60,7 +60,6 @@ namespace TimeClient.Services
 				};
 			}
 
-
 			return Observable.Return(configViewModel);
 		}
 

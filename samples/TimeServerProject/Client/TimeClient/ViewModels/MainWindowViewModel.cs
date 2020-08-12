@@ -50,6 +50,10 @@ namespace TimeClient.ViewModels
 		{
 			_managedNotificationManager = managedNotificationManager;
 			ConfigViewModel = configViewModel;
+			ConfigViewModel.ErrorsChanged += (sender, args) =>
+			{
+
+			};
 		}
 
 		public ObservableCollection<ServerModel> AccessibleServers { get; } = new ObservableCollection<ServerModel>();

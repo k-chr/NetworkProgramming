@@ -49,8 +49,9 @@ namespace TimeClient
 				_suspendHelper.OnFrameworkInitializationCompleted();
 				var mainWindow = new MainWindow();
 
-				var viewModel = new MainWindowViewModel(mainWindow.NotificationArea, RxApp.SuspensionHost.GetAppState<ConfigViewModel>());
-				
+				var viewModel = new MainWindowViewModel(mainWindow.NotificationArea,
+					RxApp.SuspensionHost.GetAppState<ConfigViewModel>());
+
 				mainWindow.DataContext = viewModel;
 				desktop.MainWindow = mainWindow;
 
@@ -62,7 +63,6 @@ namespace TimeClient
 						mainWindowViewModel?.OnClosing();
 					}
 				});
-				
 			}
 
 			base.OnFrameworkInitializationCompleted();

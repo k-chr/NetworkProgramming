@@ -17,7 +17,7 @@ namespace TimeClient.Services
 		{
 		}
 
-		public override void Send(string message, string to = "")
+		public override void Send(byte[] message, string to = "")
 		{
 			throw new NotImplementedException();
 		}
