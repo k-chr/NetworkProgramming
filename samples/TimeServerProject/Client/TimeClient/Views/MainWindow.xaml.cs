@@ -31,7 +31,7 @@ namespace TimeClient.Views
 						break;
 					}
 
-					if (!(Traverse(child, key) is ScrollViewer scrollViewer)) continue;
+					if (!(Traverse<ScrollViewer>(child, key) is ScrollViewer scrollViewer)) continue;
 					scrollViewer.ScrollToHome();
 					break;
 				}
@@ -44,9 +44,9 @@ namespace TimeClient.Views
 			};
 		}
 
-		private static IVisual Traverse(IVisual child, string key)
+		private static IVisual Traverse<T>(IVisual child, string key) where T : Control
 		{
-			if (child is ScrollViewer viewer && (viewer.Name?.Equals(key) ?? false))
+			if (child is T control && (control.Name?.Equals(key) ?? false))
 			{
 				return child;
 			}
@@ -55,7 +55,7 @@ namespace TimeClient.Views
 
 			foreach (var visualChild in child.GetVisualChildren())
 			{
-				result = Traverse(visualChild, key);
+				result = Traverse<T>(visualChild, key);
 			}
 
 			return result;

@@ -15,6 +15,7 @@ namespace TimeClient
 {
 	public class App : Application
 	{
+		private const string ConfigFileName = "Config.bin";
 		private AutoSuspendHelper _suspendHelper;
 
 		public static readonly Styles FluentDark = new Styles
@@ -38,7 +39,7 @@ namespace TimeClient
 			AvaloniaXamlLoader.Load(this);
 			_suspendHelper = new AutoSuspendHelper(ApplicationLifetime);
 			RxApp.SuspensionHost.CreateNewAppState = () => new ConfigViewModel();
-			RxApp.SuspensionHost.SetupDefaultSuspendResume(new BinaryConfigurationSuspensionDriver("Config.bin"));
+			RxApp.SuspensionHost.SetupDefaultSuspendResume(new BinaryConfigurationSuspensionDriver(ConfigFileName));
 			Styles.Insert(0, FluentDark);
 		}
 
