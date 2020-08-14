@@ -24,7 +24,7 @@
 
    <Panel Margin="{Binding #MainWindow.OffScreenMargin}">
 	  <Grid HorizontalAlignment="Stretch" ColumnDefinitions="Auto,*">
-		 <ExperimentalAcrylicBorder Grid.Column="0" Width="240">
+		 <ExperimentalAcrylicBorder Name="SideBar" Grid.Column="0" Width="240">
 			<ExperimentalAcrylicBorder.Material>
 			   <ExperimentalAcrylicMaterial TintColor="{DynamicResource SystemAltHighColor}" MaterialOpacity="0.88"
 											TintOpacity="1" />
@@ -44,18 +44,18 @@
 	  </Grid>
 
 	  <TabControl x:Name="TabControl" TabStripPlacement="Left" Classes="sidebar" Margin="0 100 0 40" >
-		 <TabItem Header="Start">
+		 <TabItem Width="{Binding #SideBar.Width}" Header="Start">
 		 </TabItem>
-		 <TabItem Header="Server Selection" >
+		 <TabItem Width="{Binding #SideBar.Width}" Header="Server Selection" >
 			<views:ServerSelectionView></views:ServerSelectionView>
 		 </TabItem>
-		 <TabItem Header="Time Protocol Communication">
+		 <TabItem Width="{Binding #SideBar.Width}" Header="Time Protocol Communication">
 			<views:MainView></views:MainView>
 		 </TabItem>
-		 <TabItem Header="Logs">
+		 <TabItem Width="{Binding #SideBar.Width}" Header="Logs">
 			<views:LogsView></views:LogsView>
 		 </TabItem>
-		 <TabItem Header="Config" IsVisible="{Binding ConfigurationOpened}">
+		 <TabItem Width="{Binding #SideBar.Width}" Header="Config" IsVisible="{Binding ConfigurationOpened}">
 			<views:ConfigView DataContext="{Binding ConfigViewModel}"></views:ConfigView>
 		 </TabItem>
 		 <TabControl.Tag>

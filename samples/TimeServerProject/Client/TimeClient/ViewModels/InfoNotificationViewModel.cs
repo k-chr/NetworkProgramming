@@ -37,6 +37,7 @@ namespace TimeClient.ViewModels
 								  "L0,3" +
 								  "C0,1.3460002,1.3459997,0,3,0z");
 		}
+
 		public override Geometry Icon { get; }
 		public override string Message { get; set; }
 		public override string Title { get; set; }

@@ -4,37 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TimeClient.Views.NotificationView"
-			 Width="400" Height="400">
-   <Panel Background="{x:Null}" Width="400" Height="400">
+			 xmlns:vm="clr-namespace:TimeClient.ViewModels;assembly=TimeClient">
+   <Design.DataContext>
+	  <vm:NotificationViewModel></vm:NotificationViewModel>
+   </Design.DataContext>
+   <Panel Background="{x:Null}">
 	  <ExperimentalAcrylicBorder >
 		 <ExperimentalAcrylicBorder.Material>
 			<ExperimentalAcrylicMaterial MaterialOpacity="0.35"
 										 TintOpacity="1"/>
 		 </ExperimentalAcrylicBorder.Material>
 		 <Grid ColumnDefinitions="Auto,*">
-			<Panel Margin="0,0,12,0" Width="250" Height="250" VerticalAlignment="Top" Background="{x:Null}">
-			   <Viewbox >
-				  <Grid Background="{x:Null}">
-					 <Grid Name="backgroundGrid" Width="480" Height="480">
-						<Rectangle Fill="{x:Null}" Name="Rect" />
-					 </Grid>
-					 <Path Data="M16.54416,1.8793057C13.781189,1.8793057 8.8082366,2.6102862 5.0282793,7.2502263
-						   2.159307,11.292211 1.1483165,16.633164 2.4903124,20.807104 3.7522922,24.734068 7.0112591,27.698059
-						   11.914206,29.384018 19.695127,31.641016 25.065063,28.186032 27.261039,26.320051 22.956077,25.008084 16.099157,22.567097 14.549171,16.302141
-						   12.999185,10.042222 15.670162,4.3902681 17.152139,1.890292 16.963146,1.8822964 16.761154,1.8793057 16.54416,1.8793057z"
-						   Stretch="Uniform" Fill="#FFFFFFFF" Stroke="Black"  Width="260" Height="260" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5">
-						<Path.RenderTransform>
-						   <TransformGroup>
-							  <TransformGroup.Children>
-								 <RotateTransform Angle="22" />
-								 <ScaleTransform ScaleX="1" ScaleY="1" />
-							  </TransformGroup.Children>
-						   </TransformGroup>
-						</Path.RenderTransform>
-					 </Path>
-				  </Grid>
+			<Panel Margin="0,0,12,0"  VerticalAlignment="Top" Background="{x:Null}">
+			   <Viewbox>
+				  <Path Data="{Binding Icon}"></Path>
 			   </Viewbox>
-
 			</Panel>
 			<DockPanel Grid.Column="1">
 			   <TextBlock DockPanel.Dock="Top" Text="{Binding Title}" FontWeight="Medium" />
