@@ -20,7 +20,7 @@
 					BorderThickness="{TemplateBinding BorderThickness}">
 					<DockPanel>
 						<ScrollViewer Margin="0 30 0 0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-						              Name="PART_ScrollViewer"
+						              Name="PART_ItemsHeadersPresenter"
 						              HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
 						              VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
 						              Background="{TemplateBinding Background}"

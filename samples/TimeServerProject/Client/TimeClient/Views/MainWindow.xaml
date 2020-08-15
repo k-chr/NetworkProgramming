@@ -20,8 +20,85 @@
 	  <Style Selector="TitleBar:fullscreen > Panel > Panel > Border">
 		 <Setter Property="Background" Value="{DynamicResource SystemChromeLowColor}" />
 	  </Style>
+	  <Style Selector="#MainWindow.sideBarCollapsed > Panel > Grid > ExperimentalAcrylicBorder#SideBar">
+		 <Style.Animations>
+			<Animation Duration="0:0:0.5" FillMode="Both" Easing="QuadraticEaseIn">
+			   <KeyFrame Cue="0%">
+				  <Setter Property="Width" Value="250" />
+			   </KeyFrame>
+			   <KeyFrame Cue="100%">
+				  <Setter Property="Width" Value="50" />
+			   </KeyFrame>
+			</Animation>
+		 </Style.Animations>
+	  </Style>
+	  <Style Selector="#MainWindow.sideBarShown > Panel > Grid > ExperimentalAcrylicBorder#SideBar">
+		 <Style.Animations>
+			<Animation Duration="0:0:0.5" FillMode="Both" Easing="QuadraticEaseOut">
+			   <KeyFrame Cue="0%">
+				  <Setter Property="Width" Value="50" />
+			   </KeyFrame>
+			   <KeyFrame Cue="100%">
+				  <Setter Property="Width" Value="250" />
+			   </KeyFrame>
+			</Animation>
+		 </Style.Animations>
+	  </Style>
+	  <Style Selector="#MainWindow.sideBarShown > Panel > Grid > ExperimentalAcrylicBorder#SideBar > StackPanel > ctrl|ClockControl">
+		 <Style.Animations>
+			<Animation Duration="0:0:0.5" FillMode="Both" Easing="QuadraticEaseOut">
+			   <KeyFrame Cue="0%">
+				  <Setter Property="Opacity" Value="0" />
+			   </KeyFrame>
+			   <KeyFrame Cue="100%">
+				  <Setter Property="Opacity" Value="1" />
+			   </KeyFrame>
+			</Animation>
+		 </Style.Animations>
+	  </Style>
+	  <Style Selector="#MainWindow.sideBarCollapsed > Panel > TabControl > TabItem">
+		 <Style.Animations>
+			<Animation Duration="0:0:0.5" FillMode="Both" Easing="QuadraticEaseIn">
+			   <KeyFrame Cue="0%">
+				  <Setter Property="Width" Value="250" />
+				  <Setter Property="Opacity" Value="1" />
+			   </KeyFrame>
+			   <KeyFrame Cue="100%">
+				  <Setter Property="Width" Value="50" />
+				  <Setter Property="Opacity" Value="0" />
+			   </KeyFrame>
+			</Animation>
+		 </Style.Animations>
+		 <Setter Property="IsHitTestVisible" Value="False"/>
+	  </Style>
+	  <Style Selector="#MainWindow.sideBarShown > Panel > TabControl > TabItem">
+		 <Setter Property="IsHitTestVisible" Value="True"/>
+		 <Style.Animations>
+			<Animation Duration="0:0:0.5" FillMode="Both" Easing="QuadraticEaseOut">
+			   <KeyFrame Cue="0%">
+				  <Setter Property="Width" Value="25"/>
+				  <Setter Property="Opacity" Value="0" />
+			   </KeyFrame>
+			   <KeyFrame Cue="100%">
+				  <Setter Property="Width" Value="250" />
+				  <Setter Property="Opacity" Value="1" />
+			   </KeyFrame>
+			</Animation>
+		 </Style.Animations>
+	  </Style>
+	  <Style Selector="#MainWindow.sideBarCollapsed > Panel > Grid > ExperimentalAcrylicBorder#SideBar > StackPanel > ctrl|ClockControl">
+		 <Style.Animations>
+			<Animation Duration="0:0:0.5" FillMode="Both" Easing="QuadraticEaseOut">
+			   <KeyFrame Cue="0%">
+				  <Setter Property="Opacity" Value="1" />
+			   </KeyFrame>
+			   <KeyFrame Cue="100%">
+				  <Setter Property="Opacity" Value="0" />
+			   </KeyFrame>
+			</Animation>
+		 </Style.Animations>
+	  </Style>
    </FluentWindow.Styles>
-
    <Panel Margin="{Binding #MainWindow.OffScreenMargin}">
 	  <Grid HorizontalAlignment="Stretch" ColumnDefinitions="Auto,*">
 		 <ExperimentalAcrylicBorder Name="SideBar" Grid.Column="0" Width="240">
@@ -31,10 +108,10 @@
 			</ExperimentalAcrylicBorder.Material>
 
 			<StackPanel Width="120" Margin="60 60 60 60" VerticalAlignment="Top" HorizontalAlignment="Left">
-			   <ctrl:ClockControl Radius="60" Foreground="{DynamicResource SystemBaseHighColor}"/>
+			   <ctrl:ClockControl Name="Clock" Radius="60" Foreground="{DynamicResource SystemBaseHighColor}" IsHitTestVisible="False" />
 			</StackPanel>
 		 </ExperimentalAcrylicBorder>
-		 <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.Column="1" >
+		 <ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.Column="1" Name="Content">
 			<ExperimentalAcrylicBorder.Material>
 			   <ExperimentalAcrylicMaterial TintColor="{DynamicResource SystemAltMediumColor}" MaterialOpacity="0.35"
 											TintOpacity="1" />
@@ -43,30 +120,35 @@
 		 </ExperimentalAcrylicBorder>
 	  </Grid>
 
-	  <TabControl x:Name="TabControl" TabStripPlacement="Left" Classes="sidebar" Margin="0 100 0 40" >
-		 <TabItem Width="{Binding #SideBar.Width}" Header="Start">
+	  <TabControl x:Name="TabControl" TabStripPlacement="Left" Classes="sidebar" Margin="0 100 0 40">
+		 <TabItem  Header="Start">
 		 </TabItem>
-		 <TabItem Width="{Binding #SideBar.Width}" Header="Server Selection" >
-			<views:ServerSelectionView></views:ServerSelectionView>
+		 <TabItem Header="Server Selection" >
+			<views:ServerSelectionView>
+			</views:ServerSelectionView>
 		 </TabItem>
-		 <TabItem Width="{Binding #SideBar.Width}" Header="Time Protocol Communication">
-			<views:MainView></views:MainView>
+		 <TabItem Header="Time Protocol Communication">
+			<views:MainView>
+			</views:MainView>
 		 </TabItem>
-		 <TabItem Width="{Binding #SideBar.Width}" Header="Logs">
-			<views:LogsView></views:LogsView>
+		 <TabItem Header="Logs">
+			<views:LogsView>
+
+			</views:LogsView>
 		 </TabItem>
-		 <TabItem Width="{Binding #SideBar.Width}" Header="Config" IsVisible="{Binding ConfigurationOpened}">
-			<views:ConfigView DataContext="{Binding ConfigViewModel}"></views:ConfigView>
+		 <TabItem  Header="Config" IsVisible="{Binding ConfigurationOpened}">
+			<views:ConfigView DataContext="{Binding ConfigViewModel}">
+			</views:ConfigView>
 		 </TabItem>
 		 <TabControl.Tag>
-			<ToggleSwitch x:Name="Themes" IsChecked="False" Margin="0,17,0,17" 
+			<ToggleSwitch x:Name="Themes" IsChecked="False" Margin="0,17,0,17"
 						  HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
 			   <ToggleSwitch.OnContent>
 				  <Panel Width="40" Height="40">
 					 <Viewbox>
 						<Path HorizontalAlignment="Center" VerticalAlignment="Center"
 							  Stretch="Uniform"
-							  Fill="{DynamicResource SystemBaseMediumColor}" 
+							  Fill="{DynamicResource SystemBaseMediumColor}"
 							  Data="M10,0 V10 A5,5 0 1 1 10,0M10,0 V10 A5,5 0 1 0 10,0z
 							  M0,4.75V5.25H4V4.75H4z
 							  M16,4.75V5.25H20V4.75H16z
