@@ -55,7 +55,7 @@ namespace NetworkingUtilities.Abstracts
 			}
 		}
 
-		public bool IsConnected() => !(ClientSocket.IsDisposed() ||
+		public bool IsConnected() => !(ClientSocket == null || ClientSocket.IsDisposed() ||
 									   ClientSocket.Poll(1000, SelectMode.SelectRead) &&
 									   (ClientSocket.Available == 0) || !ClientSocket.Connected);
 
