@@ -16,5 +16,10 @@ namespace NetworkingUtilities.Extensions
 			var @byte = outValue.GetAddressBytes()[0];
 			return ((int) @byte).InRange(224, 239);
 		}
+
+		public static byte[] GetBytes(this int num) => BitConverter.GetBytes(num);
+
+		public static byte[] GetBytes(this IPEndPoint endPoint) =>
+			endPoint.Address.GetAddressBytes().Concat(endPoint.Port.GetBytes());
 	}
 }
