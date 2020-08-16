@@ -20,7 +20,9 @@ namespace NetworkingUtilities.Tcp
 			new Socket(SocketType.Stream, ProtocolType.Tcp)) =>
 			Connect(address, port, manualResetEvent);
 
-		private void Connect(string address, in int port, ManualResetEvent manualResetEvent)
+		public Client(): base(new Socket(SocketType.Stream, ProtocolType.Tcp)){}
+
+		public void Connect(string address, in int port, ManualResetEvent manualResetEvent)
 		{
 			try
 			{

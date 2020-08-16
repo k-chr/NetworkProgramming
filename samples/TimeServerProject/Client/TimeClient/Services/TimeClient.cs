@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Publishers;
 using NetworkingUtilities.Tcp;
@@ -23,6 +25,7 @@ namespace TimeClient.Services
 		private readonly IReporter _connectedReporter;
 		private readonly IReporter _disconnectedReporter;
 		private readonly IReporter _timeMessageReporter;
+		private ManualResetEvent _clientManualEvent = new ManualResetEvent(false);
 
 		public TimeClient(string multicastAddress, int multicastPort, int localPort = 0)
 		{
@@ -97,10 +100,25 @@ namespace TimeClient.Services
 
 		public void StopService()
 		{
-			throw new NotImplementedException();
+			_discoveryClients?.ForEach(client => client.StopService());
+			_tcpClient?.StopService();
+			OnStatus(StatusCode.Info, "Stopped internal modules of TimeClient");
 		}
 
 		public void StartService() => _discoveryClients.ForEach(client => client.StartService());
+
+		public void StartTimeCommunication(string address, int port)
+		{
+			_tcpClient = new Client();
+			RegisterClient(_tcpClient);
+
+			Task.Run(() =>
+			{
+				_tcpClient.Connect(address, port, _clientManualEvent);
+				_clientManualEvent.WaitOne();
+				_tcpClient.StartService();
+			});
+		}
 
 		public void AddExceptionSubscription(Action<object, object> procedure) =>
 			_exceptionReporter.AddSubscriber(procedure);
