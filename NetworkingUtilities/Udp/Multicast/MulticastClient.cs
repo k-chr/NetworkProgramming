@@ -12,8 +12,8 @@ namespace NetworkingUtilities.Udp.Multicast
 {
 	public class MulticastClient : AbstractClient
 	{
-		private readonly IPAddress _multicastAddress;
-		private readonly int _multicastPort;
+		private IPAddress _multicastAddress;
+		private int _multicastPort;
 		private readonly IPAddress _ipAddress;
 		private readonly int _localPort;
 
@@ -34,6 +34,19 @@ namespace NetworkingUtilities.Udp.Multicast
 			try
 			{
 				var endpoint = new IPEndPoint(_multicastAddress, _multicastPort);
+				if (!string.IsNullOrEmpty(to))
+				{
+					var ep = IPEndPoint.Parse(to);
+					if ((!ep.Address.Equals(_multicastAddress) || ep.Port != _multicastPort) && ep.Address.ToString().IsMulticastAddress())
+					{
+						var old = endpoint;
+						endpoint = ep;
+						_multicastAddress = endpoint.Address;
+						_multicastPort = endpoint.Port;
+
+						OnReportingStatus(StatusCode.Info, $"Changed multicast address and port from {old} to {endpoint}");
+					}
+				}
 
 				ClientSocket.BeginSendTo(data, 0, data.Length, SocketFlags.None, endpoint, OnSendToCallback,
 					ClientSocket);

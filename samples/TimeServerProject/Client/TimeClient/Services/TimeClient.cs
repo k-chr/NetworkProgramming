@@ -25,7 +25,7 @@ namespace TimeClient.Services
 		private readonly IReporter _connectedReporter;
 		private readonly IReporter _disconnectedReporter;
 		private readonly IReporter _timeMessageReporter;
-		private ManualResetEvent _clientManualEvent = new ManualResetEvent(false);
+		private readonly ManualResetEvent _clientManualEvent = new ManualResetEvent(false);
 
 		public TimeClient(string multicastAddress, int multicastPort, int localPort = 0)
 		{
@@ -95,7 +95,10 @@ namespace TimeClient.Services
 
 		public void Send(byte[] message, string to = "")
 		{
-			throw new NotImplementedException();
+			if (!string.IsNullOrEmpty(to))
+				_discoveryClients.ForEach(client => client.Send(message, to));
+			else
+				_tcpClient.Send(message);
 		}
 
 		public void StopService()
