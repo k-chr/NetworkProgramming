@@ -12,8 +12,8 @@ namespace TimeClient
 		   .StartWithClassicDesktopLifetime(args);
 
 		// Avalonia configuration, don't remove; also used by visual designer.
-		private static AppBuilder BuildAvaloniaApp()
-			=> AppBuilder.Configure<App>()
+		private static AppBuilder BuildAvaloniaApp() => 
+			AppBuilder.Configure<App>()
 			   .UsePlatformDetect()
 			   .LogToDebug()
 			   .UseReactiveUI();

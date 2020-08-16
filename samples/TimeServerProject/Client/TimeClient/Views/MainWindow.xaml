@@ -15,7 +15,11 @@
               FontSize="14"
               Foreground="{StaticResource SystemBaseHighColor}"
               Background="{x:Null}"
-              Title="TimeClient">
+              Title="TimeClient"
+			  xmlns:conv="clr-namespace:CustomControls.Converters;assembly=CustomControls">
+   <FluentWindow.Resources>
+	  <conv:WidthConverter x:Key="WidthConverter"></conv:WidthConverter>
+   </FluentWindow.Resources>
    <FluentWindow.Styles>
 	  <Style Selector="TitleBar:fullscreen > Panel > Panel > Border">
 		 <Setter Property="Background" Value="{DynamicResource SystemChromeLowColor}" />
@@ -116,12 +120,15 @@
 			   <ExperimentalAcrylicMaterial TintColor="{DynamicResource SystemAltMediumColor}" MaterialOpacity="0.35"
 											TintOpacity="1" />
 			</ExperimentalAcrylicBorder.Material>
-			<TextBlock Text="{Binding #TabControl.SelectedItem.Header}" Foreground="{DynamicResource SystemBaseHighColor}" Margin="40 20" FontSize="32" FontWeight="Light" />
+			<TextBlock Text="{Binding #TabControl.SelectedItem.Header}" Name="Header" Foreground="{DynamicResource SystemBaseHighColor}" 
+					   Margin="40 20" FontSize="32" FontWeight="Light" HorizontalAlignment="Stretch" />
 		 </ExperimentalAcrylicBorder>
 	  </Grid>
 
-	  <TabControl x:Name="TabControl" TabStripPlacement="Left" Classes="sidebar" Margin="0 100 0 40">
+	  <TabControl x:Name="TabControl" TabStripPlacement="Left" Classes="sidebar" Margin="0 100 0 40"
+				  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 		 <TabItem  Header="Start">
+			<views:StartView InfoWidth="{Binding #Header.Bounds.Width, Converter={StaticResource WidthConverter} ConverterParameter=50}"></views:StartView>
 		 </TabItem>
 		 <TabItem Header="Server Selection" >
 			<views:ServerSelectionView>

@@ -2,12 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:timeClient="clr-namespace:TimeClient"
              x:Class="TimeClient.App">
-	<Application.DataTemplates>
-		<timeClient:ViewLocator />
-	</Application.DataTemplates>
-	<Application.Styles>
-		<StyleInclude Source="/Styles/Styles.xaml" />
-		<StyleInclude Source="/Styles/SideBar.xaml" />
-	   <StyleInclude Source="/Styles/ClockControl.xaml" />
-	</Application.Styles>
+   <Application.DataTemplates>
+	  <timeClient:ViewLocator />
+   </Application.DataTemplates>
+   <Application.Styles>
+	  <StyleInclude Source="/Styles/Styles.xaml" />
+	  <StyleInclude Source="/Styles/SideBar.xaml" />
+	  <StyleInclude Source="/Styles/ClockControl.xaml" />
+   </Application.Styles>
 </Application>

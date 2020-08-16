@@ -19,12 +19,17 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <AvaloniaResource Remove="Views\NotificationView.xaml" />
+	  <AvaloniaResource Remove="Views\StartView.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="Views\NotificationView.xaml" />
+	  <None Remove="Views\StartView.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 	  <AvaloniaXaml Include="Views\NotificationView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </AvaloniaXaml>
+	  <AvaloniaXaml Include="Views\StartView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </AvaloniaXaml>
 	</ItemGroup>
@@ -32,9 +37,11 @@
 		<PackageReference Include="Avalonia" Version="0.10.0-preview2" />
 		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview2" />
 		<PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview2" />
+		<PackageReference Include="Avalonia.HtmlRenderer" Version="0.6.1" />
 		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview2" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\CustomControls\CustomControls.csproj" />
 		<ProjectReference Include="..\..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
 	</ItemGroup>
 	<ItemGroup>
@@ -43,6 +50,9 @@
 	  </Compile>
 	  <Compile Update="Views\NotificationView.xaml.cs">
 	    <DependentUpon>NotificationView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\StartView.xaml.cs">
+	    <DependentUpon>StartView.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 </Project>
