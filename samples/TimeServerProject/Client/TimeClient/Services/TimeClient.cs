@@ -104,11 +104,17 @@ namespace TimeClient.Services
 		public void StopService()
 		{
 			_discoveryClients?.ForEach(client => client.StopService());
-			_tcpClient?.StopService();
+			StopTimeCommunication();
 			OnStatus(StatusCode.Info, "Stopped internal modules of TimeClient");
 		}
 
 		public void StartService() => _discoveryClients.ForEach(client => client.StartService());
+
+		public void StopTimeCommunication()
+		{
+			_tcpClient?.StopService();
+			_tcpClient = null;
+		}
 
 		public void StartTimeCommunication(string address, int port)
 		{
