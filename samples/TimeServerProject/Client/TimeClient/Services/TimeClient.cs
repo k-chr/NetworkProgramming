@@ -12,7 +12,7 @@ using NetworkingUtilities.Utilities.Events;
 
 namespace TimeClient.Services
 {
-	public class TimeClient : ISender, IReceiver, IService
+	public class TimeClient : ISender, IService
 	{
 		private readonly List<MulticastClient> _discoveryClients;
 		private Client _tcpClient;
@@ -21,7 +21,7 @@ namespace TimeClient.Services
 		private readonly IReporter _discoveredServerReporter;
 		private readonly IReporter _statusReporter;
 		private readonly IReporter _connectedReporter;
-		private IReporter _disconnectedReporter;
+		private readonly IReporter _disconnectedReporter;
 		private readonly IReporter _timeMessageReporter;
 
 		public TimeClient(string multicastAddress, int multicastPort, int localPort = 0)
@@ -47,14 +47,50 @@ namespace TimeClient.Services
 
 		private void RegisterClient(AbstractClient client)
 		{
+			client.AddExceptionSubscription((o, o1) =>
+			{
+				if (o1 is ExceptionEvent e)
+					OnException(e.LastError, e.LastErrorCode);
+			});
+
+			client.AddOnDisconnectedSubscription((o, o1) =>
+			{
+				if (o1 is ClientEvent clientEvent)
+					OnDisconnect(clientEvent.Ip, clientEvent.Id, clientEvent.Port);
+			});
+
+			client.AddOnConnectedSubscription((o, o1) =>
+			{
+				if (o1 is ClientEvent clientEvent)
+					OnConnect(clientEvent.Ip, clientEvent.Id, clientEvent.Port);
+			});
+
+			client.AddStatusSubscription((o, o1) =>
+			{
+				if (o1 is StatusEvent statusEvent)
+					OnStatus(statusEvent.StatusCode, statusEvent.StatusMessage);
+			});
+
+			switch (client)
+			{
+				case MulticastClient _:
+					client.AddMessageSubscription((o, o1) =>
+					{
+						if (o1 is MessageEvent message)
+							OnDiscoveredServer(message.Message, message.From, message.To);
+					});
+					break;
+				case Client _:
+					client.AddMessageSubscription((o, o1) =>
+					{
+						if (o1 is MessageEvent message)
+							OnTimeMessage(message.Message, message.From, message.To);
+					});
+					break;
+			}
 		}
 
 		public void Send(byte[] message, string to = "")
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Receive()
 		{
 			throw new NotImplementedException();
 		}
@@ -64,10 +100,25 @@ namespace TimeClient.Services
 			throw new NotImplementedException();
 		}
 
-		public void StartService()
-		{
-			throw new NotImplementedException();
-		}
+		public void StartService() => _discoveryClients.ForEach(client => client.StartService());
+
+		public void AddExceptionSubscription(Action<object, object> procedure) =>
+			_exceptionReporter.AddSubscriber(procedure);
+
+		public void AddTimeMessageSubscription(Action<object, object> procedure) =>
+			_timeMessageReporter.AddSubscriber(procedure);
+
+		public void AddOnDisconnectedSubscription(Action<object, object> procedure) =>
+			_disconnectedReporter.AddSubscriber(procedure);
+
+		public void AddOnConnectedSubscription(Action<object, object> procedure) =>
+			_connectedReporter.AddSubscriber(procedure);
+
+		public void AddStatusSubscription(Action<object, object> procedure) =>
+			_statusReporter.AddSubscriber(procedure);
+
+		public void AddDiscoveredServerSubscription(Action<object, object> procedure) =>
+			_discoveredServerReporter.AddSubscriber(procedure);
 
 		private void OnConnect(IPAddress ip, string id, int port) =>
 			_connectedReporter.Notify((ip, id, port));
