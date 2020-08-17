@@ -5,7 +5,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Threading;
 
-namespace TimeClient.CustomControls
+namespace CustomControls.Controls
 {
 	public class ClockControl : TemplatedControl
 	{
