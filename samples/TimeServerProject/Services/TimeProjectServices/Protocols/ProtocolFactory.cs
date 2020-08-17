@@ -47,5 +47,18 @@ namespace TimeProjectServices.Protocols
 				return null;
 			}
 		}
+
+		public static IProtocol CreateProtocol(ActionType action, HeaderType header, object data = null)
+		{
+			IProtocol protocol = header switch
+								 {
+									 HeaderType.Discover => new DiscoverProtocol {Data = data as IPEndPoint},
+									 HeaderType.Time => new TimeProtocol {Data = (DateTimeOffset?) data ?? default},
+									 _ => throw new ArgumentOutOfRangeException(nameof(header), header, null)
+								 };
+
+			protocol.Action = action;
+			return protocol;
+		}
 	}
 }
