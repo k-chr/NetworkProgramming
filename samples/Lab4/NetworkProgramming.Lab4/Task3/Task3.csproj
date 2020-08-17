@@ -14,11 +14,12 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.9.11" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.9.11" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.11" />
-    <PackageReference Include="Avalonia.Xaml.Interactions" Version="0.9.9" />
-    <PackageReference Include="Avalonia.Xaml.Interactivity" Version="0.9.9" />
+    <PackageReference Include="Avalonia" Version="0.10.0-preview3" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview3" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview3" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview3" />
+    <PackageReference Include="Avalonia.Xaml.Interactions" Version="0.10.0-preview3" />
+    <PackageReference Include="Avalonia.Xaml.Interactivity" Version="0.10.0-preview3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\ThreadingUtilities\ThreadingUtilities.csproj" />

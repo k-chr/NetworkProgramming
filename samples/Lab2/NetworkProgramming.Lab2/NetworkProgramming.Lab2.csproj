@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview3" />
+    <PackageReference Include="Avalonia.Direct2D1" Version="0.10.0-preview3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
   </ItemGroup>
 
