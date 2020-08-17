@@ -12,7 +12,7 @@ using NetworkingUtilities.Udp.Multicast;
 using NetworkingUtilities.Utilities;
 using NetworkingUtilities.Utilities.Events;
 
-namespace TimeClient.Services
+namespace TimeProjectServices.Services
 {
 	public class TimeClient : ISender, IService
 	{
