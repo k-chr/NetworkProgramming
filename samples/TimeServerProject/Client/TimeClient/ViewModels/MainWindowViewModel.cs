@@ -9,7 +9,7 @@ namespace TimeClient.ViewModels
 	{
 		private readonly IManagedNotificationManager _managedNotificationManager;
 
-		private Services.TimeClient _client;
+		private TimeProjectServices.Services.TimeClient _client;
 
 		private ServerModel _selectedServer;
 		private bool _isValid;

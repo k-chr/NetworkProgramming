@@ -8,17 +8,17 @@ namespace TimeClient.ViewModels
 	{
 		public abstract Geometry Icon { get; }
 		public abstract string Message { get; set; }
-		public abstract string Title { get; set; }
+		public abstract string Title { get; }
 	}
 
 	public static class NotificationViewModelFactory
 	{
-		public static NotificationViewModel Create(StatusCode code, string message, string title) =>
+		public static NotificationViewModel Create(StatusCode code, string message) =>
 			code switch
 			{
-				StatusCode.Error => new ErrorNotificationViewModel {Message = message, Title = title},
-				StatusCode.Success => new SuccessNotificationViewModel {Message = message, Title = title},
-				StatusCode.Info => new InfoNotificationViewModel {Message = message, Title = title},
+				StatusCode.Error => new ErrorNotificationViewModel {Message = message},
+				StatusCode.Success => new SuccessNotificationViewModel {Message = message},
+				StatusCode.Info => new InfoNotificationViewModel {Message = message},
 				_ => throw new ArgumentOutOfRangeException(nameof(code), code, null)
 			};
 	}

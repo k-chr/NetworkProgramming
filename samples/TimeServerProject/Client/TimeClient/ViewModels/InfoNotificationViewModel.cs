@@ -40,6 +40,6 @@ namespace TimeClient.ViewModels
 
 		public override Geometry Icon { get; }
 		public override string Message { get; set; }
-		public override string Title { get; set; }
+		public override string Title { get; } = "Info";
 	}
 }
