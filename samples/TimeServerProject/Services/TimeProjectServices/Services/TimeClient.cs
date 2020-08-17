@@ -11,6 +11,8 @@ using NetworkingUtilities.Tcp;
 using NetworkingUtilities.Udp.Multicast;
 using NetworkingUtilities.Utilities;
 using NetworkingUtilities.Utilities.Events;
+using TimeProjectServices.Enums;
+using TimeProjectServices.Protocols;
 
 namespace TimeProjectServices.Services
 {
@@ -93,13 +95,25 @@ namespace TimeProjectServices.Services
 			}
 		}
 
-		public void Send(byte[] message, string to = "")
+		public void SendProtocol(IProtocol protocol, string to)
 		{
-			if (!string.IsNullOrEmpty(to))
-				_discoveryClients.ForEach(client => client.Send(message, to));
-			else
-				_tcpClient.Send(message);
+			switch (protocol.Header)
+			{
+				case HeaderType.Discover:
+					Send(protocol.GetBytes(), to);
+					break;
+				case HeaderType.Time:
+					Send(protocol.GetBytes());
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 		}
+
+		private void Send(byte[] message) => _tcpClient?.Send(message);
+
+		public void Send(byte[] message, string to = "") =>
+			_discoveryClients.ForEach(client => client.Send(message, to));
 
 		public void StopService()
 		{
