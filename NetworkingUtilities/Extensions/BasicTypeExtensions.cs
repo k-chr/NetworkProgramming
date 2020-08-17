@@ -17,6 +17,7 @@ namespace NetworkingUtilities.Extensions
 			return ((int) @byte).InRange(224, 239);
 		}
 
+		public static byte[] GetBytes(this long num) => BitConverter.GetBytes(num);
 		public static byte[] GetBytes(this int num) => BitConverter.GetBytes(num);
 
 		public static byte[] GetBytes(this IPEndPoint endPoint) =>

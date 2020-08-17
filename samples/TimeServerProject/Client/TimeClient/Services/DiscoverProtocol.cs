@@ -7,7 +7,7 @@ namespace TimeClient.Services
 {
 	public class DiscoverProtocol : IProtocol
 	{
-		public HeaderType Header { get; set; }
+		public HeaderType Header { get; } = HeaderType.Discover;
 		public ActionType Action { get; set; }
 
 		public IPEndPoint Data { get; set; }

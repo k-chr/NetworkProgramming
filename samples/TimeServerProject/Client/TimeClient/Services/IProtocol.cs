@@ -2,7 +2,7 @@
 {
 	public interface IProtocol
 	{
-		HeaderType Header { get; set; }
+		HeaderType Header { get;  }
 		ActionType Action { get; set; }
 		byte[] GetBytes();
 	}
