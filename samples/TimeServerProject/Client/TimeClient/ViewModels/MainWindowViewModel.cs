@@ -1,5 +1,11 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive;
 using Avalonia.Controls.Notifications;
+using Avalonia.Threading;
+using CustomControls.Models;
+using JetBrains.Annotations;
+using NetworkingUtilities.Utilities.Events;
 using ReactiveUI;
 using TimeClient.Models;
 
@@ -27,6 +33,8 @@ namespace TimeClient.ViewModels
 			}
 		}
 
+		private ReactiveCommand<StatusEvent, Unit> ShowNotification { get; }
+
 		public bool IsValid
 		{
 			get => _isValid;
@@ -43,6 +51,7 @@ namespace TimeClient.ViewModels
 		{
 			_client?.StopService();
 			AccessibleServers?.Clear();
+			Logs?.Clear();
 		}
 
 		public MainWindowViewModel(IManagedNotificationManager managedNotificationManager,
@@ -50,12 +59,35 @@ namespace TimeClient.ViewModels
 		{
 			_managedNotificationManager = managedNotificationManager;
 			ConfigViewModel = configViewModel;
+
+			ShowNotification = ReactiveCommand.Create<StatusEvent, Unit>(@event =>
+			{
+				_managedNotificationManager.Show(
+					NotificationViewModelFactory.Create(@event.StatusCode, @event.StatusMessage));
+				return Unit.Default;
+			});
+
 			ConfigViewModel.ErrorsChanged += (sender, args) =>
 			{
+				var message = ConfigViewModel.GetErrors(args.PropertyName).Cast<string>().First();
+				var status = new StatusEvent(StatusCode.Error,
+					message);
+				ShowNotification.Execute(status);
 
+				var model = InternalMessageModel.Builder().WithType(InternalMessageType.Error).AttachTimeStamp(true)
+				   .AttachTextMessage(message).BuildMessage();
+
+				AddLog(model);
 			};
 		}
 
+		private void AddLog(InternalMessageModel log) => Dispatcher.UIThread.InvokeAsync(() => Logs.Add(log));
+
+		[UsedImplicitly]
+		public ObservableCollection<InternalMessageModel> Logs { get; } =
+			new ObservableCollection<InternalMessageModel>();
+
+		[UsedImplicitly]
 		public ObservableCollection<ServerModel> AccessibleServers { get; } = new ObservableCollection<ServerModel>();
 	}
 }
