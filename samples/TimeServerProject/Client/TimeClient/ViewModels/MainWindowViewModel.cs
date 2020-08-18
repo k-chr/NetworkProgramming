@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
 using Avalonia.Controls.Notifications;
 using Avalonia.Threading;
 using CustomControls.Models;
@@ -13,14 +12,21 @@ namespace TimeClient.ViewModels
 {
 	public class MainWindowViewModel : ViewModelBase
 	{
-		private readonly IManagedNotificationManager _managedNotificationManager;
-
 		private TimeProjectServices.Services.TimeClient _client;
 
 		private ServerModel _selectedServer;
+
 		private bool _isValid;
 
+		private IManagedNotificationManager _managedNotificationManager;
+
 		public ConfigViewModel ConfigViewModel { get; }
+
+		public IManagedNotificationManager ManagedNotificationManager
+		{
+			get => _managedNotificationManager;
+			set => this.RaiseAndSetIfChanged(ref _managedNotificationManager, value);
+		}
 
 		public ServerModel SelectedServer
 		{
@@ -32,8 +38,6 @@ namespace TimeClient.ViewModels
 				OnSelectedServerChanged(old, _selectedServer);
 			}
 		}
-
-		private ReactiveCommand<StatusEvent, Unit> ShowNotification { get; }
 
 		public bool IsValid
 		{
@@ -60,26 +64,32 @@ namespace TimeClient.ViewModels
 			_managedNotificationManager = managedNotificationManager;
 			ConfigViewModel = configViewModel;
 
-			ShowNotification = ReactiveCommand.Create<StatusEvent, Unit>(@event =>
-			{
-				_managedNotificationManager.Show(
-					NotificationViewModelFactory.Create(@event.StatusCode, @event.StatusMessage));
-				return Unit.Default;
-			});
-
 			ConfigViewModel.ErrorsChanged += (sender, args) =>
 			{
+				if (!ConfigViewModel.HasErrors) return;
 				var message = ConfigViewModel.GetErrors(args.PropertyName).Cast<string>().First();
 				var status = new StatusEvent(StatusCode.Error,
 					message);
-				ShowNotification.Execute(status);
 
 				var model = InternalMessageModel.Builder().WithType(InternalMessageType.Error).AttachTimeStamp(true)
 				   .AttachTextMessage(message).BuildMessage();
 
+				ShowNotification(status);
+
 				AddLog(model);
 			};
+
+			ConfigViewModel.PropertyChanged += (sender, args) =>
+			{
+				if (ConfigViewModel.HasErrors) return;
+
+				var name = args.PropertyName;
+			};
 		}
+
+		private void ShowNotification(StatusEvent @event) =>
+			ManagedNotificationManager.Show(
+				NotificationViewModelFactory.Create(@event.StatusCode, @event.StatusMessage));
 
 		private void AddLog(InternalMessageModel log) => Dispatcher.UIThread.InvokeAsync(() => Logs.Add(log));
 
@@ -89,5 +99,9 @@ namespace TimeClient.ViewModels
 
 		[UsedImplicitly]
 		public ObservableCollection<ServerModel> AccessibleServers { get; } = new ObservableCollection<ServerModel>();
+
+		[UsedImplicitly]
+		public ObservableCollection<InternalMessageModel> TimeMessages { get; } =
+			new ObservableCollection<InternalMessageModel>();
 	}
 }

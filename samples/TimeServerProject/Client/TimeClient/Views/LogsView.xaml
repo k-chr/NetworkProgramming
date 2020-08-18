@@ -8,12 +8,6 @@
 			 Background="Transparent"
 			 Orientation="Vertical"
 			 Spacing="40">
-	  <StackPanel.Styles>
-		 <Style Selector="TextBlock.header">
-			<Setter Property="Margin" Value="0 30 0 20" />
-			<Setter Property="Foreground" Value="{DynamicResource SystemBaseHighColor}"/>
-		 </Style>
-	  </StackPanel.Styles>
 	  <TextBlock Text="Application logs:" Classes="header" ></TextBlock>
 	  <Grid>
 		 <ScrollViewer VerticalScrollBarVisibility="Visible" IsVisible="{Binding !!Logs.Count}" Grid.Row="0" Grid.Column="0">

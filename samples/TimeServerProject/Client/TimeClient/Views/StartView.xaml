@@ -31,7 +31,7 @@
 	  </Style>
    </UserControl.Styles>
    <StackPanel Orientation="Vertical" Spacing="10" Margin="{StaticResource PageMargin}" HorizontalAlignment="Stretch">
-	  <TextBlock FontSize="16">Hello user!</TextBlock>
+	  <TextBlock Classes="header">Hello user!</TextBlock>
 	  <TextBlock FontSize="14">User manual:</TextBlock>
 	  <ListBox Classes="NonListBox" Items="{Binding HelpItems}"
 			   Background="Transparent"
@@ -43,10 +43,10 @@
 			   <Border>
 				  <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
 					 <TextBlock Margin="10 0 10 0" Text="&#8226;"/>
-						<TextPresenter Text="{Binding}" TextWrapping="Wrap"
-									   HorizontalAlignment="Stretch"
-									   Width="{Binding #StartView.InfoWidth}"
-									   ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+					 <TextPresenter Text="{Binding}" TextWrapping="Wrap"
+									HorizontalAlignment="Stretch"
+									Width="{Binding #StartView.InfoWidth}"
+									ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
 				  </StackPanel>
 			   </Border>
 			</DataTemplate>
