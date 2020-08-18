@@ -1,11 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-  </PropertyGroup>
+   <PropertyGroup>
+	   <OutputType>Library</OutputType>
+	   <TargetFramework>netcoreapp3.1</TargetFramework>
+   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
-  </ItemGroup>
+   <ItemGroup>
+	  <ProjectReference Include="..\..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
+   </ItemGroup>
+	<ItemGroup>
+		<None Remove="Styles\SideBar.xaml" />
+		<None Remove="Styles\Styles.xaml" />
+		<AvaloniaResource Include="**\*.xaml">
+			<SubType>Designer</SubType>
+		</AvaloniaResource>
+		<AvaloniaResource Include="Styles\SideBar.xaml" />
+		<AvaloniaResource Include="Styles\Styles.xaml" />
+		<AvaloniaResource Include="Assets\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Styles\SideBar.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Styles\Styles.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="0.10.0-preview3" />
+		<PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview3" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Include="Styles\Styles.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Include="Styles\SideBar.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+	</ItemGroup>
 
 </Project>

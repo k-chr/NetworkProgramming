@@ -48,6 +48,10 @@
    </ItemGroup>
 
    <ItemGroup>
+     <ProjectReference Include="..\NetworkingUtilities\NetworkingUtilities.csproj" />
+   </ItemGroup>
+
+   <ItemGroup>
      <AvaloniaResource Update="Themes\ClockControl.xaml">
        <Generator>MSBuild:Compile</Generator>
      </AvaloniaResource>

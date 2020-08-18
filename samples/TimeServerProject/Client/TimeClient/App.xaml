@@ -6,8 +6,8 @@
 	  <timeClient:ViewLocator />
    </Application.DataTemplates>
    <Application.Styles>
-	  <StyleInclude Source="/Styles/Styles.xaml" />
-	  <StyleInclude Source="/Styles/SideBar.xaml" />
+	  <StyleInclude Source="avares://TimeProjectServices/Styles/Styles.xaml" />
+	  <StyleInclude Source="avares://TimeProjectServices/Styles/SideBar.xaml" />
 	  <StyleInclude Source="avares://CustomControls/Themes/ClockControl.xaml" />
    </Application.Styles>
 </Application>
