@@ -4,17 +4,18 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TimeClient.Views.NotificationView"
-			 xmlns:vm="clr-namespace:TimeClient.ViewModels;assembly=TimeClient">
-   <Design.DataContext>
-	  <vm:NotificationViewModel></vm:NotificationViewModel>
-   </Design.DataContext>
+			 xmlns:vm="clr-namespace:TimeClient.ViewModels;assembly=TimeClient"
+			 xmlns:conv="clr-namespace:CustomControls.Converters;assembly=CustomControls">
+   <UserControl.Resources>
+	  <conv:StatusToBrushConverter x:Key="StateCodeConverter" />
+   </UserControl.Resources>
    <Panel Background="{x:Null}">
 	  <ExperimentalAcrylicBorder >
 		 <ExperimentalAcrylicBorder.Material>
-			<ExperimentalAcrylicMaterial MaterialOpacity="0.35"
-										 TintOpacity="1"/>
+			<ExperimentalAcrylicMaterial MaterialOpacity="0.85"
+										 TintOpacity="1" TintColor="{Binding Type, Converter={StaticResource StateCodeConverter}}"/>
 		 </ExperimentalAcrylicBorder.Material>
-		 <Grid ColumnDefinitions="Auto,*">
+		 <Grid ColumnDefinitions="Auto,*"  Margin="15">
 			<Panel Margin="0,0,12,0"  VerticalAlignment="Top" Background="{x:Null}">
 			   <Viewbox>
 				  <Path Data="{Binding Icon}"></Path>
@@ -22,9 +23,8 @@
 			</Panel>
 			<DockPanel Grid.Column="1">
 			   <TextBlock DockPanel.Dock="Top" Text="{Binding Title}" FontWeight="Medium" />
-			   <StackPanel Spacing="20" DockPanel.Dock="Bottom" Margin="0,8,0,0" Orientation="Horizontal">
-				  <Button Content="Yes" DockPanel.Dock="Right" NotificationCard.CloseOnClick="True" Command="{Binding YesCommand}" />
-				  <Button Content="No" DockPanel.Dock="Right" NotificationCard.CloseOnClick="True" Command="{Binding NoCommand}"  Margin="0,0,8,0" />
+			   <StackPanel Spacing="20" DockPanel.Dock="Bottom" Margin="0,8,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+				  <Button>OK</Button>
 
 			   </StackPanel>
 			   <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Opacity=".8" Margin="0,8,0,0"/>

@@ -4,6 +4,7 @@ using Avalonia.Controls.Notifications;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Avalonia.VisualTree;
 using DynamicData;
 using JetBrains.Annotations;
@@ -65,8 +66,9 @@ namespace TimeClient.Views
 			content.PointerEnter += OnPointerLeave;
 			NotificationArea = new WindowNotificationManager(this)
 			{
-				Position = NotificationPosition.TopRight,
-				MaxItems = 3
+				Position = NotificationPosition.BottomRight,
+				MaxItems = 3,
+				BorderBrush = Brushes.Transparent,
 			};
 		}
 

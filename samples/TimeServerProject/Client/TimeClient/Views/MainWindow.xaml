@@ -20,6 +20,11 @@
    <FluentWindow.Resources>
 	  <conv:WidthConverter x:Key="WidthConverter"></conv:WidthConverter>
    </FluentWindow.Resources>
+   <FluentWindow.DataTemplates>
+	  <DataTemplate DataType="vm:NotificationViewModel">
+		 <views:NotificationView/>
+	  </DataTemplate>
+   </FluentWindow.DataTemplates>
    <FluentWindow.Styles>
 	  <Style Selector="TitleBar:fullscreen > Panel > Panel > Border">
 		 <Setter Property="Background" Value="{DynamicResource SystemChromeLowColor}" />
