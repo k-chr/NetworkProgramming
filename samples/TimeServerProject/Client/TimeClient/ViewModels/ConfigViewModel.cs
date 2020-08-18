@@ -51,7 +51,7 @@ namespace TimeClient.ViewModels
 							  {
 								  var name when
 								  name.Equals(nameof(MulticastPort)) || name.Equals(nameof(LocalPort)) =>
-								  () => ((int) value).InRange(0, short.MaxValue),
+								  () => ((int) value).InRange(0, ushort.MaxValue),
 								  nameof(MulticastAddress) => () => ((string) value).IsMulticastAddress(),
 								  nameof(DiscoveryQueryPeriod) => () => (int) value > 0,
 								  nameof(TimeQueryPeriod) => () => ((int) value).InRange(10, 1000),

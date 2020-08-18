@@ -1,0 +1,10 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+       xmlns:sys="clr-namespace:System;assembly=netstandard">
+   <Design.PreviewWith>
+	  <TextBlock Background="{DynamicResource SystemControlBackgroundAltHighBrush}">This is light theme</TextBlock>
+   </Design.PreviewWith>
+   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/BaseLight.xaml" />
+   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/FluentBaseLight.xaml" />
+   <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/FluentControlResourcesLight.xaml" />
+</Styles>

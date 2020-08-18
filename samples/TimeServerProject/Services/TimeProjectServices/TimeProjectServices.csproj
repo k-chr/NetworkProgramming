@@ -9,6 +9,8 @@
 	  <ProjectReference Include="..\..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
    </ItemGroup>
 	<ItemGroup>
+		<None Remove="Styles\FluentDark.xaml" />
+		<None Remove="Styles\FluentLight.xaml" />
 		<None Remove="Styles\SideBar.xaml" />
 		<None Remove="Styles\Styles.xaml" />
 		<AvaloniaResource Include="**\*.xaml">
@@ -16,6 +18,8 @@
 		</AvaloniaResource>
 		<AvaloniaResource Include="Styles\SideBar.xaml" />
 		<AvaloniaResource Include="Styles\Styles.xaml" />
+		<AvaloniaResource Include="Styles\FluentLight.xaml"/>
+		<AvaloniaResource Include="Styles\FluentDark.xaml"/>
 		<AvaloniaResource Include="Assets\**" />
 	</ItemGroup>
 
@@ -43,6 +47,15 @@
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AvaloniaResource Update="Styles\FluentDark.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </AvaloniaResource>
+	  <AvaloniaResource Update="Styles\FluentLight.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </AvaloniaResource>
 	</ItemGroup>
 
 </Project>

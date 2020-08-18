@@ -15,17 +15,16 @@
 			   <ItemsControl.ItemTemplate>
 				  <DataTemplate>
 					 <ListBoxItem>
-						<TextBox CaretBrush="Transparent"
-						IsReadOnly="True" Background="Transparent"
-						BorderThickness="0" AcceptsReturn="True"
+						<TextBlock 
+						Background="Transparent"
 						Text="{Binding}" Foreground="{Binding ColorBrush}"
 						TextWrapping="Wrap" MaxWidth="275">
-						   <TextBox.Styles>
+						   <TextBlock.Styles>
 							  <Style Selector="TextBox:pointerover">
 								 <Setter Property="Background" Value="Transparent"/>
 							  </Style>
-						   </TextBox.Styles>
-						</TextBox>
+						   </TextBlock.Styles>
+						</TextBlock>
 					 </ListBoxItem>
 				  </DataTemplate>
 			   </ItemsControl.ItemTemplate>

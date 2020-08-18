@@ -20,17 +20,17 @@ namespace TimeClient
 
 		public static readonly Styles FluentDark = new Styles
 		{
-			new StyleInclude(new Uri("resm:Styles?assembly=TimeClient"))
+			new StyleInclude(new Uri("resm:Styles?assembly=TimeProjectServices"))
 			{
-				Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/FluentDark.xaml")
+				Source = new Uri("avares://TimeProjectServices/Styles/FluentDark.xaml")
 			},
 		};
 
 		public static readonly Styles FluentLight = new Styles
 		{
-			new StyleInclude(new Uri("resm:Styles?assembly=TimeClient"))
+			new StyleInclude(new Uri("resm:Styles?assembly=TimeProjectServices"))
 			{
-				Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/FluentLight.xaml")
+				Source = new Uri("avares://TimeProjectServices/Styles/FluentLight.xaml")
 			},
 		};
 
@@ -40,7 +40,6 @@ namespace TimeClient
 			_suspendHelper = new AutoSuspendHelper(ApplicationLifetime);
 			RxApp.SuspensionHost.CreateNewAppState = () => new ConfigViewModel();
 			RxApp.SuspensionHost.SetupDefaultSuspendResume(new BinaryConfigurationSuspensionDriver(ConfigFileName));
-			Styles.Insert(0, FluentDark);
 		}
 
 		public override void OnFrameworkInitializationCompleted()
