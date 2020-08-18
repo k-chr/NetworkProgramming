@@ -5,14 +5,8 @@ namespace TimeClient.Views
 {
 	public class NotificationView : UserControl
 	{
-		public NotificationView()
-		{
-			this.InitializeComponent();
-		}
+		public NotificationView() => InitializeComponent();
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-		}
+		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 	}
 }

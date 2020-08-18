@@ -21,12 +21,9 @@ namespace TimeClient.Views
 			}
 		}
 
-		static StartView()
-		{
-			InfoWidthProperty = AvaloniaProperty.Register<StartView, double>(nameof(InfoWidth), double.NaN);
-		}
+		static StartView() => InfoWidthProperty = AvaloniaProperty.Register<StartView, double>(nameof(InfoWidth), double.NaN);
 
-		public StartView() => this.InitializeComponent();
+		public StartView() => InitializeComponent();
 
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 	}

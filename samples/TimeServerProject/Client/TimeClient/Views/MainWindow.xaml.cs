@@ -20,7 +20,7 @@ namespace TimeClient.Views
 
 		public bool SideBarCollapsed
 		{
-			get => _sideBarCollapsed;
+			[UsedImplicitly] get => _sideBarCollapsed;
 			set => SetAndRaise(SideBarCollapsedProperty, ref _sideBarCollapsed, value);
 		}
 
