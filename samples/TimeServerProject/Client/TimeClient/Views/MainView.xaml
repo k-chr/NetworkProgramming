@@ -3,6 +3,36 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TimeClient.Views.MainView">
-    Welcome to Avalonia!
+             x:Class="TimeClient.Views.MainView"
+			 xmlns:ctrl="clr-namespace:CustomControls.Controls;assembly=CustomControls"
+             xmlns:conv="clr-namespace:CustomControls.Converters;assembly=CustomControls">
+   <UserControl.Resources>
+	  <conv:InternalMessageTypeToAlignmentConverter x:Key="myAlignmentConverter"/>
+	  <conv:ConvertToDynamicDock x:Key="myDockConverter"/>
+   </UserControl.Resources>
+   <StackPanel Margin="{StaticResource PageMargin}"
+			 Background="Transparent"
+			 Orientation="Vertical"
+			 Spacing="40">
+	  <TextBlock Text="Time messages:" Classes="header" ></TextBlock>
+
+	  <ScrollViewer IsVisible="{Binding !!TimeMessages.Count}">
+		 <ItemsControl Items="{Binding TimeMessages}" MinHeight="240" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Margin="0 0 0 2">
+			<ItemsControl.ItemTemplate >
+			   <DataTemplate>
+				  <ListBoxItem>
+					 <ctrl:MessageBubble Message="{Binding Data}"
+								Date="{Binding Date}"
+								HorizontalAlignment="{Binding Type, Converter={StaticResource myAlignmentConverter} ConverterParameter=Client}"
+								Client="{Binding ClientModelData}"
+								BubbleColor="{Binding ColorBrush}"
+								DynamicDock="{Binding $self.HorizontalAlignment, Converter={StaticResource myDockConverter}}">
+					 </ctrl:MessageBubble>
+				  </ListBoxItem>
+			   </DataTemplate>
+			</ItemsControl.ItemTemplate>
+		 </ItemsControl>
+	  </ScrollViewer>
+	  <TextBlock Text="No time messages found" IsVisible="{Binding !TimeMessages.Count}"></TextBlock>
+   </StackPanel>
 </UserControl>
