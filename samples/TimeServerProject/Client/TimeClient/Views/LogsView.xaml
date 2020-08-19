@@ -15,10 +15,10 @@
 			   <ItemsControl.ItemTemplate>
 				  <DataTemplate>
 					 <ListBoxItem>
-						<TextBlock 
-						Background="Transparent"
-						Text="{Binding}" Foreground="{Binding ColorBrush}"
-						TextWrapping="Wrap" MaxWidth="275">
+						<TextBlock FontFamily="{StaticResource CodeFontFamily}"
+								   Background="Transparent"
+								   Text="{Binding}" Foreground="{Binding ColorBrush}"
+								   TextWrapping="Wrap" MaxWidth="275">
 						   <TextBlock.Styles>
 							  <Style Selector="TextBox:pointerover">
 								 <Setter Property="Background" Value="Transparent"/>
@@ -30,7 +30,7 @@
 			   </ItemsControl.ItemTemplate>
 			</ItemsControl>
 		 </ScrollViewer>
-		 <TextBlock  Grid.Row="0" Grid.Column="0" IsVisible="{Binding !Logs.Count}">No logs found</TextBlock>
+		 <TextBlock Grid.Row="0" Grid.Column="0" IsVisible="{Binding !Logs.Count}">No logs found</TextBlock>
 	  </Grid>
    </StackPanel>
 </UserControl>

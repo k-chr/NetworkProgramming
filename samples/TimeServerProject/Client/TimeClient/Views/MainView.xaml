@@ -16,23 +16,25 @@
 			 Spacing="40">
 	  <TextBlock Text="Time messages:" Classes="header" ></TextBlock>
 
-	  <ScrollViewer IsVisible="{Binding !!TimeMessages.Count}">
-		 <ItemsControl Items="{Binding TimeMessages}" MinHeight="240" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Margin="0 0 0 2">
-			<ItemsControl.ItemTemplate >
-			   <DataTemplate>
-				  <ListBoxItem>
-					 <ctrl:MessageBubble Message="{Binding Data}"
-								Date="{Binding Date}"
-								HorizontalAlignment="{Binding Type, Converter={StaticResource myAlignmentConverter} ConverterParameter=Client}"
-								Client="{Binding ClientModelData}"
-								BubbleColor="{Binding ColorBrush}"
-								DynamicDock="{Binding $self.HorizontalAlignment, Converter={StaticResource myDockConverter}}">
-					 </ctrl:MessageBubble>
-				  </ListBoxItem>
-			   </DataTemplate>
-			</ItemsControl.ItemTemplate>
-		 </ItemsControl>
-	  </ScrollViewer>
-	  <TextBlock Text="No time messages found" IsVisible="{Binding !TimeMessages.Count}"></TextBlock>
+	  <Grid>
+		 <ScrollViewer IsVisible="{Binding !!TimeMessages.Count}">
+			<ItemsControl Items="{Binding TimeMessages}" MinHeight="240" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Margin="0 0 0 2">
+			   <ItemsControl.ItemTemplate >
+				  <DataTemplate>
+					 <ListBoxItem>
+						<ctrl:MessageBubble Message="{Binding Data}"
+								   Date="{Binding Date}"
+								   HorizontalAlignment="{Binding Type, Converter={StaticResource myAlignmentConverter} ConverterParameter=Client}"
+								   Client="{Binding ClientModelData}"
+								   BubbleColor="{Binding ColorBrush}"
+								   DynamicDock="{Binding $self.HorizontalAlignment, Converter={StaticResource myDockConverter}}">
+						</ctrl:MessageBubble>
+					 </ListBoxItem>
+				  </DataTemplate>
+			   </ItemsControl.ItemTemplate>
+			</ItemsControl>
+		 </ScrollViewer>
+		 <TextBlock Text="No time messages found" IsVisible="{Binding !TimeMessages.Count}"></TextBlock>
+	  </Grid>
    </StackPanel>
 </UserControl>

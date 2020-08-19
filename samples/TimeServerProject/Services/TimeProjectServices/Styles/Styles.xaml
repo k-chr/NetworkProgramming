@@ -4,6 +4,7 @@
 	  <Border Padding="20">
 		 <StackPanel Spacing="5">
 			<TextBlock Text="Code Font Family" FontFamily="{StaticResource CodeFontFamily}" />
+			<TextBlock Text="Code Font Family" />
 		 </StackPanel>
 	  </Border>
    </Design.PreviewWith>

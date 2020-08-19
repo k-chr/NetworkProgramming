@@ -43,8 +43,8 @@
 		 <DataValidationErrors>
 			<TextBox Watermark="Address, default 224.0.0.0"
 					 UseFloatingWatermark="True"
-					 Name="MulticastAddr"
-					 Text="{Binding MulticastAddress, Mode=TwoWay, Priority=TemplatedParent}">
+					
+					 Text="{Binding MulticastAddress, Mode=TwoWay}">
 			</TextBox>
 		 </DataValidationErrors>
 	  </StackPanel>
