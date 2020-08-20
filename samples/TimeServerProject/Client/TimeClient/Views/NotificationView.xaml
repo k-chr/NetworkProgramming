@@ -6,28 +6,29 @@
              x:Class="TimeClient.Views.NotificationView"
 			 xmlns:vm="clr-namespace:TimeClient.ViewModels;assembly=TimeClient"
 			 xmlns:conv="clr-namespace:CustomControls.Converters;assembly=CustomControls">
+   <Design.DataContext>
+   </Design.DataContext>
    <UserControl.Resources>
 	  <conv:StatusToBrushConverter x:Key="StateCodeConverter" />
    </UserControl.Resources>
-   <Panel Background="{x:Null}">
-	  <ExperimentalAcrylicBorder >
+   <Panel Background="{x:Null}" >
+	  <ExperimentalAcrylicBorder  Margin="0" Padding="0" >
 		 <ExperimentalAcrylicBorder.Material>
-			<ExperimentalAcrylicMaterial MaterialOpacity="0.85"
+			<ExperimentalAcrylicMaterial MaterialOpacity="0.85" FallbackColor="Transparent"
 										 TintOpacity="1" TintColor="{Binding Type, Converter={StaticResource StateCodeConverter}}"/>
 		 </ExperimentalAcrylicBorder.Material>
-		 <Grid ColumnDefinitions="Auto,*"  Margin="15">
-			<Panel Margin="0,0,12,0"  VerticalAlignment="Top" Background="{x:Null}">
-			   <Viewbox>
-				  <Path Data="{Binding Icon}"></Path>
+		 <Grid ColumnDefinitions="Auto,*" Margin="15" Background="{x:Null}">
+			<Panel Margin="4" Width="40" Height="40"  VerticalAlignment="Top" Grid.Column="0" Background="{x:Null}">
+			   <Viewbox Width="32" Height="32">
+				  <Path Data="{Binding Icon}" Fill="Black" Stroke="Black" />
 			   </Viewbox>
 			</Panel>
 			<DockPanel Grid.Column="1">
-			   <TextBlock DockPanel.Dock="Top" Text="{Binding Title}" FontWeight="Medium" />
+			   <TextBlock  DockPanel.Dock="Top" Text="{Binding Title}" Background="{x:Null}" FontWeight="Medium" Foreground="{DynamicResource SystemBaseHighColor}" />
 			   <StackPanel Spacing="20" DockPanel.Dock="Bottom" Margin="0,8,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
 				  <Button>OK</Button>
-
 			   </StackPanel>
-			   <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Opacity=".8" Margin="0,8,0,0"/>
+			   <TextBlock Text="{Binding Message}" Foreground="{DynamicResource SystemBaseHighColor}" Background="{x:Null}" TextWrapping="Wrap" Opacity=".8" Margin="0,0,0,0"/>
 			</DockPanel>
 		 </Grid>
 	  </ExperimentalAcrylicBorder>

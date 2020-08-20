@@ -4,7 +4,7 @@ namespace TimeClient.ViewModels
 {
 	internal class SuccessNotificationViewModel : NotificationViewModel
 	{
-		internal SuccessNotificationViewModel() => Icon = Geometry.Parse(
+		internal SuccessNotificationViewModel() => Icon = PathGeometry.Parse(
 			"M22.014996,10.204013" +
 			"L23.449993,11.597013 13.512005,21.845022 8.4560118,17.863018 9.6940098,16.292017 13.332006,19.157019z " +
 			"M15.937988,2" +

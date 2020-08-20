@@ -87,6 +87,11 @@ namespace TimeClient.ViewModels
 			};
 		}
 
+		public void ConnectToSelectedServer()
+		{
+			if(SelectedServer != null){}
+		}
+
 		private void ShowNotification(StatusEvent @event) =>
 			ManagedNotificationManager.Show(
 				NotificationViewModelFactory.Create(@event.StatusCode, @event.StatusMessage));

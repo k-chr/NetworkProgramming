@@ -5,7 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:ctrl="clr-namespace:CustomControls.Controls;assembly=CustomControls"
              x:Class="TimeClient.Views.ServerSelectionView">
-   <StackPanel Margin="{StaticResource PageMargin}"			   
+   <StackPanel Margin="{StaticResource PageMargin}"
 			   Background="Transparent"
 			   Orientation="Vertical"
 			   Spacing="40">
@@ -17,11 +17,12 @@
 	  </StackPanel.Styles>
 	  <TextBlock Text="Server List" Classes="header"></TextBlock>
 	  <Grid>
-		 <ListBox Grid.Row="0" Grid.Column="0" SelectedItem="{Binding SelectedServer, Mode=TwoWay}" Items="{Binding AccessibleServers}" IsVisible="{Binding !!AccessibleServers.Count}" >
-
-		 </ListBox>
+		 <ListBox Grid.Row="0" Grid.Column="0" SelectedItem="{Binding SelectedServer, Mode=TwoWay}" Items="{Binding AccessibleServers}" IsVisible="{Binding !!AccessibleServers.Count}" />
 		 <TextBlock Grid.Row="0" Grid.Column="0" Background="Transparent" IsVisible="{Binding !AccessibleServers.Count}">Currently we can't find any suitable server</TextBlock>
 	  </Grid>
+	  <Button Content="Connect" HorizontalAlignment="Right"
+			  IsEnabled="{Binding SelectedServer, Converter={x:Static ObjectConverters.IsNotNull}}"
+			  Command="{Binding ConnectToSelectedServer}"/>
    </StackPanel>
 	
 </UserControl>

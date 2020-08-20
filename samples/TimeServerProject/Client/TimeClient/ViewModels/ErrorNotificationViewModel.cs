@@ -4,7 +4,7 @@ namespace TimeClient.ViewModels
 {
 	internal class ErrorNotificationViewModel : NotificationViewModel
 	{
-		internal ErrorNotificationViewModel() => Icon = Geometry.Parse(
+		internal ErrorNotificationViewModel() => Icon = PathGeometry.Parse(
 			"M14.966003,22.147998" +
 			"L17.112,22.147998 17.112,24.293016 14.966003,24.293016z " +
 			"M14.874008,13.098992" +
