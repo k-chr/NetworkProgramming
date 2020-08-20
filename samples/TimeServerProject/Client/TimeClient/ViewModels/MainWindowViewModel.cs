@@ -73,6 +73,7 @@ namespace TimeClient.ViewModels
 			{
 				if (!ConfigViewModel.HasErrors) return;
 				var message = ConfigViewModel.GetErrors(args.PropertyName).Cast<string>().First();
+				if(string.IsNullOrEmpty(message)) return;
 				var status = new StatusEvent(StatusCode.Error,
 					message);
 

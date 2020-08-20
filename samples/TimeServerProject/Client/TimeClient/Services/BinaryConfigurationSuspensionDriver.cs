@@ -38,26 +38,25 @@ namespace TimeClient.Services
 					server = null;
 
 				configViewModel = new ConfigViewModel
-				{
-					DiscoveryQueryPeriod = BitConverter.ToInt32(discoverPeriod),
-					TimeQueryPeriod = BitConverter.ToInt32(timePeriod),
-					LocalPort = BitConverter.ToInt32(localPort),
-					MulticastPort = BitConverter.ToInt32(multicastPort),
-					MulticastAddress = new IPAddress(multicastAddress).ToString(),
-					SelectedServer = server
-				};
+				(
+					discoveryQueryPeriod: BitConverter.ToInt32(discoverPeriod),
+					timeQueryPeriod: BitConverter.ToInt32(timePeriod),
+					localPort: BitConverter.ToInt32(localPort),
+					multicastPort: BitConverter.ToInt32(multicastPort),
+					multicastAddress: new IPAddress(multicastAddress).ToString()
+				) {SelectedServer = server};
 			}
 			catch (Exception)
 			{
 				var r = new Random();
 				configViewModel = new ConfigViewModel
-				{
-					DiscoveryQueryPeriod = 10,
-					LocalPort = r.Next(0, ushort.MaxValue),
-					TimeQueryPeriod = 10,
-					MulticastPort = 7,
-					MulticastAddress = "224.0.0.0"
-				};
+				(
+					discoveryQueryPeriod: 10,
+					localPort: r.Next(0, ushort.MaxValue),
+					timeQueryPeriod: 10,
+					multicastPort: 7,
+					multicastAddress: "224.0.0.0"
+				);
 			}
 
 			return Observable.Return(configViewModel);

@@ -12,16 +12,13 @@ namespace TimeClient.ViewModels
 {
 	public class ConfigViewModel : ViewModelBase, INotifyDataErrorInfo
 	{
-		public event EventHandler ConfigurationChanged;
 		private string _multicastAddress;
 		private int _multicastPort;
 		private int _localPort;
 		private int _discoveryQueryPeriod;
 		private int _timeQueryPeriod;
 		private bool _backedUp;
-		public ServerModel SelectedServer { get; set; }
-
-
+		
 		private (string MulticastAddress, int MulticastPort, int LocalPort, int DiscoveryQueryPeriod, int
 			TimeQueryPeriod) _backup;
 
@@ -36,8 +33,16 @@ namespace TimeClient.ViewModels
 
 		private readonly Dictionary<string, string> _propertiesErrors = new Dictionary<string, string>();
 
-		public ConfigViewModel()
+
+		public ConfigViewModel(string multicastAddress = "", int multicastPort = 0, int localPort = 0,
+			int timeQueryPeriod = 0, int discoveryQueryPeriod = 0) : this()
 		{
+			_multicastPort = multicastPort;
+			_multicastAddress = multicastAddress;
+			_localPort = localPort;
+			_timeQueryPeriod = timeQueryPeriod;
+			_discoveryQueryPeriod = discoveryQueryPeriod;
+
 			this.WhenAnyValue(model => model.MulticastPort)
 			   .Subscribe(val => UpdateErrorInformation(nameof(MulticastPort), val));
 			this.WhenAnyValue(model => model.DiscoveryQueryPeriod)
@@ -48,17 +53,20 @@ namespace TimeClient.ViewModels
 			   .Subscribe(i => UpdateErrorInformation(nameof(TimeQueryPeriod), i));
 			this.WhenAnyValue(model => model.LocalPort)
 			   .Subscribe(i => UpdateErrorInformation(nameof(LocalPort), i));
-			
+		}
+
+		private ConfigViewModel()
+		{
 			PropertyChanging += (sender, args) =>
 			{
-				if (!_backedUp)
+				if (!BackedUp && !args.PropertyName.Equals(nameof(BackedUp)))
 				{
 					_backup.DiscoveryQueryPeriod = DiscoveryQueryPeriod;
 					_backup.LocalPort = LocalPort;
 					_backup.TimeQueryPeriod = TimeQueryPeriod;
 					_backup.MulticastAddress = MulticastAddress;
 					_backup.MulticastPort = MulticastPort;
-					_backedUp = !_backedUp;
+					BackedUp = !BackedUp;
 				}
 			};
 		}
@@ -82,6 +90,7 @@ namespace TimeClient.ViewModels
 				if (_propertiesErrors.ContainsKey(propertyName))
 				{
 					_propertiesErrors.Remove(propertyName);
+					this.RaisePropertyChanged(nameof(HasErrors));
 					ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
 				}
 			}
@@ -90,10 +99,19 @@ namespace TimeClient.ViewModels
 				if (!_propertiesErrors.ContainsKey(propertyName))
 				{
 					_propertiesErrors.Add(propertyName, DefaultPropertiesErrors[propertyName]);
+					this.RaisePropertyChanged(nameof(HasErrors));
 					ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
 				}
 			}
 		}
+
+		public bool BackedUp
+		{
+			get => _backedUp;
+			set => this.RaiseAndSetIfChanged(ref _backedUp, value);
+		}
+
+		public ServerModel SelectedServer { get; set; }
 
 		public string MulticastAddress
 		{
@@ -125,19 +143,28 @@ namespace TimeClient.ViewModels
 			set => this.RaiseAndSetIfChanged(ref _discoveryQueryPeriod, value);
 		}
 
-		public IEnumerable GetErrors(string propertyName) => new[] {_propertiesErrors.Get(propertyName)};
-
 		public bool HasErrors => _propertiesErrors.Any();
 
+		public IEnumerable GetErrors(string propertyName) => new[] {_propertiesErrors.Get(propertyName)}; 
+		
+		public event EventHandler ConfigurationChanged;
 		public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 
 		public void ApplyConfiguration()
 		{
-			OnConfigurationChanged();
+			if (!HasErrors)
+			{
+				OnConfigurationChanged();
+				_backup = default;
+				BackedUp = default;
+			}
 		}
 
 		public void DiscardConfiguration()
 		{
+			(MulticastAddress, MulticastPort, LocalPort, DiscoveryQueryPeriod, TimeQueryPeriod) = _backup;
+			_backup = default;
+			BackedUp = default;
 		}
 
 		private void OnConfigurationChanged() => ConfigurationChanged?.Invoke(this, EventArgs.Empty);
