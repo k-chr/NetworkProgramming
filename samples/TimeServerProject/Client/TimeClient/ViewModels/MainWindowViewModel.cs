@@ -15,19 +15,30 @@ namespace TimeClient.ViewModels
 		private TimeProjectServices.Services.TimeClient _client;
 
 		private ServerModel _selectedServer;
-
+		
 		private bool _isValid;
 
 		private IManagedNotificationManager _managedNotificationManager;
+		private ServerModel _connectedServer;
 
+		[UsedImplicitly]
 		public ConfigViewModel ConfigViewModel { get; }
 
+		[UsedImplicitly]
 		public IManagedNotificationManager ManagedNotificationManager
 		{
 			get => _managedNotificationManager;
 			set => this.RaiseAndSetIfChanged(ref _managedNotificationManager, value);
 		}
 
+		[UsedImplicitly]
+		public ServerModel ConnectedServer
+		{
+			get => _connectedServer;
+			set => this.RaiseAndSetIfChanged(ref _connectedServer, value);
+		}
+
+		[UsedImplicitly]
 		public ServerModel SelectedServer
 		{
 			get => _selectedServer;
@@ -38,13 +49,7 @@ namespace TimeClient.ViewModels
 				OnSelectedServerChanged(old, _selectedServer);
 			}
 		}
-
-		public bool IsValid
-		{
-			get => _isValid;
-			set => this.RaiseAndSetIfChanged(ref _isValid, value);
-		}
-
+		
 		private void OnSelectedServerChanged(ServerModel old, ServerModel selectedServer)
 		{
 			if (!(selectedServer is null) && !old.Equals(selectedServer))
@@ -79,17 +84,23 @@ namespace TimeClient.ViewModels
 				AddLog(model);
 			};
 
-			ConfigViewModel.PropertyChanged += (sender, args) =>
+			ConfigViewModel.ConfigurationChanged += (sender, args) =>
 			{
 				if (ConfigViewModel.HasErrors) return;
-
-				var name = args.PropertyName;
 			};
 		}
 
 		public void ConnectToSelectedServer()
 		{
 			if(SelectedServer != null){}
+		}
+
+		public void DisconnectFromServer()
+		{
+			if (ConnectedServer != null)
+			{
+				_client?.StopTimeCommunication();
+			}
 		}
 
 		private void ShowNotification(StatusEvent @event) =>
