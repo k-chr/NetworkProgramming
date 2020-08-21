@@ -20,7 +20,9 @@ namespace NetworkingUtilities.Tcp
 			new Socket(SocketType.Stream, ProtocolType.Tcp)) =>
 			Connect(address, port, manualResetEvent);
 
-		public Client(): base(new Socket(SocketType.Stream, ProtocolType.Tcp)){}
+		public Client() : base(new Socket(SocketType.Stream, ProtocolType.Tcp))
+		{
+		}
 
 		public void Connect(string address, in int port, ManualResetEvent manualResetEvent)
 		{
@@ -57,9 +59,11 @@ namespace NetworkingUtilities.Tcp
 						WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port);
 					}
 
+					var server = ClientSocket.RemoteEndPoint as IPEndPoint;
+
 					OnReportingStatus(StatusCode.Success,
 						$"Successfully created TCP connection to {ClientSocket.RemoteEndPoint}");
-					OnConnect(WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port);
+					OnConnect(server?.Address, WhoAmI.Id, server?.Port ?? 0);
 				}
 				catch (ObjectDisposedException)
 				{
@@ -182,8 +186,8 @@ namespace NetworkingUtilities.Tcp
 						Disconnect(clientSocket);
 						return;
 					}
-					Receive(clientSocket, state);
 
+					Receive(clientSocket, state);
 				}
 				catch (ObjectDisposedException)
 				{
