@@ -31,12 +31,12 @@ namespace TimeProjectServices.Services
 
 		public TimeClient(string multicastAddress, int multicastPort, int localPort = 0)
 		{
-			_discoveryClients = GeneralUtilities.GetNetworkInterfacesThatAreUp().ConvertAll(input =>
-				new MulticastClient(multicastAddress, multicastPort, localPort: localPort,
-					ipAddress: (input.GetIPProperties().UnicastAddresses.SingleOrDefault(ipAddressInformation =>
-									ipAddressInformation.Address.AddressFamily == AddressFamily.InterNetwork &&
-									!ipAddressInformation.Address.Equals(IPAddress.Loopback))?.Address ??
-								IPAddress.Any).ToString()));
+			_discoveryClients = GeneralUtilities.GetNetworkInterfacesThatAreUp().Where(networkInterface =>
+					networkInterface.GetIPProperties().UnicastAddresses
+					   .FirstOrDefault(information => !information.Address.Equals(IPAddress.Loopback)) != null)
+			   .ToList().ConvertAll(input => new MulticastClient(multicastAddress, multicastPort, localPort: localPort,
+					ipAddress: input.GetIPProperties().UnicastAddresses.First(ipAddressInformation =>
+						ipAddressInformation.Address.AddressFamily == AddressFamily.InterNetwork).Address.ToString()));
 
 			_exceptionReporter = new ExceptionReporter();
 			_statusReporter = new StatusReporter();
@@ -128,12 +128,13 @@ namespace TimeProjectServices.Services
 		{
 			if (_tcpClient != null)
 			{
-				_tcpClient.StopService(); 
+				_tcpClient.StopService();
 			}
 			else
 			{
 				OnDisconnect(IPAddress.Any, "", 0);
 			}
+
 			_tcpClient = null;
 		}
 

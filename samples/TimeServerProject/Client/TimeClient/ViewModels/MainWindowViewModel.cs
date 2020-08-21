@@ -64,7 +64,7 @@ namespace TimeClient.ViewModels
 			set => this.RaiseAndSetIfChanged(ref _selectedServer, value);
 		}
 
-		[UsedImplicitly] public bool CanDiscover => !_disableDiscovery && ConnectedServer == null;
+		[UsedImplicitly] public bool CanDiscover => _disableDiscovery && ConnectedServer == null;
 
 		private void OnConnectedServerChanged(ServerModel old, ServerModel connectedServer)
 		{
@@ -129,6 +129,7 @@ namespace TimeClient.ViewModels
 		{
 			_client?.StartService();
 			PrepareDiscoveryTask();
+			_disableDiscovery = false;
 		}
 
 		public MainWindowViewModel(IManagedNotificationManager managedNotificationManager,

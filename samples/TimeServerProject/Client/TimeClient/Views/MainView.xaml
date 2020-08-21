@@ -36,7 +36,7 @@
 		 </ScrollViewer>
 		 <TextBlock Text="No time messages found" IsVisible="{Binding !TimeMessages.Count}"></TextBlock>
 	  </Grid>
-	  <Button IsEnabled="{Binding}"
+	  <Button IsEnabled="{Binding ConnectedServer, Converter={x:Static ObjectConverters.IsNotNull}}"
 			  HorizontalAlignment="Right" Content="Disconnect" 
 			  Command="{Binding DisconnectFromServer}"/>
    </StackPanel>
