@@ -1,0 +1,36 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TimeClient.Views.NotificationView"
+			 xmlns:vm="clr-namespace:TimeClient.ViewModels;assembly=TimeClient"
+			 xmlns:conv="clr-namespace:CustomControls.Converters;assembly=CustomControls">
+   <Design.DataContext>
+   </Design.DataContext>
+   <UserControl.Resources>
+	  <conv:StatusToBrushConverter x:Key="StateCodeConverter" />
+   </UserControl.Resources>
+   <Panel Background="{x:Null}" >
+	  <ExperimentalAcrylicBorder  Margin="0" Padding="0" >
+		 <ExperimentalAcrylicBorder.Material>
+			<ExperimentalAcrylicMaterial MaterialOpacity="0.85" FallbackColor="Transparent"
+										 TintOpacity="1" TintColor="{Binding Type, Converter={StaticResource StateCodeConverter}}"/>
+		 </ExperimentalAcrylicBorder.Material>
+		 <Grid ColumnDefinitions="Auto,*" Margin="15" Background="{x:Null}">
+			<Panel Margin="4" Width="40" Height="40"  VerticalAlignment="Top" Grid.Column="0" Background="{x:Null}">
+			   <Viewbox Width="32" Height="32">
+				  <Path Data="{Binding Icon}" Fill="Black" Stroke="Black" />
+			   </Viewbox>
+			</Panel>
+			<DockPanel Grid.Column="1">
+			   <TextBlock  DockPanel.Dock="Top" Text="{Binding Title}" Background="{x:Null}" FontWeight="Medium" Foreground="{DynamicResource SystemBaseHighColor}" />
+			   <StackPanel Spacing="20" DockPanel.Dock="Bottom" Margin="0,8,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+				  <Button>OK</Button>
+			   </StackPanel>
+			   <TextBlock Text="{Binding Message}" Foreground="{DynamicResource SystemBaseHighColor}" Background="{x:Null}" TextWrapping="Wrap" Opacity=".8" Margin="0,0,0,0"/>
+			</DockPanel>
+		 </Grid>
+	  </ExperimentalAcrylicBorder>
+   </Panel>
+</UserControl>

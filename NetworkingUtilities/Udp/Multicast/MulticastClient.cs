@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Extensions;
 using NetworkingUtilities.Utilities.Events;
@@ -13,8 +12,8 @@ namespace NetworkingUtilities.Udp.Multicast
 {
 	public class MulticastClient : AbstractClient
 	{
-		private readonly IPAddress _multicastAddress;
-		private readonly int _multicastPort;
+		private IPAddress _multicastAddress;
+		private int _multicastPort;
 		private readonly IPAddress _ipAddress;
 		private readonly int _localPort;
 
@@ -30,15 +29,29 @@ namespace NetworkingUtilities.Udp.Multicast
 			_localPort = localPort;
 		}
 
-		public override void Send(string message, string to = "")
+		public override void Send(byte[] data, string to = "")
 		{
 			try
 			{
-				var data = Encoding.ASCII.GetBytes(message);
 				var endpoint = new IPEndPoint(_multicastAddress, _multicastPort);
+				if (!string.IsNullOrEmpty(to))
+				{
+					var ep = IPEndPoint.Parse(to);
+					if ((!ep.Address.Equals(_multicastAddress) || ep.Port != _multicastPort) && ep.Address.ToString().IsMulticastAddress())
+					{
+						var old = endpoint;
+						endpoint = ep;
+						_multicastAddress = endpoint.Address;
+						_multicastPort = endpoint.Port;
+
+						OnReportingStatus(StatusCode.Info, $"Changed multicast address and port from {old} to {endpoint}");
+					}
+				}
 
 				ClientSocket.BeginSendTo(data, 0, data.Length, SocketFlags.None, endpoint, OnSendToCallback,
 					ClientSocket);
+				OnReportingStatus(StatusCode.Info,
+					$"Started sending {data.Length} bytes via UDP socket in multicast mode");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -60,6 +73,7 @@ namespace NetworkingUtilities.Udp.Multicast
 			try
 			{
 				var _ = socket.EndSendTo(ar);
+				OnReportingStatus(StatusCode.Success, $"Successfully sent {_} bytes multicast via UDP socket");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -86,7 +100,9 @@ namespace NetworkingUtilities.Udp.Multicast
 					StreamBuffer = new MemoryStream()
 				};
 				var ep = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
+
 				ClientSocket.BeginReceiveFrom(state.Buffer, 0, MaxBufferSize, 0, ref ep, OnReceiveFromCallback, state);
+				OnReportingStatus(StatusCode.Info, "Started receiving bytes via UDP socket");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -110,6 +126,7 @@ namespace NetworkingUtilities.Udp.Multicast
 					var ep = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
 
 					var bytesRead = state.CurrentSocket.EndReceiveFrom(ar, ref ep);
+					OnReportingStatus(StatusCode.Success, $"Successfully received {bytesRead} bytes via UDP socket");
 					if (bytesRead > 0)
 					{
 						state.StreamBuffer.Write(state.Buffer, 0, bytesRead);
@@ -159,6 +176,7 @@ namespace NetworkingUtilities.Udp.Multicast
 					WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port, WhoAmI.Id);
 				}
 
+				OnReportingStatus(StatusCode.Success, $"Successfully bound to {WhoAmI.Ip}:{WhoAmI.Port}");
 				Receive();
 			}
 			catch (ObjectDisposedException)

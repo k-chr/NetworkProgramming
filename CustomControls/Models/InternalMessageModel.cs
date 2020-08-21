@@ -1,5 +1,6 @@
 ﻿using System;
 using Avalonia.Media;
+using JetBrains.Annotations;
 
 namespace CustomControls.Models
 {
@@ -9,10 +10,10 @@ namespace CustomControls.Models
 		public string Data { get; }
 		public DateTime Date { get; }
 		public InternalMessageType Type { get; }
-		public IBrush ColorBrush { get; }
-		public ClientModel ClientModelData { get; set; }
+		public IBrush ColorBrush { [UsedImplicitly] get; }
+		public ClientModel ClientModelData { get; }
 
-		internal InternalMessageModel(MessageBuilder builder)
+		private InternalMessageModel(MessageBuilder builder)
 		{
 			Data = builder.MessageData;
 			ExceptionData = builder.ExceptionData;

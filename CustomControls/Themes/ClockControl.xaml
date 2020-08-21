@@ -1,0 +1,68 @@
+﻿<Styles xmlns:local="clr-namespace:CustomControls.Controls;assembly=CustomControls"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+   <Design.PreviewWith>
+	  <ScrollViewer VerticalScrollBarVisibility="Visible" Height="150" Background="{x:Null}" Foreground="AliceBlue">
+		 <StackPanel Width="200">
+			<local:ClockControl Radius="60" Foreground="White"  />
+		 </StackPanel>
+	  </ScrollViewer>
+
+   </Design.PreviewWith>
+   <Style Selector="local|ClockControl">
+	  <Setter Property="Background"
+		Value="{DynamicResource ThemeControlHighlightHighBrush}"/>
+	  <Setter Property="BorderBrush"
+			  Value="{DynamicResource ThemeBorderLowBrush}" />
+	  <Setter Property="BorderThickness"
+			  Value="{DynamicResource ThemeBorderThickness}" />
+	  <Setter Property="Foreground"
+			  Value="{DynamicResource ThemeForegroundBrush}" />
+	  <Setter Property="Template">
+		 <ControlTemplate> 
+
+			<Grid RowDefinitions="Auto,*" MinWidth="{Binding $parent[local:ClockControl].Diameter}"
+				  MinHeight="{Binding $parent[local:ClockControl].Diameter}">
+			   <Ellipse  Grid.Row="0" Stroke="{TemplateBinding Foreground}"
+				StrokeThickness="3"
+				Width="{Binding $parent[local:ClockControl].Diameter}"
+				Height="{Binding $parent[local:ClockControl].Diameter}"/>
+			   <Rectangle Name="Hours" Grid.Row="0" Margin="{Binding $parent[local:ClockControl].HoursTickOffset}"
+						  Width="{Binding $parent[local:ClockControl].TickWidth}" 
+						  Height="{Binding $parent[local:ClockControl].HoursLength}"
+						  Fill="{TemplateBinding Foreground}" RenderTransformOrigin="{Binding $parent[local:ClockControl].HoursTransformOrigin}">
+				  <Rectangle.RenderTransform>
+					 <RotateTransform Angle="{Binding $parent[local:ClockControl].HoursAngle}"></RotateTransform>
+				  </Rectangle.RenderTransform>
+			   </Rectangle>
+			   <Rectangle Name="Minutes" Grid.Row="0" Margin="{Binding $parent[local:ClockControl].MinutesTickOffset}" 
+						  Width="{Binding $parent[local:ClockControl].TickWidth}" 
+						  Height="{Binding $parent[local:ClockControl].MinutesLength}" 
+				  Fill="{TemplateBinding Foreground}" RenderTransformOrigin="0.75, 48">
+				  <Rectangle.RenderTransform>
+					 <RotateTransform Angle="{Binding $parent[local:ClockControl].MinutesAngle}"></RotateTransform>
+				  </Rectangle.RenderTransform>
+			   </Rectangle>
+			   <Rectangle Name="Seconds" Grid.Row="0" Margin="{Binding $parent[local:ClockControl].SecondsTickOffset}" Width="{Binding $parent[local:ClockControl].SecondsTickWidth}" 
+						  Height="{Binding $parent[local:ClockControl].SecondsLength}" 
+						  Fill="{TemplateBinding Foreground}" RenderTransformOrigin="{TemplateBinding SecondsTransformOrigin}">
+				  <Rectangle.RenderTransform>
+					 <RotateTransform Angle="{Binding $parent[local:ClockControl].SecondsAngle}"></RotateTransform>
+				  </Rectangle.RenderTransform>
+			   </Rectangle>
+			   <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
+				  <TextBlock Text="{Binding $parent[local:ClockControl].Hours}"></TextBlock>				  
+				  <TextBlock Text=":"></TextBlock>				  
+				  <TextBlock Text="{Binding $parent[local:ClockControl].Minutes}"></TextBlock>				  
+				  <TextBlock Text=":"></TextBlock>				  
+				  <TextBlock Text="{Binding $parent[local:ClockControl].Seconds}"></TextBlock>
+			   </StackPanel>
+			</Grid>
+
+		 </ControlTemplate>
+	  </Setter>
+   </Style>
+
+</Styles>

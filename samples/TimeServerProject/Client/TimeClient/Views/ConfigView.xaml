@@ -1,0 +1,67 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TimeClient.Views.ConfigView"
+			 xmlns:sys="clr-namespace:System;assembly=netstandard">
+   <StackPanel Margin="{StaticResource PageMargin}"
+			   Background="Transparent"
+			   Orientation="Vertical"
+			   Spacing="40">
+
+	  <StackPanel.Styles>
+		 <Style Selector="TextBlock.header">
+			<Setter Property="Margin" Value="0 30 0 20" />
+			<Setter Property="Foreground" Value="{DynamicResource SystemBaseHighColor}"/>
+		 </Style>
+	  </StackPanel.Styles>
+
+	  <StackPanel>
+		 <TextBlock Classes="header"
+					Text="Servers' list refreshing period [s]:"/>
+		 <NumericUpDown Increment="1"
+						Value="{Binding DiscoveryQueryPeriod, Mode=TwoWay}" />
+	  </StackPanel>
+
+	  <StackPanel>
+		 <TextBlock Classes="header"
+					Text="TIMEQUERY protocol sending period [ms]:"/>
+		 <NumericUpDown Increment="1"
+						Value="{Binding TimeQueryPeriod, Mode=TwoWay}" />
+	  </StackPanel>
+
+	  <StackPanel>
+		 <TextBlock Classes="header" Text="Default local port"/>
+		 <TextBox Watermark="Local port, default random or loaded"
+				  UseFloatingWatermark="True"
+				  Text="{Binding LocalPort, Mode=TwoWay}" />
+	  </StackPanel>
+
+	  <StackPanel>
+		 <TextBlock Classes="header" Text="Multicast group address"/>
+		 <DataValidationErrors>
+			<TextBox Watermark="Address, default 224.0.0.0"
+					 UseFloatingWatermark="True"
+					
+					 Text="{Binding MulticastAddress, Mode=TwoWay}">
+			</TextBox>
+		 </DataValidationErrors>
+	  </StackPanel>
+
+	  <StackPanel>
+		 <TextBlock Classes="header" Text="Multicast group port"/>
+		 <DataValidationErrors>
+			<TextBox Watermark="Port, default 7 or loaded"
+					 UseFloatingWatermark="True"
+					 Text="{Binding MulticastPort, Mode=TwoWay}">
+			</TextBox>
+		 </DataValidationErrors>
+	  </StackPanel>
+	  <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+		 <Button Content="Apply" IsEnabled="{Binding !HasErrors}" Command="{Binding ApplyConfiguration}"  />
+		 <Button Content="Discard" IsEnabled="{Binding BackedUp}" Command="{Binding DiscardConfiguration}"/>
+	  </StackPanel>
+
+   </StackPanel>
+</UserControl>

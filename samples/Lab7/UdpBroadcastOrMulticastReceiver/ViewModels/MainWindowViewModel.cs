@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
+using System.Text;
 using Avalonia.Media;
 using Avalonia.Threading;
 using CustomControls.Models;
@@ -159,17 +160,18 @@ namespace UdpBroadcastOrMulticastReceiver.ViewModels
 			{
 				if (o1 is MessageEvent message)
 				{
+					var textMessage = Encoding.ASCII.GetString(message.Message);
 					if (message.From.Equals(message.To))
 					{
 						var builder = InternalMessageModel.Builder().AttachTimeStamp(true)
-						   .WithType(InternalMessageType.Info).AttachTextMessage(message.Message);
+						   .WithType(InternalMessageType.Info).AttachTextMessage(textMessage);
 						AddLog(builder.BuildMessage());
 					}
 					else
 					{
 						var client = FindClientModel(IPEndPoint.Parse(message.From));
 						var builder = InternalMessageModel.Builder().AttachTimeStamp(true)
-						   .WithType(InternalMessageType.Client).AttachTextMessage(message.Message)
+						   .WithType(InternalMessageType.Client).AttachTextMessage(textMessage)
 						   .AttachClientData(client);
 						AddMsg(builder.BuildMessage());
 					}

@@ -1,0 +1,36 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TimeClient.Views.LogsView">
+   <StackPanel Margin="{StaticResource PageMargin}"
+			 Background="Transparent"
+			 Orientation="Vertical"
+			 Spacing="40">
+	  <TextBlock Text="Application logs:" Classes="header" ></TextBlock>
+	  <Grid>
+		 <ScrollViewer VerticalScrollBarVisibility="Visible" IsVisible="{Binding !!Logs.Count}" Grid.Row="0" Grid.Column="0">
+			<ItemsControl Items="{Binding Logs}" VerticalAlignment="Top">
+			   <ItemsControl.ItemTemplate>
+				  <DataTemplate>
+					 <ListBoxItem>
+						<TextBlock FontFamily="{StaticResource CodeFontFamily}"
+								   Background="Transparent"
+								   Text="{Binding}" Foreground="{Binding ColorBrush}"
+								   TextWrapping="Wrap" MaxWidth="275">
+						   <TextBlock.Styles>
+							  <Style Selector="TextBox:pointerover">
+								 <Setter Property="Background" Value="Transparent"/>
+							  </Style>
+						   </TextBlock.Styles>
+						</TextBlock>
+					 </ListBoxItem>
+				  </DataTemplate>
+			   </ItemsControl.ItemTemplate>
+			</ItemsControl>
+		 </ScrollViewer>
+		 <TextBlock Grid.Row="0" Grid.Column="0" IsVisible="{Binding !Logs.Count}">No logs found</TextBlock>
+	  </Grid>
+   </StackPanel>
+</UserControl>

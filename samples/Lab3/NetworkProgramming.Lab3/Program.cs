@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Dialogs;
 using Avalonia.Logging;
-using Avalonia.Logging.Serilog;
 using Avalonia.ReactiveUI;
 
 namespace NetworkProgramming.Lab3
@@ -16,8 +15,7 @@ namespace NetworkProgramming.Lab3
 			=> AppBuilder.Configure<App>()
 			   .LogToDebug(LogEventLevel.Verbose)
 			   .UsePlatformDetect()
-			   .UseDirect2D1()
 			   .UseReactiveUI()
-			   .UseManagedSystemDialogs().LogToDebug().LogToTrace();
+			   .UseManagedSystemDialogs().LogToDebug();
 	}
 }

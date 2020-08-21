@@ -11,6 +11,7 @@ namespace NetworkingUtilities.Abstracts
 	{
 		private readonly IReporter _lastException;
 		private readonly IReporter _lastMessage;
+		private readonly IReporter _statusReporter;
 		protected const int MaxBufferSize = 4096;
 		protected readonly string Ip;
 		protected readonly int Port;
@@ -18,6 +19,7 @@ namespace NetworkingUtilities.Abstracts
 		private readonly IReporter _disconnected;
 		private readonly IReporter _newClient;
 		protected Socket ServerSocket;
+		protected static readonly object Lock = new object();
 
 		protected AbstractServer(string ip, int port, string interfaceName)
 		{
@@ -28,55 +30,36 @@ namespace NetworkingUtilities.Abstracts
 			_lastMessage = new MessageReporter();
 			_lastException = new ExceptionReporter();
 			_newClient = new ClientReporter();
+			_statusReporter = new StatusReporter();
 			Clients = new List<AbstractClient>();
 		}
 
 		protected ICollection<AbstractClient> Clients { get; }
 
-		public abstract void Send(string message, string to = "");
+		public abstract void Send(byte[] message, string to = "");
 
 		public abstract void StopService();
 
 		public abstract void StartService();
 
-		public void AddExceptionSubscription(Action<object, object> procedure)
-		{
-			_lastException.AddSubscriber(procedure);
-		}
+		public void AddStatusSubscription(Action<object, object> procedure) => _statusReporter.AddSubscriber(procedure);
 
-		public void AddMessageSubscription(Action<object, object> procedure)
-		{
-			_lastMessage.AddSubscriber(procedure);
-		}
+		public void AddExceptionSubscription(Action<object, object> procedure) => _lastException.AddSubscriber(procedure);
 
-		public void AddOnDisconnectedSubscription(Action<object, object> procedure)
-		{
-			_disconnected.AddSubscriber(procedure);
-		}
+		public void AddMessageSubscription(Action<object, object> procedure) => _lastMessage.AddSubscriber(procedure);
 
-		public void AddNewClientSubscription(Action<object, object> procedure)
-		{
-			_newClient.AddSubscriber(procedure);
-		}
+		public void AddOnDisconnectedSubscription(Action<object, object> procedure) => _disconnected.AddSubscriber(procedure);
 
-		protected void OnNewMessage(string message, string from, string to)
-		{
-			_lastMessage.Notify((message, from, to));
-		}
+		public void AddNewClientSubscription(Action<object, object> procedure) => _newClient.AddSubscriber(procedure);
 
-		protected void OnNewClient(IPAddress ip, string id, int port)
-		{
-			_newClient.Notify((ip, id, port));
-		}
+		protected void OnNewMessage(byte[] message, string from, string to) => _lastMessage.Notify((message, @from, to));
 
-		protected void OnDisconnect(IPAddress ip, string id, int port)
-		{
-			_disconnected.Notify((ip, id, port));
-		}
+		protected void OnNewClient(IPAddress ip, string id, int port) => _newClient.Notify((ip, id, port));
 
-		protected void OnCaughtException(Exception exception, EventCode code)
-		{
-			_lastException.Notify((exception, code));
-		}
+		protected void OnDisconnect(IPAddress ip, string id, int port) => _disconnected.Notify((ip, id, port));
+
+		protected void OnCaughtException(Exception exception, EventCode code) => _lastException.Notify((exception, code));
+
+		protected void OnReportingStatus(StatusCode code, string msg) => _statusReporter.Notify((code, msg));
 	}
 }

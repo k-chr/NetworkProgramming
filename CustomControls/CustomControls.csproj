@@ -2,10 +2,11 @@
 
    <PropertyGroup>
       <OutputType>Library</OutputType>
-      <TargetFramework>netcoreapp3.0</TargetFramework>
+      <TargetFramework>netcoreapp3.1</TargetFramework>
    </PropertyGroup>
 
    <ItemGroup>
+     <None Remove="Themes\ClockControl.xaml" />
      <None Remove="Themes\MessageBubble.xaml" />
      <None Remove="Themes\RoundedButton.xaml" />
      <None Remove="Themes\SideBar.xaml" />
@@ -13,6 +14,7 @@
      <AvaloniaResource Include="**\*.xaml">
         <SubType>Designer</SubType>
      </AvaloniaResource>
+     <None Remove="Themes\ClockControl.xaml" />
      <AvaloniaResource Include="Themes\SideBar.xaml" />
      <AvaloniaResource Include="Themes\SliderButton.xaml" />
      <AvaloniaResource Include="Themes\MessageBubble.xaml" />
@@ -29,9 +31,9 @@
    </ItemGroup>
 
    <ItemGroup>
-     <PackageReference Include="Avalonia" Version="0.9.11" />
-     <PackageReference Include="Avalonia.Desktop" Version="0.9.11" />
-     <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.11" />
+     <PackageReference Include="Avalonia" Version="0.10.0-preview3" />
+     <PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview3" />
+     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview3" />
    </ItemGroup>
 
    <ItemGroup>
@@ -43,6 +45,16 @@
         <SubType>Designer</SubType>
         <Generator>MSBuild:Compile</Generator>
      </Page>
+   </ItemGroup>
+
+   <ItemGroup>
+     <ProjectReference Include="..\NetworkingUtilities\NetworkingUtilities.csproj" />
+   </ItemGroup>
+
+   <ItemGroup>
+     <AvaloniaResource Update="Themes\ClockControl.xaml">
+       <Generator>MSBuild:Compile</Generator>
+     </AvaloniaResource>
    </ItemGroup>
 
 </Project>
