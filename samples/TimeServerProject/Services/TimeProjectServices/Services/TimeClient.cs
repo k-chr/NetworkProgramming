@@ -126,12 +126,21 @@ namespace TimeProjectServices.Services
 
 		public void StopTimeCommunication()
 		{
-			_tcpClient?.StopService();
+			if (_tcpClient != null)
+			{
+				_tcpClient.StopService(); 
+			}
+			else
+			{
+				OnDisconnect(IPAddress.Any, "", 0);
+			}
 			_tcpClient = null;
 		}
 
-		public void StartTimeCommunication(string address, int port)
+		public void StartTimeCommunication(IPEndPoint endPoint)
 		{
+			var address = endPoint?.Address.ToString();
+			var port = endPoint?.Port ?? 0;
 			_tcpClient = new Client();
 			RegisterClient(_tcpClient);
 

@@ -131,7 +131,7 @@
 	  </Grid>
 
 	  <TabControl x:Name="TabControl" TabStripPlacement="Left" Classes="sidebar" Margin="0 100 0 40"
-				  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+				  ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectedIndex="{Binding SelectedView}">
 		 <TabItem  Header="Start">
 			<views:StartView InfoWidth="{Binding #Header.Bounds.Width, Converter={StaticResource WidthConverter} ConverterParameter=50}"></views:StartView>
 		 </TabItem>
