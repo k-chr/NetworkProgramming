@@ -26,8 +26,8 @@ namespace TimeClient.ViewModels
 		private ServerModel _selectedServer;
 		private IManagedNotificationManager _managedNotificationManager;
 		private ServerModel _connectedServer;
-		private bool _disableDiscovery;
-		private readonly CancellationTokenSource _cancelDiscoverySource = new CancellationTokenSource();
+		private bool _disabledDiscovery = true;
+		private CancellationTokenSource _cancelDiscoverySource = new CancellationTokenSource();
 		private int _selectedView;
 		private long _tStart;
 		private const int Unit = 1000;
@@ -64,7 +64,7 @@ namespace TimeClient.ViewModels
 			set => this.RaiseAndSetIfChanged(ref _selectedServer, value);
 		}
 
-		[UsedImplicitly] public bool CanDiscover => _disableDiscovery && ConnectedServer == null;
+		[UsedImplicitly] public bool CanDiscover => _disabledDiscovery && ConnectedServer == null;
 
 		private void OnConnectedServerChanged(ServerModel old, ServerModel connectedServer)
 		{
@@ -105,9 +105,10 @@ namespace TimeClient.ViewModels
 		private void PrepareDiscoveryTask()
 		{
 			var timer = new Timer(ConfigViewModel.DiscoveryQueryPeriod * Unit);
+			_cancelDiscoverySource = new CancellationTokenSource();
 			timer.Elapsed += (sender, args) =>
 			{
-				if (!_disableDiscovery || !_cancelDiscoverySource.IsCancellationRequested)
+				if (!_cancelDiscoverySource.IsCancellationRequested)
 				{
 					Task.Run(() =>
 					{
@@ -129,7 +130,8 @@ namespace TimeClient.ViewModels
 		{
 			_client?.StartService();
 			PrepareDiscoveryTask();
-			_disableDiscovery = false;
+			_disabledDiscovery = false;
+			Dispatcher.UIThread.InvokeAsync(() => this.RaisePropertyChanged(nameof(CanDiscover)));
 		}
 
 		public MainWindowViewModel(IManagedNotificationManager managedNotificationManager,
@@ -170,7 +172,7 @@ namespace TimeClient.ViewModels
 			if (ConfigViewModel.HasErrors) return;
 			_cancelDiscoverySource.Cancel(false);
 			_cancelTimeCommunicationSource.Cancel(false);
-			_disableDiscovery = false;
+			_disabledDiscovery = true;
 			Dispatcher.UIThread.InvokeAsync(() =>
 			{
 				AccessibleServers.Clear();
@@ -209,7 +211,7 @@ namespace TimeClient.ViewModels
 
 		private void OnDiscoveredServer(object o, object o1)
 		{
-			if (o1 is MessageEvent message && !_disableDiscovery)
+			if (o1 is MessageEvent message && !_disabledDiscovery)
 			{
 				var protocol = ProtocolFactory.FromBytes(message.Message);
 				if (protocol == null || protocol.Header != HeaderType.Discover ||
@@ -218,6 +220,8 @@ namespace TimeClient.ViewModels
 				) return;
 				var model = (((DiscoverProtocol) protocol).Data, $"server_{LocalIdSupplier.CreateId()}");
 				AddServer(model);
+				AddLog(InternalMessageModel.Builder().WithType(InternalMessageType.Info).AttachTimeStamp(true)
+				   .AttachTextMessage($"Discovered server: {model}").BuildMessage());
 			}
 		}
 
@@ -225,7 +229,8 @@ namespace TimeClient.ViewModels
 		{
 			if (o1 is ClientEvent)
 			{
-				_disableDiscovery = false;
+				_disabledDiscovery = true;
+
 				Dispatcher.UIThread.InvokeAsync(() =>
 				{
 					this.RaisePropertyChanged(nameof(CanDiscover));
@@ -239,7 +244,7 @@ namespace TimeClient.ViewModels
 		{
 			if (o1 is ClientEvent clientEvent)
 			{
-				_disableDiscovery = true;
+				_disabledDiscovery = true;
 				var endpoint = new IPEndPoint(clientEvent.Ip, clientEvent.Port);
 				var old = _connectedServer;
 				Dispatcher.UIThread.InvokeAsync(() =>
@@ -337,7 +342,7 @@ namespace TimeClient.ViewModels
 			if (SelectedServer != null)
 			{
 				_client?.StartTimeCommunication(SelectedServer.Ip);
-				_disableDiscovery = true;
+				_disabledDiscovery = true;
 				this.RaisePropertyChanged(nameof(CanDiscover));
 			}
 		}
@@ -352,9 +357,9 @@ namespace TimeClient.ViewModels
 			}
 		}
 
-		private void ShowNotification(StatusEvent @event) =>
+		private void ShowNotification(StatusEvent @event) => Dispatcher.UIThread.InvokeAsync(() =>
 			ManagedNotificationManager.Show(
-				NotificationViewModelFactory.Create(@event.StatusCode, @event.StatusMessage));
+				NotificationViewModelFactory.Create(@event.StatusCode, @event.StatusMessage)));
 
 		private void AddServer((IPEndPoint Data, string) model) =>
 			Dispatcher.UIThread.InvokeAsync(() => AccessibleServers.Add(model));

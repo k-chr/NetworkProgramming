@@ -33,7 +33,7 @@ namespace TimeProjectServices.Services
 		{
 			_discoveryClients = GeneralUtilities.GetNetworkInterfacesThatAreUp().Where(networkInterface =>
 					networkInterface.GetIPProperties().UnicastAddresses
-					   .FirstOrDefault(information => !information.Address.Equals(IPAddress.Loopback)) != null)
+					   .All(information => !information.Address.Equals(IPAddress.Loopback)))
 			   .ToList().ConvertAll(input => new MulticastClient(multicastAddress, multicastPort, localPort: localPort,
 					ipAddress: input.GetIPProperties().UnicastAddresses.First(ipAddressInformation =>
 						ipAddressInformation.Address.AddressFamily == AddressFamily.InterNetwork).Address.ToString()));
