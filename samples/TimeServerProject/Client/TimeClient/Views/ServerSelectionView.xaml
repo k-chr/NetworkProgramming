@@ -15,13 +15,19 @@
 			<Setter Property="Foreground" Value="{DynamicResource SystemBaseHighColor}"/>
 		 </Style>
 	  </StackPanel.Styles>
-	  <TextBlock Text="Server List" Classes="header"></TextBlock>
+	  <DockPanel>
+		 <TextBlock Text="Server List" Classes="header"></TextBlock>
+		 <Button Margin="0 30 0 20" IsEnabled="{Binding CanDiscover}" Command="{Binding StartDiscovering}"
+				 IsVisible="{Binding ConnectedServer, Converter={x:Static ObjectConverters.IsNull}}" 
+				 HorizontalAlignment="Right">Discover</Button>
+	  </DockPanel>
 	  <Grid>
 		 <ListBox Grid.Row="0" Grid.Column="0" SelectedItem="{Binding SelectedServer, Mode=TwoWay}" Items="{Binding AccessibleServers}" IsVisible="{Binding !!AccessibleServers.Count}" />
 		 <TextBlock Grid.Row="0" Grid.Column="0" Background="Transparent" IsVisible="{Binding !AccessibleServers.Count}">Currently we can't find any suitable server</TextBlock>
 	  </Grid>
 	  <Button Content="Connect" HorizontalAlignment="Right"
 			  IsEnabled="{Binding SelectedServer, Converter={x:Static ObjectConverters.IsNotNull}}"
+			  IsVisible="{Binding ConnectedServer, Converter={x:Static ObjectConverters.IsNull}}"
 			  Command="{Binding ConnectToSelectedServer}"/>
    </StackPanel>
 	
