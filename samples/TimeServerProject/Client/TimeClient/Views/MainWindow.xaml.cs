@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.VisualTree;
+using CustomControls.Controls;
 using DynamicData;
 using JetBrains.Annotations;
 

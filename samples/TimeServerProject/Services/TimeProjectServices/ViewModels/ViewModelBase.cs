@@ -1,6 +1,6 @@
 ﻿using ReactiveUI;
 
-namespace TimeClient.ViewModels
+namespace TimeProjectServices.ViewModels
 {
 	public class ViewModelBase : ReactiveObject
 	{

@@ -15,6 +15,7 @@ using TimeClient.Models;
 using TimeProjectServices.Enums;
 using TimeProjectServices.Protocols;
 using TimeProjectServices.Services;
+using TimeProjectServices.ViewModels;
 using Timer = System.Timers.Timer;
 
 namespace TimeClient.ViewModels

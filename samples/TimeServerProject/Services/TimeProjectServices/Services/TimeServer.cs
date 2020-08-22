@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Tcp;
 using NetworkingUtilities.Udp.Multicast;
 
-namespace TimeServer.Services
+namespace TimeProjectServices.Services
 {
 	public class TimeServer : AbstractServer
 	{

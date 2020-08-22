@@ -1,6 +1,6 @@
 ﻿using Avalonia.Media;
 
-namespace TimeClient.ViewModels
+namespace TimeProjectServices.ViewModels
 {
 	internal class InfoNotificationViewModel : NotificationViewModel
 	{

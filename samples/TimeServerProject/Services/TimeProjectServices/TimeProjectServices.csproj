@@ -18,8 +18,8 @@
 		</AvaloniaResource>
 		<AvaloniaResource Include="Styles\SideBar.xaml" />
 		<AvaloniaResource Include="Styles\Styles.xaml" />
-		<AvaloniaResource Include="Styles\FluentLight.xaml"/>
-		<AvaloniaResource Include="Styles\FluentDark.xaml"/>
+		<AvaloniaResource Include="Styles\FluentLight.xaml" />
+		<AvaloniaResource Include="Styles\FluentDark.xaml" />
 		<AvaloniaResource Include="Assets\**" />
 	</ItemGroup>
 

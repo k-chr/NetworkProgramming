@@ -7,6 +7,7 @@ using NetworkingUtilities.Extensions;
 using ReactiveUI;
 using TimeClient.Exceptions;
 using TimeClient.Models;
+using TimeProjectServices.ViewModels;
 
 namespace TimeClient.ViewModels
 {
