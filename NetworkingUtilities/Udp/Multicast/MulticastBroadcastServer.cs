@@ -15,15 +15,17 @@ namespace NetworkingUtilities.Udp.Multicast
 	{
 		private readonly bool _acceptBroadcast;
 		private readonly Dictionary<EndPoint, ControlState> _clientsBuffers;
+		private readonly string _multicastAddress;
 
-		public MulticastBroadcastServer(string ip, int port, string interfaceName, bool acceptBroadcast = false) : base(
-			ip, port, interfaceName)
+		public MulticastBroadcastServer(int localPort, string multicastGroupAddress, string interfaceName,
+			bool acceptBroadcast = false, string localIp = null) : base(localIp, localPort, interfaceName)
 		{
+			_multicastAddress = multicastGroupAddress;
 			_acceptBroadcast = acceptBroadcast;
 			ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 			_clientsBuffers = new Dictionary<EndPoint, ControlState>();
 		}
-
+		
 		public override void StopService() =>
 			(ServerSocket == null || ServerSocket.IsDisposed()
 				? (Action) (() => { })
@@ -31,7 +33,7 @@ namespace NetworkingUtilities.Udp.Multicast
 				{
 					if (!_acceptBroadcast)
 						ServerSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DropMembership,
-							new MulticastOption(IPAddress.Parse(Ip)));
+							new MulticastOption(IPAddress.Parse(_multicastAddress)));
 					ServerSocket.Close();
 				})();
 
@@ -46,8 +48,8 @@ namespace NetworkingUtilities.Udp.Multicast
 		{
 			try
 			{
-				var localAdd = IPAddress.Any;
-				var groupAddress = IPAddress.Parse(Ip);
+				var localAdd = string.IsNullOrEmpty(Ip) ? IPAddress.Any : IPAddress.Parse(Ip);
+				var groupAddress = IPAddress.Parse(_multicastAddress);
 				OnReportingStatus(StatusCode.Info, $"Started configuring socket for {(_acceptBroadcast ? "broadcast" : "multicast")} communication");
 
 				if (!_acceptBroadcast)
