@@ -6,6 +6,7 @@
    </PropertyGroup>
 
    <ItemGroup>
+	  <ProjectReference Include="..\..\..\..\CustomControls\CustomControls.csproj" />
 	  <ProjectReference Include="..\..\..\..\NetworkingUtilities\NetworkingUtilities.csproj" />
    </ItemGroup>
 	<ItemGroup>
@@ -13,6 +14,7 @@
 		<None Remove="Styles\FluentLight.xaml" />
 		<None Remove="Styles\SideBar.xaml" />
 		<None Remove="Styles\Styles.xaml" />
+		<None Remove="Views\NotificationView.xaml" />
 		<AvaloniaResource Include="**\*.xaml">
 			<SubType>Designer</SubType>
 		</AvaloniaResource>
@@ -22,6 +24,7 @@
 		<AvaloniaResource Include="Styles\FluentDark.xaml" />
 		<AvaloniaResource Include="Assets\**" />
 	</ItemGroup>
+
 
 	<ItemGroup>
 		<EmbeddedResource Include="Styles\SideBar.xaml">
@@ -56,6 +59,15 @@
 	  <AvaloniaResource Update="Styles\FluentLight.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </AvaloniaResource>
+	  <AvaloniaResource Update="Views\NotificationView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </AvaloniaResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Views\NotificationView.xaml.cs">
+	    <DependentUpon>NotificationView.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 </Project>

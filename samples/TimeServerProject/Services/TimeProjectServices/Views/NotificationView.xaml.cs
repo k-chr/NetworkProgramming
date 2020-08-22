@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace TimeClient.Views
+namespace TimeProjectServices.Views
 {
 	public class NotificationView : UserControl
 	{

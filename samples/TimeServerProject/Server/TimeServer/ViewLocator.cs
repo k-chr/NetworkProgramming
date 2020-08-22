@@ -1,14 +1,12 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using TimeServer.ViewModels;
+using TimeProjectServices.ViewModels;
 
 namespace TimeServer
 {
 	public class ViewLocator : IDataTemplate
 	{
-		public bool SupportsRecycling => false;
-
 		public IControl Build(object data)
 		{
 			var name = data.GetType().FullName.Replace("ViewModel", "View");
