@@ -25,7 +25,7 @@ namespace NetworkingUtilities.Udp.Multicast
 			ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 			_clientsBuffers = new Dictionary<EndPoint, ControlState>();
 		}
-		
+
 		public override void StopService() =>
 			(ServerSocket == null || ServerSocket.IsDisposed()
 				? (Action) (() => { })
@@ -46,27 +46,30 @@ namespace NetworkingUtilities.Udp.Multicast
 
 		private void InitializeSocket()
 		{
+			EndPoint = null;
+			ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
 			try
 			{
+				ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+				OnReportingStatus(StatusCode.Success, "Successfully set ReuseAddress option");
 				var localAdd = string.IsNullOrEmpty(Ip) ? IPAddress.Any : IPAddress.Parse(Ip);
 				var groupAddress = IPAddress.Parse(_multicastAddress);
-				OnReportingStatus(StatusCode.Info, $"Started configuring socket for {(_acceptBroadcast ? "broadcast" : "multicast")} communication");
+				OnReportingStatus(StatusCode.Info,
+					$"Started configuring socket for {(_acceptBroadcast ? "broadcast" : "multicast")} communication");
 
 				if (!_acceptBroadcast)
 				{
 					ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, false);
 					ServerSocket.EnableBroadcast = false;
 					OnReportingStatus(StatusCode.Success, "Successfully unset Broadcast option");
-
 					ServerSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership,
 						new MulticastOption(groupAddress, localAdd));
-					OnReportingStatus(StatusCode.Success, $"Successfully set AddMembership multicast option ({groupAddress})");
+					OnReportingStatus(StatusCode.Success,
+						$"Successfully set AddMembership multicast option ({groupAddress})");
 				}
 				else
 				{
-					ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-					OnReportingStatus(StatusCode.Success, "Successfully set ReuseAddress option");
-
 					ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
 					OnReportingStatus(StatusCode.Success, "Successfully set Broadcast option");
 
@@ -104,7 +107,8 @@ namespace NetworkingUtilities.Udp.Multicast
 				var endPoint = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
 				ServerSocket.BeginReceiveFrom(state.Buffer, 0, state.Buffer.Length, 0, ref endPoint,
 					OnReceiveFromCallback, state);
-				OnReportingStatus(StatusCode.Info, $"Stared receiving {(_acceptBroadcast ? "broadcast" : "multicast")} bytes via UDP socket");
+				OnReportingStatus(StatusCode.Info,
+					$"Stared receiving {(_acceptBroadcast ? "broadcast" : "multicast")} bytes via UDP socket");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -154,6 +158,8 @@ namespace NetworkingUtilities.Udp.Multicast
 					ProcessMessage(end);
 					_clientsBuffers[end].StreamBuffer = new MemoryStream();
 				}
+
+				Receive();
 			}
 			catch (ObjectDisposedException)
 			{

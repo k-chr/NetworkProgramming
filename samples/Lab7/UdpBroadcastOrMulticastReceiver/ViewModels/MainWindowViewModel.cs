@@ -127,7 +127,7 @@ namespace UdpBroadcastOrMulticastReceiver.ViewModels
 			try
 			{
 				var port = int.Parse(Port);
-				_service = new MulticastBroadcastServer(MulticastAddress, port, "", BroadcastEnabled);
+				_service = new MulticastBroadcastServer(port, MulticastAddress, "", BroadcastEnabled, "");
 				var builder = InternalMessageModel.Builder();
 				RegisterServer(_service);
 				_service.StartService();

@@ -222,6 +222,7 @@ namespace NetworkingUtilities.Tcp
 		{
 			try
 			{
+				EndPoint = null;
 				ServerSocket = new Socket(SocketType.Stream, ProtocolType.Tcp);
 			}
 			catch (SocketException socketException)

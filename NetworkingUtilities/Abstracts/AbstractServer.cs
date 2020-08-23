@@ -12,14 +12,20 @@ namespace NetworkingUtilities.Abstracts
 		private readonly IReporter _lastException;
 		private readonly IReporter _lastMessage;
 		private readonly IReporter _statusReporter;
-		protected const int MaxBufferSize = 4096;
-		protected readonly string Ip;
-		protected readonly int Port;
-		private IPEndPoint _endPoint = null;
-		public IPEndPoint EndPoint => _endPoint ??= ServerSocket.LocalEndPoint as IPEndPoint;
-		protected readonly string InterfaceName;
 		private readonly IReporter _disconnected;
 		private readonly IReporter _newClient;
+		protected const int MaxBufferSize = 4096;
+		protected readonly string Ip;
+		public int Port { get; set; }
+
+		private IPEndPoint _endPoint;
+		public IPEndPoint EndPoint
+		{
+			get => _endPoint ??= ServerSocket.LocalEndPoint as IPEndPoint;
+			protected set => _endPoint = value;
+		}
+
+		protected readonly string InterfaceName;
 		protected Socket ServerSocket;
 		protected static readonly object Lock = new object();
 

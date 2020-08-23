@@ -21,7 +21,7 @@ namespace UdpBroadcastOrMulticastReceiver.Views
 #if DEBUG
 			this.AttachDevTools();
 #endif
-			this.LayoutUpdated += (sender, args) => PollWindowState();
+			PollWindowState();
 		}
 
 		private void PollWindowState()
@@ -75,6 +75,7 @@ namespace UdpBroadcastOrMulticastReceiver.Views
 		public void Maximize(object sender, RoutedEventArgs args)
 		{
 			WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+			PollWindowState();
 		}
 	}
 }
