@@ -12,6 +12,7 @@ namespace TimeProjectServices.Services
 
 		private const int IdLength = 12;
 		private static readonly HashSet<string> IdSet = new HashSet<string>();
+		private static readonly HashSet<ushort> PortSet = new HashSet<ushort>();
 
 		public static string CreateId()
 		{
@@ -23,6 +24,26 @@ namespace TimeProjectServices.Services
 
 			IdSet.Add(id);
 			return id;
+		}
+
+		public static ushort CreatePort()
+		{
+			ushort port;
+
+			do
+			{
+				port = GetRandomPort();
+			} while (PortSet.Contains(port));
+
+			PortSet.Add(port);
+			return port;
+		}
+
+		private static ushort GetRandomPort()
+		{
+			using var rNg = new RNGCryptoServiceProvider();
+			var bytes = new byte[2];
+			return BitConverter.ToUInt16(bytes);
 		}
 
 		private static string GetRandomString()
