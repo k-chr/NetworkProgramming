@@ -5,8 +5,8 @@ using System.ComponentModel;
 using System.Linq;
 using NetworkingUtilities.Extensions;
 using ReactiveUI;
-using TimeClient.Exceptions;
 using TimeClient.Models;
+using TimeProjectServices.Exceptions;
 using TimeProjectServices.ViewModels;
 
 namespace TimeClient.ViewModels
@@ -19,7 +19,7 @@ namespace TimeClient.ViewModels
 		private int _discoveryQueryPeriod;
 		private int _timeQueryPeriod;
 		private bool _backedUp;
-		
+
 		private (string MulticastAddress, int MulticastPort, int LocalPort, int DiscoveryQueryPeriod, int
 			TimeQueryPeriod) _backup;
 
@@ -146,8 +146,8 @@ namespace TimeClient.ViewModels
 
 		public bool HasErrors => _propertiesErrors.Any();
 
-		public IEnumerable GetErrors(string propertyName) => new[] {_propertiesErrors.Get(propertyName)}; 
-		
+		public IEnumerable GetErrors(string propertyName) => new[] {_propertiesErrors.Get(propertyName)};
+
 		public event EventHandler ConfigurationChanged;
 		public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 
