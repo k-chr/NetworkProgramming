@@ -16,7 +16,7 @@ using TimeProjectServices.Protocols;
 
 namespace TimeProjectServices.Services
 {
-	public class TimeClient : ISender, IService
+	public class TimeClient : IService
 	{
 		private readonly List<MulticastClient> _discoveryClients;
 		private Client _tcpClient;
@@ -97,23 +97,19 @@ namespace TimeProjectServices.Services
 
 		public void SendProtocol(IProtocol protocol, string to)
 		{
+			var message = protocol.GetBytes();
 			switch (protocol.Header)
 			{
 				case HeaderType.Discover:
-					Send(protocol.GetBytes(), to);
+					_tcpClient?.Send(message);
 					break;
 				case HeaderType.Time:
-					Send(protocol.GetBytes());
+					_discoveryClients.ForEach(client => client.Send(message, to));
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
 		}
-
-		private void Send(byte[] message) => _tcpClient?.Send(message);
-
-		public void Send(byte[] message, string to = "") =>
-			_discoveryClients.ForEach(client => client.Send(message, to));
 
 		public void StopService()
 		{
