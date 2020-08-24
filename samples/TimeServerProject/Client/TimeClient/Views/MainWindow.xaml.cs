@@ -67,9 +67,11 @@ namespace TimeClient.Views
 			content.PointerEnter += OnPointerLeave;
 			NotificationArea = new WindowNotificationManager(this)
 			{
+				Margin = Thickness.Parse("0 30 0 0"),
 				Position = NotificationPosition.BottomRight,
-				MaxItems = 3,
+				MaxItems = 6,
 				BorderBrush = Brushes.Transparent,
+				Background = Brushes.Transparent
 			};
 		}
 
