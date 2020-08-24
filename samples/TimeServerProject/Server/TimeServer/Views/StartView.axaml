@@ -1,0 +1,57 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TimeServer.Views.StartView"
+             xmlns:vm="clr-namespace:TimeServer.ViewModels;assembly=TimeServer"
+			 xmlns:v="clr-namespace:TimeServer.Views;assembly=TimeServer"
+			 Name="StartView">
+   <UserControl.DataContext>
+	  <vm:StartViewModel/>
+   </UserControl.DataContext>
+   <UserControl.Styles>
+	  <Style Selector="ListBoxItem">
+		 <Setter Property="Background" Value="Transparent"/>
+	  </Style>
+	  <Style Selector="ListBoxItem:pointerover">
+		 <Setter Property="Background" Value="Transparent"/>
+	  </Style>
+	  <Style Selector="ListBoxItem:selected">
+		 <Setter Property="Background" Value="Transparent"/>
+	  </Style>
+	  <Style Selector="ListBoxItem:selected /template/ Rectangle#PressedBackground">
+		 <Setter Property="Fill" Value="Transparent"/>
+	  </Style>
+	  <Style Selector="ListBoxItem:pointerover /template/ Rectangle#PressedBackground">
+		 <Setter Property="Fill" Value="Transparent"/>
+	  </Style>
+	  <Style Selector="ListBoxItem /template/ Rectangle#PressedBackground">
+		 <Setter Property="Fill" Value="Transparent"/>
+	  </Style>
+   </UserControl.Styles>
+   <StackPanel Orientation="Vertical" Spacing="10" Margin="{StaticResource PageMargin}" HorizontalAlignment="Stretch">
+	  <TextBlock Classes="header">Hello user!</TextBlock>
+	  <TextBlock FontSize="14">User manual:</TextBlock>
+	  <ListBox Classes="NonListBox" Items="{Binding HelpItems}"
+			   Background="Transparent"
+			   HorizontalAlignment="Stretch"
+			   SelectionMode="AlwaysSelected" Selection="{x:Null}"
+			   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+		 <ListBox.ItemTemplate>
+			<DataTemplate>
+			   <Border>
+				  <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+					 <TextBlock Margin="10 0 10 0" Text="&#8226;"/>
+					 <TextPresenter Text="{Binding}" TextWrapping="Wrap"
+									HorizontalAlignment="Stretch"
+									Width="{Binding #StartView.InfoWidth}"
+									ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+				  </StackPanel>
+			   </Border>
+			</DataTemplate>
+		 </ListBox.ItemTemplate>
+
+	  </ListBox>
+   </StackPanel>
+</UserControl>
