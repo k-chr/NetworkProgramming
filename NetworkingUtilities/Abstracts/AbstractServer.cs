@@ -15,10 +15,11 @@ namespace NetworkingUtilities.Abstracts
 		private readonly IReporter _disconnected;
 		private readonly IReporter _newClient;
 		protected const int MaxBufferSize = 4096;
-		protected readonly string Ip;
+		public readonly string Ip;
 		public int Port { get; set; }
 
 		private IPEndPoint _endPoint;
+
 		public IPEndPoint EndPoint
 		{
 			get => _endPoint ??= ServerSocket.LocalEndPoint as IPEndPoint;
@@ -65,9 +66,11 @@ namespace NetworkingUtilities.Abstracts
 		protected void OnNewMessage(byte[] message, string from, string to) =>
 			_lastMessage.Notify((message, @from, to));
 
-		protected void OnNewClient(IPAddress ip, string id, int port) => _newClient.Notify((ip, id, port));
+		protected void OnNewClient(string id, IPEndPoint ip, IPEndPoint serverIp) =>
+			_newClient.Notify((id, ip, serverIp));
 
-		protected void OnDisconnect(IPAddress ip, string id, int port) => _disconnected.Notify((ip, id, port));
+		protected void OnDisconnect(string id, IPEndPoint ip, IPEndPoint serverIp) =>
+			_disconnected.Notify((id, ip, serverIp));
 
 		protected void OnCaughtException(Exception exception, EventCode code) =>
 			_lastException.Notify((exception, code));

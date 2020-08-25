@@ -61,13 +61,13 @@ namespace TimeProjectServices.Services
 			client.AddOnDisconnectedSubscription((o, o1) =>
 			{
 				if (o1 is ClientEvent clientEvent)
-					OnDisconnect(clientEvent.Ip, clientEvent.Id, clientEvent.Port);
+					OnDisconnect(clientEvent.Id, clientEvent.Ip, clientEvent.ServerIp);
 			});
 
 			client.AddOnConnectedSubscription((o, o1) =>
 			{
 				if (o1 is ClientEvent clientEvent)
-					OnConnect(clientEvent.Ip, clientEvent.Id, clientEvent.Port);
+					OnConnect(clientEvent.Id, clientEvent.Ip, clientEvent.ServerIp);
 			});
 
 			client.AddStatusSubscription((o, o1) =>
@@ -128,7 +128,7 @@ namespace TimeProjectServices.Services
 			}
 			else
 			{
-				OnDisconnect(IPAddress.Any, "", 0);
+				OnDisconnect("", new IPEndPoint(IPAddress.Any, 0), new IPEndPoint(IPAddress.Any, 0));
 			}
 
 			_tcpClient = null;
@@ -167,11 +167,11 @@ namespace TimeProjectServices.Services
 		public void AddDiscoveredServerSubscription(Action<object, object> procedure) =>
 			_discoveredServerReporter.AddSubscriber(procedure);
 
-		private void OnConnect(IPAddress ip, string id, int port) =>
-			_connectedReporter.Notify((ip, id, port));
+		private void OnConnect(string id, IPEndPoint ip, IPEndPoint serverIp) =>
+			_connectedReporter.Notify((id, ip, serverIp));
 
-		private void OnDisconnect(IPAddress ip, string id, int port) =>
-			_disconnectedReporter.Notify((ip, id, port));
+		private void OnDisconnect(string id, IPEndPoint ip, IPEndPoint serverIp) =>
+			_disconnectedReporter.Notify((ip, id, serverIp));
 
 		private void OnException(Exception exception, EventCode code) =>
 			_exceptionReporter.Notify((exception, code));

@@ -5,14 +5,14 @@ namespace NetworkingUtilities.Utilities.Events
 {
 	public class ClientEvent : EventArgs
 	{
-		public IPAddress Ip { get; }
-		public int Port { get; }
+		public IPEndPoint Ip { get; }
+		public IPEndPoint ServerIp { get; }
 		public string Id { get; }
 
-		public ClientEvent(IPAddress ipAddress, int port, string id = "")
+		public ClientEvent(string id, IPEndPoint clientIp, IPEndPoint serverIp)
 		{
-			Ip = ipAddress;
-			Port = port;
+			Ip = clientIp;
+			ServerIp = serverIp;
 
 			if (string.IsNullOrEmpty(id))
 			{

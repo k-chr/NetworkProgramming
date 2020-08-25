@@ -82,7 +82,7 @@ namespace NetworkProgramming.Lab3.ViewModels
 			{
 				if (obj is ClientEvent clientEvent)
 				{
-					var model = new ClientModel((clientEvent.Ip.ToString(), clientEvent.Id, clientEvent.Port));
+					var model = new ClientModel((clientEvent.Ip.Address.ToString(), clientEvent.Id, clientEvent.Ip.Port));
 					var messageModel = InternalMessageModel.Builder().WithType(InternalMessageType.Success)
 					   .AttachTimeStamp(true).AttachTextMessage("Successfully accepted new client").BuildMessage();
 					AddClient(model);

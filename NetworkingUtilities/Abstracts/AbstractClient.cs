@@ -31,27 +31,22 @@ namespace NetworkingUtilities.Abstracts
 			_connected = new ClientReporter();
 			ServerHandler = serverHandler;
 
-			if (ServerHandler)
+			if (clientSocket.RemoteEndPoint is IPEndPoint endPoint &&
+				clientSocket.LocalEndPoint is IPEndPoint localEndPoint)
 			{
-				if (clientSocket.RemoteEndPoint is IPEndPoint endPoint)
+				if (ServerHandler)
 				{
-					WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port);
+					WhoAmI = new ClientEvent("", endPoint, localEndPoint);
 				}
 				else
 				{
-					WhoAmI = new ClientEvent(IPAddress.None, -1, "UNDEFINED");
+					WhoAmI = new ClientEvent("", localEndPoint, endPoint);
 				}
 			}
 			else
 			{
-				if (clientSocket.LocalEndPoint is IPEndPoint endPoint)
-				{
-					WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port);
-				}
-				else
-				{
-					WhoAmI = new ClientEvent(IPAddress.None, -1, "UNDEFINED");
-				}
+				WhoAmI = new ClientEvent("UNDEFINED", new IPEndPoint(IPAddress.Any, 0),
+					new IPEndPoint(IPAddress.Any, 0));
 			}
 		}
 
@@ -74,9 +69,9 @@ namespace NetworkingUtilities.Abstracts
 		protected void OnNewMessage(byte[] message, string from, string to) =>
 			_lastMessage.Notify((message, from, to));
 
-		protected void OnDisconnect(IPAddress ip, string id, int port) => _disconnected.Notify((ip, id, port));
+		protected void OnDisconnect(string id, IPEndPoint ip, IPEndPoint serverIp) => _disconnected.Notify((id, ip, serverIp));
 
-		protected void OnConnect(IPAddress ip, string id, int port) => _connected.Notify((ip, id, port));
+		protected void OnConnect(string id, IPEndPoint ip, IPEndPoint serverIp) => _connected.Notify((id, ip, serverIp));
 
 		protected void OnCaughtException(Exception exception, EventCode code) =>
 			_lastException.Notify((exception, code));
@@ -98,7 +93,7 @@ namespace NetworkingUtilities.Abstracts
 			stream.Seek(0, SeekOrigin.Begin);
 			var message = stream.ToArray();
 			var (from, to) = ServerHandler ? (WhoAmI.Id, "server") : ("server", WhoAmI.Id);
-			OnNewMessage(message, @from, to);
+			OnNewMessage(message, from, to);
 		}
 	}
 }

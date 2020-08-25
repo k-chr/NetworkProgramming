@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Security;
-using System.Threading;
 using System.Threading.Tasks;
 using NetworkingUtilities.Abstracts;
 using NetworkingUtilities.Utilities.Events;
@@ -128,7 +127,7 @@ namespace NetworkingUtilities.Tcp
 				OnReportingStatus(StatusCode.Success, $"Successfully accepted new TCP connection");
 				var handler = new Client(client, true);
 				var whoAreYou = handler.WhoAmI;
-				OnNewClient(whoAreYou.Ip, whoAreYou.Id, whoAreYou.Port);
+				OnNewClient(whoAreYou.Id, whoAreYou.Ip, whoAreYou.ServerIp);
 				CleanClients();
 				RegisterHandler(handler);
 				lock (Lock)
@@ -180,7 +179,7 @@ namespace NetworkingUtilities.Tcp
 							lock (Lock)
 							{
 								Clients.Remove(Clients.FirstOrDefault());
-								OnDisconnect(@event.Ip, @event.Id, @event.Port);
+								OnDisconnect(@event.Id, @event.Ip, @event.ServerIp);
 							}
 						});
 					}

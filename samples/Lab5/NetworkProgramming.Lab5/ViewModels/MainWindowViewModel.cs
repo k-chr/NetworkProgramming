@@ -67,7 +67,7 @@ namespace NetworkProgramming.Lab5.ViewModels
 			{
 				if (obj is ClientEvent clientEvent)
 				{
-					var model = new ClientModel((clientEvent.Ip.ToString(), clientEvent.Id, clientEvent.Port))
+					var model = new ClientModel((clientEvent.Ip.Address.ToString(), clientEvent.Id, clientEvent.Ip.Port))
 					{
 						Connected = "Online"
 					};

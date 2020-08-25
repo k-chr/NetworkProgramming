@@ -56,14 +56,12 @@ namespace NetworkingUtilities.Tcp
 					state.BlockingEvent.Set();
 					if (ClientSocket.LocalEndPoint is IPEndPoint endPoint)
 					{
-						WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port);
+						WhoAmI = new ClientEvent("", endPoint, ClientSocket.RemoteEndPoint as IPEndPoint);
 					}
-
-					var server = ClientSocket.RemoteEndPoint as IPEndPoint;
 
 					OnReportingStatus(StatusCode.Success,
 						$"Successfully created TCP connection to {ClientSocket.RemoteEndPoint}");
-					OnConnect(server?.Address, WhoAmI.Id, server?.Port ?? 0);
+					OnConnect(WhoAmI.Id, WhoAmI.Ip, WhoAmI.ServerIp);
 				}
 				catch (ObjectDisposedException)
 				{
@@ -217,7 +215,7 @@ namespace NetworkingUtilities.Tcp
 				if (ServerHandler)
 				{
 					clientSocket.Close();
-					OnDisconnect(WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port);
+					OnDisconnect(WhoAmI.Id, WhoAmI.Ip, WhoAmI.ServerIp);
 				}
 				else
 				{
@@ -226,17 +224,17 @@ namespace NetworkingUtilities.Tcp
 			}
 			catch (ObjectDisposedException)
 			{
-				OnDisconnect(WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port);
+				OnDisconnect(WhoAmI.Id, WhoAmI.Ip, WhoAmI.ServerIp);
 			}
 			catch (SocketException s)
 			{
 				OnCaughtException(s, EventCode.Disconnect);
-				OnDisconnect(WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port);
+				OnDisconnect(WhoAmI.Id, WhoAmI.Ip, WhoAmI.ServerIp);
 			}
 			catch (Exception e)
 			{
 				OnCaughtException(e, EventCode.Other);
-				OnDisconnect(WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port);
+				OnDisconnect(WhoAmI.Id, WhoAmI.Ip, WhoAmI.ServerIp);
 			}
 		}
 
@@ -264,7 +262,7 @@ namespace NetworkingUtilities.Tcp
 				}
 				finally
 				{
-					OnDisconnect(WhoAmI.Ip, WhoAmI.Id, WhoAmI.Port);
+					OnDisconnect(WhoAmI.Id, WhoAmI.Ip, WhoAmI.ServerIp);
 				}
 			}
 		}

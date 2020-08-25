@@ -246,7 +246,7 @@ namespace TimeClient.ViewModels
 			if (o1 is ClientEvent clientEvent)
 			{
 				_disabledDiscovery = true;
-				var endpoint = new IPEndPoint(clientEvent.Ip, clientEvent.Port);
+				var endpoint = clientEvent.ServerIp;
 				var old = _connectedServer;
 				Dispatcher.UIThread.InvokeAsync(() =>
 				{

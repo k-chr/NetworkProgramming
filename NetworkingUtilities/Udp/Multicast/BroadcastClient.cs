@@ -165,7 +165,7 @@ namespace NetworkingUtilities.Udp.Multicast
 
 				if (ClientSocket.LocalEndPoint is IPEndPoint endPoint)
 				{
-					WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port, WhoAmI.Id);
+					WhoAmI = new ClientEvent(WhoAmI.Id, endPoint, new IPEndPoint(_address, _localPort));
 				}
 
 				Receive();

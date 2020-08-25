@@ -42,8 +42,8 @@ namespace NetworkingUtilities.Tcp
 					{
 						lock (Lock)
 						{
-							Clients.Remove(Clients.FirstOrDefault());
-							OnDisconnect(@event.Ip, @event.Id, @event.Port);
+							Clients.Remove(Clients.FirstOrDefault(client => client.WhoAmI.Equals(handler.WhoAmI)));
+							OnDisconnect(@event.Id, @event.Ip, @event.ServerIp);
 						}
 					});
 				}
@@ -86,7 +86,7 @@ namespace NetworkingUtilities.Tcp
 				foreach (var abstractClient in Clients)
 				{
 					abstractClient.StopService();
-				} 
+				}
 			}
 
 			Clients.Clear();
@@ -191,7 +191,7 @@ namespace NetworkingUtilities.Tcp
 				{
 					var handler = new Client(client, true);
 					var whoAreYou = handler.WhoAmI;
-					OnNewClient(whoAreYou.Ip, whoAreYou.Id, whoAreYou.Port);
+					OnNewClient(whoAreYou.Id, whoAreYou.Ip, whoAreYou.ServerIp);
 					RegisterHandler(handler);
 					lock (Lock)
 					{
