@@ -13,5 +13,7 @@
 	   <StyleInclude Source="avares://TimeProjectServices/Styles/Styles.xaml" />
 	   <StyleInclude Source="avares://TimeProjectServices/Styles/SideBar.xaml" />
 	   <StyleInclude Source="avares://CustomControls/Themes/ClockControl.xaml" />
-    </Application.Styles>
+	   <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Default.xaml"/>
+
+	</Application.Styles>
 </Application>
