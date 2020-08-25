@@ -23,8 +23,12 @@ namespace TimeServer.Models
 
 		public int NumberOfClients { get; private set; }
 
-		public void NewClient() => ++NumberOfClients;
+		public int MaxClientsCount => int.MaxValue;
 
-		public void ClientDisconnected() => --NumberOfClients;
+		public void NewClient() =>
+			(NumberOfClients < MaxClientsCount ? (Action) (() => ++NumberOfClients) : () => { })();
+
+		public void ClientDisconnected() =>
+			(NumberOfClients > 0 ? (Action) (() => --NumberOfClients) : () => { })();
 	}
 }

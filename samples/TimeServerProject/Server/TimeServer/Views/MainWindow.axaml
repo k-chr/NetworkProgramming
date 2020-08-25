@@ -143,7 +143,7 @@
 			<views:LogsView/>
 		 </TabItem>
 		 <TabItem Header="Config">
-			<views:ConfigView/>
+			<views:ConfigView DataContext="{Binding AppState}"/>
 		 </TabItem>
 		 <TabControl.Tag>
 			<ToggleSwitch x:Name="Themes" IsChecked="False" Margin="0,17,0,17"
