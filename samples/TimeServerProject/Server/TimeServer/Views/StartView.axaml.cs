@@ -2,11 +2,13 @@
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
+using JetBrains.Annotations;
 
 namespace TimeServer.Views
 {
 	public class StartView : UserControl
 	{
+		[UsedImplicitly]
 		public static readonly StyledProperty<double> InfoWidthProperty;
 		private double _infoWidth;
 

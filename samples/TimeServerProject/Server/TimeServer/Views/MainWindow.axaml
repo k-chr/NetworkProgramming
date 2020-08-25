@@ -137,13 +137,13 @@
 			<views:StartView InfoWidth="{Binding #Header.Bounds.Width, Converter={StaticResource WidthConverter} ConverterParameter=50}"></views:StartView>
 		 </TabItem>
 		 <TabItem Header="Servers">
-			
+			<views:ServersView/>
 		 </TabItem>
 		 <TabItem Header="Logs">
-
+			<views:LogsView/>
 		 </TabItem>
 		 <TabItem Header="Config">
-
+			<views:ConfigView/>
 		 </TabItem>
 		 <TabControl.Tag>
 			<ToggleSwitch x:Name="Themes" IsChecked="False" Margin="0,17,0,17"

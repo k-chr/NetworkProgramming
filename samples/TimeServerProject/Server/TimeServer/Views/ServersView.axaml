@@ -1,0 +1,27 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TimeServer.Views.ServersView">
+   <StackPanel Margin="{StaticResource PageMargin}"
+				Background="Transparent"
+				Orientation="Vertical"
+				Spacing="40">
+
+	  <StackPanel>
+		 <TextBlock Classes="header">Servers</TextBlock>
+		 <Grid>
+			<TextBlock Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" IsVisible="{Binding !Servers.Count}">There's no available servers, check network connection or press Start Server</TextBlock>
+			<DataGrid Grid.Row="0" Grid.Column="0" Margin="12" Items="{Binding Servers}" IsVisible="{Binding !!Servers.Count}">
+			   <DataGrid.Columns>
+				  <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="6*" />
+				  <DataGridTextColumn Header="Ip" Binding="{Binding Ip}" Width="4*" />
+				  <DataGridTextColumn Header="Active Clients count" Binding="{Binding NumberOfClients}" Width="3*" />
+			   </DataGrid.Columns>
+			</DataGrid>
+		 </Grid>
+		 <Button IsEnabled="{Binding ServerStarted}" HorizontalAlignment="Right">Start Server</Button>
+	  </StackPanel>
+   </StackPanel>
+</UserControl>
