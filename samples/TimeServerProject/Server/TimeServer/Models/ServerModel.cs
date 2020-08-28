@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Net;
+using ReactiveUI;
 
 namespace TimeServer.Models
 {
-	public class ServerModel
+	public class ServerModel : ReactiveObject
 	{
+		private int _numberOfClients;
+
 		public static implicit operator ServerModel(ValueTuple<IPEndPoint, string> pair) =>
 			Create(pair.Item1, pair.Item2);
 
@@ -17,11 +20,17 @@ namespace TimeServer.Models
 
 		public IPEndPoint Ip { get; private set; }
 
+		public string IpString => Ip.ToString();
+
 		public string Name { get; private set; }
 
 		public override string ToString() => $"{Name}|{Ip}";
 
-		public int NumberOfClients { get; private set; }
+		public int NumberOfClients
+		{
+			get => _numberOfClients;
+			private set => this.RaiseAndSetIfChanged(ref _numberOfClients, value);
+		}
 
 		public int MaxClientsCount => int.MaxValue;
 

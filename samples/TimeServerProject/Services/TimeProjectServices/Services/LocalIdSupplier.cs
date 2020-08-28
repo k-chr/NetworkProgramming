@@ -43,6 +43,7 @@ namespace TimeProjectServices.Services
 		{
 			using var rNg = new RNGCryptoServiceProvider();
 			var bytes = new byte[2];
+			rNg.GetBytes(bytes);
 			return BitConverter.ToUInt16(bytes);
 		}
 
