@@ -33,8 +33,15 @@ namespace TimeClient.ViewModels
 		private long _tStart;
 		private const int Unit = 1000;
 		private readonly object _lock = new object();
-		private readonly CancellationTokenSource _cancelTimeCommunicationSource = new CancellationTokenSource();
+		private CancellationTokenSource _cancelTimeCommunicationSource = new CancellationTokenSource();
+		private readonly LogDumper _dumper;
+		private string _currentTime;
+		private string _previousTime;
+		private long _currentDelta;
+		private long _previousDelta;
 
+		[UsedImplicitly] public string DeltaTag => "[Delta]";
+		[UsedImplicitly] public string TimeTag => "[Server Time]";
 		[UsedImplicitly] public ConfigViewModel ConfigViewModel { get; }
 
 		[UsedImplicitly]
@@ -42,6 +49,20 @@ namespace TimeClient.ViewModels
 		{
 			get => _managedNotificationManager;
 			set => this.RaiseAndSetIfChanged(ref _managedNotificationManager, value);
+		}
+
+		[UsedImplicitly]
+		public string CurrentTime
+		{
+			get => _currentTime;
+			set => this.RaiseAndSetIfChanged(ref _currentTime, value);
+		}
+
+		[UsedImplicitly]
+		public string PreviousTime
+		{
+			get => _previousTime;
+			set => this.RaiseAndSetIfChanged(ref _previousTime, value);
 		}
 
 		[UsedImplicitly]
@@ -65,11 +86,25 @@ namespace TimeClient.ViewModels
 			set => this.RaiseAndSetIfChanged(ref _selectedServer, value);
 		}
 
+		[UsedImplicitly]
+		public long CurrentDelta
+		{
+			get => _currentDelta;
+			set => this.RaiseAndSetIfChanged(ref _currentDelta, value);
+		}
+
+		[UsedImplicitly]
+		public long PreviousDelta
+		{
+			get => _previousDelta;
+			set => this.RaiseAndSetIfChanged(ref _previousDelta, value);
+		}
+
 		[UsedImplicitly] public bool CanDiscover => _disabledDiscovery && ConnectedServer == null;
 
 		private void OnConnectedServerChanged(ServerModel old, ServerModel connectedServer)
 		{
-			if (!(connectedServer is null) && !old.Equals(connectedServer))
+			if (!(connectedServer is null) && (old is null || !old.Equals(connectedServer)))
 				ConfigViewModel.SelectedServer = connectedServer;
 		}
 
@@ -79,13 +114,15 @@ namespace TimeClient.ViewModels
 			Dispatcher.UIThread.InvokeAsync(() =>
 			{
 				AccessibleServers?.Clear();
-				TimeMessages?.Clear();
 				Logs?.Clear();
 			});
+
+			_dumper.End();
 		}
 
 		private void PrepareTimeMessageTask()
 		{
+			_cancelTimeCommunicationSource = new CancellationTokenSource();
 			Task.Run(() =>
 			{
 				while (!_cancelTimeCommunicationSource.Token.IsCancellationRequested)
@@ -144,6 +181,7 @@ namespace TimeClient.ViewModels
 			ConfigViewModel.ErrorsChanged += OnConfigViewModelOnErrorsChanged;
 
 			ConfigViewModel.ConfigurationChanged += OnConfigViewModelOnConfigurationChanged;
+			_dumper = new LogDumper("client_status.log");
 
 			_client = new TimeProjectServices.Services.TimeClient(ConfigViewModel.MulticastAddress,
 				ConfigViewModel.MulticastPort, ConfigViewModel.LocalPort);
@@ -165,7 +203,7 @@ namespace TimeClient.ViewModels
 
 			ShowNotification(status);
 
-			AddLog(model);
+			AddLog(model, true);
 		}
 
 		private void OnConfigViewModelOnConfigurationChanged([CanBeNull] object sender, EventArgs args)
@@ -184,7 +222,8 @@ namespace TimeClient.ViewModels
 					ConnectedServer = null;
 				}
 
-				TimeMessages.Clear();
+				CurrentTime = null;
+				PreviousTime = null;
 				SelectedView = 1;
 				this.RaisePropertyChanged(nameof(CanDiscover));
 			});
@@ -221,8 +260,10 @@ namespace TimeClient.ViewModels
 				) return;
 				var model = (((DiscoverProtocol) protocol).Data, $"server_{LocalIdSupplier.CreateId()}");
 				AddServer(model);
-				AddLog(InternalMessageModel.Builder().WithType(InternalMessageType.Info).AttachTimeStamp(true)
-				   .AttachTextMessage($"Discovered server: {model}").BuildMessage());
+				var log = InternalMessageModel.Builder().WithType(InternalMessageType.Info).AttachTimeStamp(true)
+				   .AttachTextMessage($"Discovered server: {model}").BuildMessage();
+				AddLog(log, true);
+				ShowNotification(new StatusEvent(StatusCode.Success, $"Discovered server: {model}"));
 			}
 		}
 
@@ -230,13 +271,14 @@ namespace TimeClient.ViewModels
 		{
 			if (o1 is ClientEvent)
 			{
-				_disabledDiscovery = true;
-
+				ConnectedServer = null;
+				_disabledDiscovery = false;
+				PrepareDiscoveryTask();
 				Dispatcher.UIThread.InvokeAsync(() =>
 				{
 					this.RaisePropertyChanged(nameof(CanDiscover));
-					TimeMessages.Clear();
 					SelectedView = 1;
+					AccessibleServers.Clear();
 				});
 			}
 		}
@@ -281,7 +323,7 @@ namespace TimeClient.ViewModels
 				   .AttachTimeStamp(true)
 				   .BuildMessage();
 
-				AddLog(log);
+				AddLog(log, true);
 
 				var status = new StatusEvent(StatusCode.Error, message);
 				ShowNotification(status);
@@ -292,28 +334,38 @@ namespace TimeClient.ViewModels
 		{
 			if (o1 is MessageEvent messageEvent)
 			{
-				var protocol = ProtocolFactory.FromBytes(messageEvent.Message);
-				if (protocol != null && protocol.Header == HeaderType.Time && protocol.Action == ActionType.Response)
+				Task.Run(() =>
 				{
-					var tCli = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-					var time = ((TimeProtocol) protocol).Data.ToUnixTimeMilliseconds();
-					var delta = time + (tCli - _tStart) / 2 - tCli;
-					var serverTime = DateTimeOffset.FromUnixTimeMilliseconds(tCli + delta);
-					var str = $"{"[Server Time]",15}\t{serverTime:O}\n{"[Delta]",15}\t{delta}[ms]";
-					var message = InternalMessageModel.Builder().WithType(InternalMessageType.Server)
-					   .AttachTextMessage(str)
-					   .AttachTimeStamp(true).AttachClientData(new ClientModel((ConnectedServer.Ip.Address.ToString(),
-							ConnectedServer.Name, ConnectedServer.Ip.Port))).BuildMessage();
-					AddLog(message);
-					AddTimeMessage(message);
-					ShowNotification(new StatusEvent(StatusCode.Success, $"New TimeMessage!\n{str}"));
-					_event.Set();
-				}
+					var protocol = ProtocolFactory.FromBytes(messageEvent.Message);
+					if (protocol != null && protocol.Header == HeaderType.Time &&
+						protocol.Action == ActionType.Response)
+					{
+						var tCli = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+						var time = ((TimeProtocol) protocol).Data.ToUnixTimeMilliseconds();
+						var delta = time + (tCli - _tStart) / 2 - tCli;
+						var serverTime = DateTimeOffset.FromUnixTimeMilliseconds(tCli + delta);
+						var str = $"{"[Server Time]",15}\t{serverTime:O}\n{"[Delta]",15}\t{delta,40}[ms]";
+						var message = InternalMessageModel.Builder().WithType(InternalMessageType.Server)
+						   .AttachTextMessage(str)
+						   .AttachTimeStamp(true).AttachClientData(new ClientModel((
+								ConnectedServer.Ip.Address.ToString(),
+								ConnectedServer.Name, ConnectedServer.Ip.Port))).BuildMessage();
+						AddLog(message);
+						SetTimeMessage($"{serverTime:O}", delta);
+						_event.Set();
+					}
+				});
 			}
 		}
 
-		private void AddTimeMessage(InternalMessageModel message) =>
-			Dispatcher.UIThread.InvokeAsync(() => TimeMessages.Add(message));
+		private void SetTimeMessage(string message, long delta) =>
+			Dispatcher.UIThread.InvokeAsync(() =>
+			{
+				PreviousDelta = CurrentDelta;
+				PreviousTime = CurrentTime;
+				CurrentTime = message;
+				CurrentDelta = delta;
+			});
 
 		private void OnNewStatus(object o, object o1)
 		{
@@ -332,8 +384,6 @@ namespace TimeClient.ViewModels
 				   .AttachTextMessage(statusEvent.StatusMessage)
 				   .BuildMessage();
 				AddLog(log);
-
-				if (type != InternalMessageType.Error) ShowNotification(statusEvent);
 			}
 		}
 
@@ -365,7 +415,12 @@ namespace TimeClient.ViewModels
 		private void AddServer((IPEndPoint Data, string) model) =>
 			Dispatcher.UIThread.InvokeAsync(() => AccessibleServers.Add(model));
 
-		private void AddLog(InternalMessageModel log) => Dispatcher.UIThread.InvokeAsync(() => Logs.Add(log));
+		private void AddLog(InternalMessageModel log, bool addLogToView = false)
+		{
+			_dumper.DumpLog(log);
+			if (addLogToView)
+				Dispatcher.UIThread.InvokeAsync(() => Logs.Add(log));
+		}
 
 		[UsedImplicitly]
 		public ObservableCollection<InternalMessageModel> Logs { get; } =
@@ -373,9 +428,5 @@ namespace TimeClient.ViewModels
 
 		[UsedImplicitly]
 		public ObservableCollection<ServerModel> AccessibleServers { get; } = new ObservableCollection<ServerModel>();
-
-		[UsedImplicitly]
-		public ObservableCollection<InternalMessageModel> TimeMessages { get; } =
-			new ObservableCollection<InternalMessageModel>();
 	}
 }
