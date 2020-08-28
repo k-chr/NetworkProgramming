@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" 
+			 Name="ServersView"
              x:Class="TimeServer.Views.ServersView">
    <StackPanel Margin="{StaticResource PageMargin}"
 				Background="Transparent"
@@ -10,19 +11,19 @@
 				Spacing="40">
 
 	  <StackPanel>
-		 <TextBlock Classes="header">Servers</TextBlock>
-		 <Grid>
+		 <TextBlock Name="Header" Classes="header">Servers</TextBlock>
+		 <Grid Width="{Binding #ServersView.InfoWidth}">
 			<TextBlock Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" IsVisible="{Binding !Servers.Count}">There's no available servers, check network connection or press Start Server</TextBlock>
-			<DataGrid Grid.Row="0" Grid.Column="0" Margin="12" Items="{Binding Servers}" IsVisible="{Binding !!Servers.Count}">
+			<DataGrid  IsReadOnly="True" Grid.Row="0" Grid.Column="0" Margin="12" Items="{Binding Servers}" IsVisible="{Binding !!Servers.Count}">
 			   <DataGrid.Columns>
-				  <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" />
-				  <DataGridTextColumn Header="Ip" Binding="{Binding Ip}" Width="Auto" />
-				  <DataGridTextColumn Header="Count of active clients" Binding="{Binding NumberOfClients}" Width="Auto" />
-				  <DataGridTextColumn Header="Max count clients" Binding="{Binding MaxClientsCount}" Width="Auto" />
+				  <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="6*" />
+				  <DataGridTextColumn Header="Ip" Binding="{Binding IpString}" Width="4*" />
+				  <DataGridTextColumn Header="Count of active clients" Binding="{Binding NumberOfClients}" Width="2*" />
+				  <DataGridTextColumn Header="Max count clients" Binding="{Binding MaxClientsCount}" Width="3*" />
 			   </DataGrid.Columns>
 			</DataGrid>
 		 </Grid>
-		 <Button IsEnabled="{Binding !ServerStarted}" HorizontalAlignment="Right">Start Server</Button>
+		 <Button IsEnabled="{Binding !ServerStarted}" HorizontalAlignment="Right" Command="{Binding StartServer}">Start Server</Button>
 	  </StackPanel>
    </StackPanel>
 </UserControl>
