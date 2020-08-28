@@ -214,8 +214,8 @@ namespace NetworkingUtilities.Tcp
 				clientSocket.Shutdown(SocketShutdown.Both);
 				if (ServerHandler)
 				{
-					clientSocket.Close();
 					OnDisconnect(WhoAmI.Id, WhoAmI.Ip, WhoAmI.ServerIp);
+					clientSocket.Close();
 				}
 				else
 				{

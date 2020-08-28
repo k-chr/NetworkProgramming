@@ -180,7 +180,7 @@ namespace NetworkingUtilities.Udp.Multicast
 			var state = _clientsBuffers[end];
 			using var stream = state.StreamBuffer;
 			stream.Seek(0, SeekOrigin.Begin);
-			OnNewMessage(stream.ToArray(), ((IPEndPoint) end).ToString(), "server");
+			OnNewMessage(stream.ToArray(), ((IPEndPoint) end).ToString(), EndPoint.ToString());
 		}
 
 		public override void Send(byte[] data, string to = "")

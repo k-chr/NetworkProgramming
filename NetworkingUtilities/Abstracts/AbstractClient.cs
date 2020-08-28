@@ -34,14 +34,12 @@ namespace NetworkingUtilities.Abstracts
 			if (clientSocket.RemoteEndPoint is IPEndPoint endPoint &&
 				clientSocket.LocalEndPoint is IPEndPoint localEndPoint)
 			{
+				endPoint = IPEndPoint.Parse(endPoint.ToString());
+				localEndPoint = IPEndPoint.Parse(localEndPoint.ToString());
 				if (ServerHandler)
-				{
 					WhoAmI = new ClientEvent("", endPoint, localEndPoint);
-				}
 				else
-				{
 					WhoAmI = new ClientEvent("", localEndPoint, endPoint);
-				}
 			}
 			else
 			{
@@ -69,9 +67,11 @@ namespace NetworkingUtilities.Abstracts
 		protected void OnNewMessage(byte[] message, string from, string to) =>
 			_lastMessage.Notify((message, from, to));
 
-		protected void OnDisconnect(string id, IPEndPoint ip, IPEndPoint serverIp) => _disconnected.Notify((id, ip, serverIp));
+		protected void OnDisconnect(string id, IPEndPoint ip, IPEndPoint serverIp) =>
+			_disconnected.Notify((id, ip, serverIp));
 
-		protected void OnConnect(string id, IPEndPoint ip, IPEndPoint serverIp) => _connected.Notify((id, ip, serverIp));
+		protected void OnConnect(string id, IPEndPoint ip, IPEndPoint serverIp) =>
+			_connected.Notify((id, ip, serverIp));
 
 		protected void OnCaughtException(Exception exception, EventCode code) =>
 			_lastException.Notify((exception, code));
