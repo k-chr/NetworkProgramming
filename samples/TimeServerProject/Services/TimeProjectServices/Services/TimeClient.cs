@@ -100,10 +100,10 @@ namespace TimeProjectServices.Services
 			var message = protocol.GetBytes();
 			switch (protocol.Header)
 			{
-				case HeaderType.Discover:
+				case HeaderType.Time:
 					_tcpClient?.Send(message);
 					break;
-				case HeaderType.Time:
+				case HeaderType.Discover:
 					_discoveryClients.ForEach(client => client.Send(message, to));
 					break;
 				default:
@@ -171,7 +171,7 @@ namespace TimeProjectServices.Services
 			_connectedReporter.Notify((id, ip, serverIp));
 
 		private void OnDisconnect(string id, IPEndPoint ip, IPEndPoint serverIp) =>
-			_disconnectedReporter.Notify((ip, id, serverIp));
+			_disconnectedReporter.Notify((id, ip, serverIp));
 
 		private void OnException(Exception exception, EventCode code) =>
 			_exceptionReporter.Notify((exception, code));

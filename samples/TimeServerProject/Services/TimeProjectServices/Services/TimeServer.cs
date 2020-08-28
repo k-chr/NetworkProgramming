@@ -16,6 +16,8 @@ namespace TimeProjectServices.Services
 {
 	public class TimeServer : IService
 	{
+		public IReadOnlyList<IPEndPoint> WorkingServers => _workingServers;
+
 		private readonly int _multicastPort;
 		private readonly List<MulticastBroadcastServer> _multicastBroadcastServers;
 		private readonly List<MultithreadingServer> _tcpServers;
@@ -26,19 +28,23 @@ namespace TimeProjectServices.Services
 		private readonly IReporter _newClientReporter;
 		private readonly IReporter _clientDisconnectedReporter;
 		private readonly IReporter _timeMessageRequestReporter;
+		private readonly List<IPEndPoint> _workingServers = new List<IPEndPoint>();
 
 		public TimeServer(string multicastIp, int multicastPort)
 		{
 			_multicastPort = multicastPort;
 			var interfaces = GeneralUtilities.GetNetworkInterfacesThatAreUp().Where(networkInterface =>
 				networkInterface.GetIPProperties().UnicastAddresses.All(information =>
-					information.Address.AddressFamily == AddressFamily.InterNetwork &&
 					!information.Address.Equals(IPAddress.Loopback))).ToList();
 
 			_multicastBroadcastServers = interfaces.ConvertAll(input => new MulticastBroadcastServer(multicastPort,
-				multicastIp, input.Name, false, input.GetIPProperties().UnicastAddresses.First().ToString()));
+				multicastIp, input.Name, false,
+				input.GetIPProperties().UnicastAddresses
+				   .First(information => information.Address.AddressFamily == AddressFamily.InterNetwork).Address.ToString()));
 			_tcpServers = interfaces.ConvertAll(input =>
-				new MultithreadingServer(input.GetIPProperties().UnicastAddresses.ToString(),
+				new MultithreadingServer(
+					input.GetIPProperties().UnicastAddresses.First(information =>
+						information.Address.AddressFamily == AddressFamily.InterNetwork).Address.ToString(),
 					LocalIdSupplier.CreatePort(), input.Name,
 					int.MaxValue));
 
@@ -104,12 +110,14 @@ namespace TimeProjectServices.Services
 					OnNewException(exceptionEvent.LastError, exceptionEvent.LastErrorCode);
 					if (exceptionEvent.LastErrorCode == EventCode.Bind)
 					{
+						_workingServers.Remove(IPEndPoint.Parse($"{server.Ip}:{server.Port}"));
 						do
 						{
 							server.Port = LocalIdSupplier.CreatePort();
 						} while (server.Port == _multicastPort);
 
 						server.StartService();
+						_workingServers.Add(server.EndPoint);
 					}
 				}
 			});
@@ -123,13 +131,13 @@ namespace TimeProjectServices.Services
 			server.AddNewClientSubscription((o, o1) =>
 			{
 				if (o1 is ClientEvent clientEvent)
-					OnNewClient(clientEvent.Ip, clientEvent.Id, clientEvent.Port);
+					OnNewClient(clientEvent.Id, clientEvent.Ip, clientEvent.ServerIp);
 			});
 
 			server.AddOnDisconnectedSubscription((o, o1) =>
 			{
 				if (o1 is ClientEvent clientEvent)
-					OnClientDisconnected(clientEvent.Ip, clientEvent.Id, clientEvent.Port);
+					OnClientDisconnected(clientEvent.Id, clientEvent.Ip, clientEvent.ServerIp);
 			});
 
 			server.AddStatusSubscription((o, o1) =>
@@ -157,8 +165,8 @@ namespace TimeProjectServices.Services
 		public void AddOnDisconnectionSubscription(Action<object, object> procedure) =>
 			_clientDisconnectedReporter.AddSubscriber(procedure);
 
-		private void OnNewClient(IPAddress address, string id, int port) =>
-			_newClientReporter.Notify((address, id, port));
+		private void OnNewClient(string id, IPEndPoint ip, IPEndPoint serverIp) =>
+			_newClientReporter.Notify((id, ip, serverIp));
 
 		private void OnNewException(Exception exception, EventCode code) =>
 			_exceptionReporter.Notify((exception, code));
@@ -166,8 +174,8 @@ namespace TimeProjectServices.Services
 		private void OnStatus(StatusCode code, string info) =>
 			_statusReporter.Notify((code, info));
 
-		private void OnClientDisconnected(IPAddress address, string id, int port) =>
-			_clientDisconnectedReporter.Notify((address, id, port));
+		private void OnClientDisconnected(string id, IPEndPoint ip, IPEndPoint serverIp) =>
+			_clientDisconnectedReporter.Notify((id, ip, serverIp));
 
 		private void OnTimeMessageRequest(byte[] message, string from, string to) =>
 			_timeMessageRequestReporter.Notify((message, from, to));
@@ -186,6 +194,7 @@ namespace TimeProjectServices.Services
 		{
 			OnStatus(StatusCode.Info, "Starting internal services of TimeServer");
 			_tcpServers.ForEach(server => server.StartService());
+			_tcpServers.ForEach(server => _workingServers.Add(server.EndPoint));
 			_multicastBroadcastServers.ForEach(server => server.StartService());
 		}
 	}
