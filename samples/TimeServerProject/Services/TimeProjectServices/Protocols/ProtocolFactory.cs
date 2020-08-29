@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using NetworkingUtilities.Extensions;
 using TimeProjectServices.Enums;
 
 namespace TimeProjectServices.Protocols
@@ -18,7 +19,10 @@ namespace TimeProjectServices.Protocols
 				{
 					case HeaderType.Discover:
 						var data = action == ActionType.Response
-							? new IPEndPoint(new IPAddress(dataBytes[..4]), BitConverter.ToInt32(dataBytes[4..]))
+							? dataBytes.Length.InRange(4, 8)
+								?
+								new IPEndPoint(new IPAddress(dataBytes[..4]), BitConverter.ToInt32(dataBytes[4..]))
+								: new IPEndPoint(new IPAddress(dataBytes[..16]), BitConverter.ToInt32(dataBytes[16..]))
 							: null;
 						protocol = new DiscoverProtocol
 						{

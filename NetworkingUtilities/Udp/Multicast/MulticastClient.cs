@@ -37,14 +37,16 @@ namespace NetworkingUtilities.Udp.Multicast
 				if (!string.IsNullOrEmpty(to))
 				{
 					var ep = IPEndPoint.Parse(to);
-					if ((!ep.Address.Equals(_multicastAddress) || ep.Port != _multicastPort) && ep.Address.ToString().IsMulticastAddress())
+					if ((!ep.Address.Equals(_multicastAddress) || ep.Port != _multicastPort) &&
+						ep.Address.ToString().IsMulticastAddress())
 					{
 						var old = endpoint;
 						endpoint = ep;
 						_multicastAddress = endpoint.Address;
 						_multicastPort = endpoint.Port;
 
-						OnReportingStatus(StatusCode.Info, $"Changed multicast address and port from {old} to {endpoint}");
+						OnReportingStatus(StatusCode.Info,
+							$"Changed multicast address and port from {old} to {endpoint}");
 					}
 				}
 
@@ -173,10 +175,10 @@ namespace NetworkingUtilities.Udp.Multicast
 
 				if (ClientSocket.LocalEndPoint is IPEndPoint endPoint)
 				{
-					WhoAmI = new ClientEvent(endPoint.Address, endPoint.Port, WhoAmI.Id);
+					WhoAmI = new ClientEvent(WhoAmI.Id, endPoint, new IPEndPoint(_multicastAddress, _multicastPort));
 				}
 
-				OnReportingStatus(StatusCode.Success, $"Successfully bound to {WhoAmI.Ip}:{WhoAmI.Port}");
+				OnReportingStatus(StatusCode.Success, $"Successfully bound to {WhoAmI.Ip}:{WhoAmI.ServerIp}");
 				Receive();
 			}
 			catch (ObjectDisposedException)

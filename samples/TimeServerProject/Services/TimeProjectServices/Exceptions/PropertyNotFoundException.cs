@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TimeClient.Exceptions
+namespace TimeProjectServices.Exceptions
 {
 	public class PropertyNotFoundException : Exception
 	{

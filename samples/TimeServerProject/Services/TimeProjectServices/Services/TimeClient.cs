@@ -16,7 +16,7 @@ using TimeProjectServices.Protocols;
 
 namespace TimeProjectServices.Services
 {
-	public class TimeClient : ISender, IService
+	public class TimeClient : IService
 	{
 		private readonly List<MulticastClient> _discoveryClients;
 		private Client _tcpClient;
@@ -33,7 +33,7 @@ namespace TimeProjectServices.Services
 		{
 			_discoveryClients = GeneralUtilities.GetNetworkInterfacesThatAreUp().Where(networkInterface =>
 					networkInterface.GetIPProperties().UnicastAddresses
-					   .FirstOrDefault(information => !information.Address.Equals(IPAddress.Loopback)) != null)
+					   .All(information => !information.Address.Equals(IPAddress.Loopback)))
 			   .ToList().ConvertAll(input => new MulticastClient(multicastAddress, multicastPort, localPort: localPort,
 					ipAddress: input.GetIPProperties().UnicastAddresses.First(ipAddressInformation =>
 						ipAddressInformation.Address.AddressFamily == AddressFamily.InterNetwork).Address.ToString()));
@@ -61,13 +61,13 @@ namespace TimeProjectServices.Services
 			client.AddOnDisconnectedSubscription((o, o1) =>
 			{
 				if (o1 is ClientEvent clientEvent)
-					OnDisconnect(clientEvent.Ip, clientEvent.Id, clientEvent.Port);
+					OnDisconnect(clientEvent.Id, clientEvent.Ip, clientEvent.ServerIp);
 			});
 
 			client.AddOnConnectedSubscription((o, o1) =>
 			{
 				if (o1 is ClientEvent clientEvent)
-					OnConnect(clientEvent.Ip, clientEvent.Id, clientEvent.Port);
+					OnConnect(clientEvent.Id, clientEvent.Ip, clientEvent.ServerIp);
 			});
 
 			client.AddStatusSubscription((o, o1) =>
@@ -97,23 +97,19 @@ namespace TimeProjectServices.Services
 
 		public void SendProtocol(IProtocol protocol, string to)
 		{
+			var message = protocol.GetBytes();
 			switch (protocol.Header)
 			{
-				case HeaderType.Discover:
-					Send(protocol.GetBytes(), to);
-					break;
 				case HeaderType.Time:
-					Send(protocol.GetBytes());
+					_tcpClient?.Send(message);
+					break;
+				case HeaderType.Discover:
+					_discoveryClients.ForEach(client => client.Send(message, to));
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
 		}
-
-		private void Send(byte[] message) => _tcpClient?.Send(message);
-
-		public void Send(byte[] message, string to = "") =>
-			_discoveryClients.ForEach(client => client.Send(message, to));
 
 		public void StopService()
 		{
@@ -132,7 +128,7 @@ namespace TimeProjectServices.Services
 			}
 			else
 			{
-				OnDisconnect(IPAddress.Any, "", 0);
+				OnDisconnect("", new IPEndPoint(IPAddress.Any, 0), new IPEndPoint(IPAddress.Any, 0));
 			}
 
 			_tcpClient = null;
@@ -171,11 +167,11 @@ namespace TimeProjectServices.Services
 		public void AddDiscoveredServerSubscription(Action<object, object> procedure) =>
 			_discoveredServerReporter.AddSubscriber(procedure);
 
-		private void OnConnect(IPAddress ip, string id, int port) =>
-			_connectedReporter.Notify((ip, id, port));
+		private void OnConnect(string id, IPEndPoint ip, IPEndPoint serverIp) =>
+			_connectedReporter.Notify((id, ip, serverIp));
 
-		private void OnDisconnect(IPAddress ip, string id, int port) =>
-			_disconnectedReporter.Notify((ip, id, port));
+		private void OnDisconnect(string id, IPEndPoint ip, IPEndPoint serverIp) =>
+			_disconnectedReporter.Notify((id, ip, serverIp));
 
 		private void OnException(Exception exception, EventCode code) =>
 			_exceptionReporter.Notify((exception, code));

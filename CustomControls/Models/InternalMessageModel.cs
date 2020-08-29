@@ -37,7 +37,7 @@ namespace CustomControls.Models
 		public override string ToString()
 		{
 			var dateMsg = Date == DateTime.MinValue ? "" : $"[{Date.ToShortDateString()} {Date.ToLongTimeString()}]";
-			return $"[{Type}]{dateMsg} {ClientModelData?.ToString() ?? ""} {Data}\n{ExceptionData}";
+			return $"[{Type}] {dateMsg} {ClientModelData?.ToString() ?? ""} {Data}\n{ExceptionData}";
 		}
 
 		public class MessageBuilder

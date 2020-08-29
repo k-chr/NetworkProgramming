@@ -14,30 +14,48 @@
 			 Background="Transparent"
 			 Orientation="Vertical"
 			 Spacing="40">
-	  <TextBlock Text="Time messages:" Classes="header" ></TextBlock>
-
+	  <TextBlock Text="Time messages:" Classes="header" />
 	  <Grid>
-		 <ScrollViewer IsVisible="{Binding !!TimeMessages.Count}">
-			<ItemsControl Items="{Binding TimeMessages}" MinHeight="240" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Margin="0 0 0 2">
-			   <ItemsControl.ItemTemplate >
-				  <DataTemplate>
-					 <ListBoxItem>
-						<ctrl:MessageBubble Message="{Binding Data}"
-								   Date="{Binding Date}"
-								   HorizontalAlignment="{Binding Type, Converter={StaticResource myAlignmentConverter} ConverterParameter=Client}"
-								   Client="{Binding ClientModelData}"
-								   BubbleColor="{Binding ColorBrush}"
-								   DynamicDock="{Binding $self.HorizontalAlignment, Converter={StaticResource myDockConverter}}">
-						</ctrl:MessageBubble>
-					 </ListBoxItem>
-				  </DataTemplate>
-			   </ItemsControl.ItemTemplate>
-			</ItemsControl>
-		 </ScrollViewer>
-		 <TextBlock Text="No time messages found" IsVisible="{Binding !TimeMessages.Count}"></TextBlock>
+		 <StackPanel Spacing="10" Orientation="Vertical" HorizontalAlignment="Center" IsVisible="{Binding CurrentTime, Converter={x:Static ObjectConverters.IsNotNull}}">
+			<Grid>
+			   <StackPanel Orientation="Vertical" Spacing="2" HorizontalAlignment="Center">
+				  <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Left"
+							  IsVisible="{Binding PreviousTime, Converter={x:Static ObjectConverters.IsNotNull}}">
+					 <TextBlock Classes="PrevTime" Text="{Binding TimeTag}" />
+					 <TextBlock Classes="PrevTime" Text="{Binding PreviousTime}"/>
+				  </StackPanel>
+				  <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Left"
+							  IsVisible="{Binding PreviousTime, Converter={x:Static ObjectConverters.IsNotNull}}">
+					 <TextBlock Classes="PrevTime" Text="{Binding DeltaTag}" />
+					 <TextBlock Classes="PrevTime" Text="{Binding PreviousDelta}"/>
+					 <TextBlock Classes="PrevTime" Text="[ms]" />
+
+				  </StackPanel>
+			   </StackPanel>
+			   <TextBlock Classes="PrevTime" Text="YYYY-MM-DDThh:mm:ssZ"
+						  IsVisible="{Binding PreviousTime, Converter={x:Static ObjectConverters.IsNull}}"/>
+			</Grid>
+			<StackPanel Orientation="Vertical" Spacing="2" HorizontalAlignment="Center">
+			   <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Left"
+						   IsVisible="{Binding CurrentTime, Converter={x:Static ObjectConverters.IsNotNull}}">
+				  <TextBlock Classes="CurrTime" Text="{Binding TimeTag}" />
+				  <TextBlock Classes="CurrTime" Text="{Binding CurrentTime}"/>
+			   </StackPanel>
+			   <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Left"
+						   IsVisible="{Binding CurrentTime, Converter={x:Static ObjectConverters.IsNotNull}}">
+				  <TextBlock Classes="CurrTime" Text="{Binding DeltaTag}" />
+				  <TextBlock Classes="CurrTime" Text="{Binding CurrentDelta}"/>
+				  <TextBlock Classes="CurrTime" Text="[ms]" />
+
+			   </StackPanel>
+			</StackPanel>
+
+		 </StackPanel>
+		 <TextBlock Text="No time messages found"
+					IsVisible="{Binding CurrentTime, Converter={x:Static ObjectConverters.IsNull}}"/>
 	  </Grid>
 	  <Button IsEnabled="{Binding ConnectedServer, Converter={x:Static ObjectConverters.IsNotNull}}"
-			  HorizontalAlignment="Right" Content="Disconnect" 
+			  HorizontalAlignment="Right" Content="Disconnect"
 			  Command="{Binding DisconnectFromServer}"/>
    </StackPanel>
 </UserControl>

@@ -5,7 +5,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Platform;
 using Avalonia.Styling;
 
-namespace TimeClient
+namespace CustomControls.Controls
 {
 	public class FluentWindow : Window, IStyleable
 	{

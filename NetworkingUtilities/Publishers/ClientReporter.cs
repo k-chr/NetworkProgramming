@@ -11,8 +11,8 @@ namespace NetworkingUtilities.Publishers
 
 		public void Notify(object obj)
 		{
-			if (obj is ValueTuple<IPAddress, string, int> data)
-				Report?.Invoke(this, new ClientEvent(data.Item1, data.Item3, data.Item2));
+			if (obj is ValueTuple<string, IPEndPoint, IPEndPoint> data)
+				Report?.Invoke(this, new ClientEvent(data.Item1, data.Item2, data.Item3));
 		}
 
 		public void AddSubscriber(Action<object, object> procedure) => Report += (s, e) => procedure?.Invoke(s, e);

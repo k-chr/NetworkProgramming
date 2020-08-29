@@ -5,8 +5,9 @@ using System.ComponentModel;
 using System.Linq;
 using NetworkingUtilities.Extensions;
 using ReactiveUI;
-using TimeClient.Exceptions;
 using TimeClient.Models;
+using TimeProjectServices.Exceptions;
+using TimeProjectServices.ViewModels;
 
 namespace TimeClient.ViewModels
 {
@@ -18,7 +19,7 @@ namespace TimeClient.ViewModels
 		private int _discoveryQueryPeriod;
 		private int _timeQueryPeriod;
 		private bool _backedUp;
-		
+
 		private (string MulticastAddress, int MulticastPort, int LocalPort, int DiscoveryQueryPeriod, int
 			TimeQueryPeriod) _backup;
 
@@ -32,6 +33,7 @@ namespace TimeClient.ViewModels
 		};
 
 		private readonly Dictionary<string, string> _propertiesErrors = new Dictionary<string, string>();
+		private ServerModel _selectedServer;
 
 
 		public ConfigViewModel(string multicastAddress = "", int multicastPort = 0, int localPort = 0,
@@ -59,7 +61,8 @@ namespace TimeClient.ViewModels
 		{
 			PropertyChanging += (sender, args) =>
 			{
-				if (!BackedUp && !args.PropertyName.Equals(nameof(BackedUp)))
+				if (!BackedUp && !args.PropertyName.Equals(nameof(BackedUp)) &&
+					!args.PropertyName.Equals(nameof(SelectedServer)))
 				{
 					_backup.DiscoveryQueryPeriod = DiscoveryQueryPeriod;
 					_backup.LocalPort = LocalPort;
@@ -111,7 +114,11 @@ namespace TimeClient.ViewModels
 			set => this.RaiseAndSetIfChanged(ref _backedUp, value);
 		}
 
-		public ServerModel SelectedServer { get; set; }
+		public ServerModel SelectedServer
+		{
+			get => _selectedServer;
+			set => this.RaiseAndSetIfChanged(ref _selectedServer, value);
+		}
 
 		public string MulticastAddress
 		{
@@ -145,8 +152,8 @@ namespace TimeClient.ViewModels
 
 		public bool HasErrors => _propertiesErrors.Any();
 
-		public IEnumerable GetErrors(string propertyName) => new[] {_propertiesErrors.Get(propertyName)}; 
-		
+		public IEnumerable GetErrors(string propertyName) => new[] {_propertiesErrors.Get(propertyName)};
+
 		public event EventHandler ConfigurationChanged;
 		public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 

@@ -5,8 +5,8 @@
               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
               mc:Ignorable="d" d:DesignWidth="1350" d:DesignHeight="700" Height="800" Width="1400"
-              xmlns:views="clr-namespace:TimeClient.Views;assembly=TimeClient"
-              x:Class="TimeClient.Views.MainWindow"
+              xmlns:views="clr-namespace:TimeServer.Views;assembly=TimeServer"
+              x:Class="TimeServer.Views.MainWindow"
               Icon="{x:Null}"
               x:Name="MainWindow"
 			  MinWidth="330"
@@ -15,7 +15,7 @@
               FontSize="14"
               Foreground="{StaticResource SystemBaseHighColor}"
               Background="{x:Null}"
-              Title="TimeClient"
+              Title="TimeServer"
 			  xmlns:viewscommon="clr-namespace:TimeProjectServices.Views;assembly=TimeProjectServices"
 			  xmlns:conv="clr-namespace:CustomControls.Converters;assembly=CustomControls">
    <FluentWindow.Resources>
@@ -126,7 +126,7 @@
 			   <ExperimentalAcrylicMaterial TintColor="{DynamicResource SystemAltMediumColor}" MaterialOpacity="0.35"
 											TintOpacity="1" />
 			</ExperimentalAcrylicBorder.Material>
-			<TextBlock Text="{Binding #TabControl.SelectedItem.Header}" Name="Header" Foreground="{DynamicResource SystemBaseHighColor}" 
+			<TextBlock Text="{Binding #TabControl.SelectedItem.Header}" Name="Header" Foreground="{DynamicResource SystemBaseHighColor}"
 					   Margin="40 20" FontSize="32" FontWeight="Light" HorizontalAlignment="Stretch" />
 		 </ExperimentalAcrylicBorder>
 	  </Grid>
@@ -134,24 +134,16 @@
 	  <TabControl x:Name="TabControl" TabStripPlacement="Left" Classes="sidebar" Margin="0 100 0 40"
 				  ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectedIndex="{Binding SelectedView}">
 		 <TabItem  Header="Start">
-			<views:StartView InfoWidth="{Binding #Header.Bounds.Width, Converter={StaticResource WidthConverter} ConverterParameter=50}"></views:StartView>
+			<views:StartView InfoWidth="{Binding #Header.Bounds.Width, Converter={StaticResource WidthConverter} ConverterParameter=50}"/>
 		 </TabItem>
-		 <TabItem Header="Server Selection" >
-			<views:ServerSelectionView>
-			</views:ServerSelectionView>
-		 </TabItem>
-		 <TabItem Header="Time Protocol Communication">
-			<views:MainView>
-			</views:MainView>
+		 <TabItem Header="Servers">
+			<views:ServersView InfoWidth="{Binding #Header.Bounds.Width, Converter={StaticResource WidthConverter} ConverterParameter=50}"/>
 		 </TabItem>
 		 <TabItem Header="Logs">
-			<views:LogsView>
-
-			</views:LogsView>
+			<views:LogsView/>
 		 </TabItem>
-		 <TabItem  Header="Config" IsVisible="{Binding ConfigurationOpened}">
-			<views:ConfigView DataContext="{Binding ConfigViewModel}">
-			</views:ConfigView>
+		 <TabItem Header="Config">
+			<views:ConfigView DataContext="{Binding AppState}"/>
 		 </TabItem>
 		 <TabControl.Tag>
 			<ToggleSwitch x:Name="Themes" IsChecked="False" Margin="0,17,0,17"

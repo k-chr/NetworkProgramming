@@ -10,7 +10,7 @@ using CustomControls.Controls;
 using DynamicData;
 using JetBrains.Annotations;
 
-namespace TimeClient.Views
+namespace TimeServer.Views
 {
 	public class MainWindow : FluentWindow
 	{
@@ -71,7 +71,7 @@ namespace TimeClient.Views
 				Position = NotificationPosition.BottomRight,
 				MaxItems = 6,
 				BorderBrush = Brushes.Transparent,
-				Background = Brushes.Transparent
+				Background = Brushes.Transparent,
 			};
 		}
 

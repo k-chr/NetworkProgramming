@@ -4,14 +4,11 @@ using Avalonia.Markup.Xaml;
 
 namespace TimeServer.Views
 {
-	public class MainWindow : Window
+	public class ConfigView : UserControl
 	{
-		public MainWindow()
+		public ConfigView()
 		{
-			InitializeComponent();
-#if DEBUG
-           // this.AttachDevTools();
-#endif
+			this.InitializeComponent();
 		}
 
 		private void InitializeComponent()

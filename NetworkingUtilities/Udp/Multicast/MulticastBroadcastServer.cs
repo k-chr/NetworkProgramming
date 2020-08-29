@@ -15,10 +15,12 @@ namespace NetworkingUtilities.Udp.Multicast
 	{
 		private readonly bool _acceptBroadcast;
 		private readonly Dictionary<EndPoint, ControlState> _clientsBuffers;
+		private readonly string _multicastAddress;
 
-		public MulticastBroadcastServer(string ip, int port, string interfaceName, bool acceptBroadcast = false) : base(
-			ip, port, interfaceName)
+		public MulticastBroadcastServer(int localPort, string multicastGroupAddress, string interfaceName,
+			bool acceptBroadcast = false, string localIp = null) : base(localIp, localPort, interfaceName)
 		{
+			_multicastAddress = multicastGroupAddress;
 			_acceptBroadcast = acceptBroadcast;
 			ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 			_clientsBuffers = new Dictionary<EndPoint, ControlState>();
@@ -29,10 +31,20 @@ namespace NetworkingUtilities.Udp.Multicast
 				? (Action) (() => { })
 				: () =>
 				{
-					if (!_acceptBroadcast)
-						ServerSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DropMembership,
-							new MulticastOption(IPAddress.Parse(Ip)));
-					ServerSocket.Close();
+					try
+					{
+						if (!_acceptBroadcast)
+							ServerSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DropMembership,
+								new MulticastOption(IPAddress.Parse(_multicastAddress)));
+						ServerSocket.Close();
+					}
+					catch (ObjectDisposedException)
+					{
+					}
+					catch (Exception socketException)
+					{
+						OnCaughtException(socketException, EventCode.Other);
+					}
 				})();
 
 
@@ -44,27 +56,30 @@ namespace NetworkingUtilities.Udp.Multicast
 
 		private void InitializeSocket()
 		{
+			EndPoint = null;
+			ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
 			try
 			{
-				var localAdd = IPAddress.Any;
-				var groupAddress = IPAddress.Parse(Ip);
-				OnReportingStatus(StatusCode.Info, $"Started configuring socket for {(_acceptBroadcast ? "broadcast" : "multicast")} communication");
+				ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+				OnReportingStatus(StatusCode.Success, "Successfully set ReuseAddress option");
+				var localAdd = string.IsNullOrEmpty(Ip) ? IPAddress.Any : IPAddress.Parse(Ip);
+				var groupAddress = IPAddress.Parse(_multicastAddress);
+				OnReportingStatus(StatusCode.Info,
+					$"Started configuring socket for {(_acceptBroadcast ? "broadcast" : "multicast")} communication");
 
 				if (!_acceptBroadcast)
 				{
 					ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, false);
 					ServerSocket.EnableBroadcast = false;
 					OnReportingStatus(StatusCode.Success, "Successfully unset Broadcast option");
-
 					ServerSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership,
 						new MulticastOption(groupAddress, localAdd));
-					OnReportingStatus(StatusCode.Success, $"Successfully set AddMembership multicast option ({groupAddress})");
+					OnReportingStatus(StatusCode.Success,
+						$"Successfully set AddMembership multicast option ({groupAddress})");
 				}
 				else
 				{
-					ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-					OnReportingStatus(StatusCode.Success, "Successfully set ReuseAddress option");
-
 					ServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
 					OnReportingStatus(StatusCode.Success, "Successfully set Broadcast option");
 
@@ -102,7 +117,8 @@ namespace NetworkingUtilities.Udp.Multicast
 				var endPoint = new IPEndPoint(IPAddress.Any, 0) as EndPoint;
 				ServerSocket.BeginReceiveFrom(state.Buffer, 0, state.Buffer.Length, 0, ref endPoint,
 					OnReceiveFromCallback, state);
-				OnReportingStatus(StatusCode.Info, $"Stared receiving {(_acceptBroadcast ? "broadcast" : "multicast")} bytes via UDP socket");
+				OnReportingStatus(StatusCode.Info,
+					$"Stared receiving {(_acceptBroadcast ? "broadcast" : "multicast")} bytes via UDP socket");
 			}
 			catch (ObjectDisposedException)
 			{
@@ -152,6 +168,8 @@ namespace NetworkingUtilities.Udp.Multicast
 					ProcessMessage(end);
 					_clientsBuffers[end].StreamBuffer = new MemoryStream();
 				}
+
+				Receive();
 			}
 			catch (ObjectDisposedException)
 			{
@@ -172,7 +190,7 @@ namespace NetworkingUtilities.Udp.Multicast
 			var state = _clientsBuffers[end];
 			using var stream = state.StreamBuffer;
 			stream.Seek(0, SeekOrigin.Begin);
-			OnNewMessage(stream.ToArray(), ((IPEndPoint) end).ToString(), "server");
+			OnNewMessage(stream.ToArray(), ((IPEndPoint) end).ToString(), EndPoint.ToString());
 		}
 
 		public override void Send(byte[] data, string to = "")
