@@ -15,7 +15,7 @@
               FontSize="14"
               Foreground="{StaticResource SystemBaseHighColor}"
               Background="{x:Null}"
-              Title="TimeClient"
+              Title="TimeServer"
 			  xmlns:viewscommon="clr-namespace:TimeProjectServices.Views;assembly=TimeProjectServices"
 			  xmlns:conv="clr-namespace:CustomControls.Converters;assembly=CustomControls">
    <FluentWindow.Resources>

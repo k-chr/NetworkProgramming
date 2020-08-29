@@ -26,7 +26,7 @@ namespace TimeServer.ViewModels
 		private TimeProjectServices.Services.TimeServer _timeServer;
 		private int _selectedView;
 		private bool _serverStarted;
-		private List<ClientEvent> _clients = new List<ClientEvent>();
+		private readonly List<ClientEvent> _clients = new List<ClientEvent>();
 		private readonly LogDumper _dumper;
 
 		[UsedImplicitly] public ConfigViewModel AppState { get; }
@@ -244,7 +244,7 @@ namespace TimeServer.ViewModels
 				}
 
 				var server = Servers.FirstOrDefault(model =>
-					model.Ip.Address.Equals(ep.Address));
+					model.Ip.Address.ToString().Contains(ep.Address.ToString()));
 				_timeServer.SendProtocol(
 					ProtocolFactory.CreateProtocol(ActionType.Response, HeaderType.Discover, server?.Ip
 					),
@@ -285,12 +285,13 @@ namespace TimeServer.ViewModels
 			_dumper.End();
 		}
 
+		[UsedImplicitly]
 		public void StartServer()
 		{
 			_timeServer.StartService();
 			foreach (var ipEndPoint in _timeServer.WorkingServers)
 			{
-				AddServer((ipEndPoint, LocalIdSupplier.CreateId()));
+				AddServer((ipEndPoint, $"server_{LocalIdSupplier.CreateId()}"));
 			}
 
 			ServerStarted = true;
