@@ -59,8 +59,8 @@
 		 </DataValidationErrors>
 	  </StackPanel>
 	  <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-		 <Button Content="Apply" IsEnabled="{Binding !HasErrors}" Command="{Binding ApplyConfiguration}"  />
-		 <Button Content="Discard" IsEnabled="{Binding BackedUp}" Command="{Binding DiscardConfiguration}"/>
+		 <Button Content="Apply" IsEnabled="{Binding !HasErrors}" IsVisible="{Binding BackedUp}" Command="{Binding ApplyConfiguration}"  />
+		 <Button Content="Discard" IsVisible="{Binding BackedUp}" Command="{Binding DiscardConfiguration}"/>
 	  </StackPanel>
 
    </StackPanel>
