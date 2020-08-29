@@ -20,12 +20,10 @@
 	  <Setter Property="Foreground" Value="{DynamicResource SystemBaseHighColor}"/>
    </Style>
    <Style Selector="TextBlock.CurrTime">
-	  <Setter Property="Margin" Value="0 30 0 20" />
 	  <Setter Property="FontSize" Value="30" />
 	  <Setter Property="Foreground" Value="{DynamicResource SystemBaseHighColor}"/>
    </Style>
    <Style Selector="TextBlock.PrevTime">
-	  <Setter Property="Margin" Value="0 30 0 20" />
 	  <Setter Property="FontSize" Value="20" />
 	  <Setter Property="Opacity" Value="0.5"/>
 	  <Setter Property="Foreground" Value="{DynamicResource SystemBaseHighColor}"/>

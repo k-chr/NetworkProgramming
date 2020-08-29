@@ -102,12 +102,6 @@ namespace TimeClient.ViewModels
 
 		[UsedImplicitly] public bool CanDiscover => _disabledDiscovery && ConnectedServer == null;
 
-		private void OnConnectedServerChanged(ServerModel old, ServerModel connectedServer)
-		{
-			if (!(connectedServer is null) && (old is null || !old.Equals(connectedServer)))
-				ConfigViewModel.SelectedServer = connectedServer;
-		}
-
 		public void OnClosing()
 		{
 			_client?.StopService();
@@ -172,6 +166,27 @@ namespace TimeClient.ViewModels
 			Dispatcher.UIThread.InvokeAsync(() => this.RaisePropertyChanged(nameof(CanDiscover)));
 		}
 
+		[UsedImplicitly]
+		public void ConnectToSelectedServer()
+		{
+			if (SelectedServer != null)
+			{
+				_client?.StartTimeCommunication(SelectedServer.Ip);
+				_disabledDiscovery = true;
+				this.RaisePropertyChanged(nameof(CanDiscover));
+			}
+		}
+
+		[UsedImplicitly]
+		public void DisconnectFromServer()
+		{
+			if (ConnectedServer != null)
+			{
+				_cancelTimeCommunicationSource.Cancel(false);
+				_client?.StopTimeCommunication();
+			}
+		}
+
 		public MainWindowViewModel(IManagedNotificationManager managedNotificationManager,
 			ConfigViewModel configViewModel)
 		{
@@ -186,6 +201,12 @@ namespace TimeClient.ViewModels
 			_client = new TimeProjectServices.Services.TimeClient(ConfigViewModel.MulticastAddress,
 				ConfigViewModel.MulticastPort, ConfigViewModel.LocalPort);
 			RegisterClient(_client);
+		}
+
+		private void OnConnectedServerChanged(ServerModel old, ServerModel connectedServer)
+		{
+			if (!(connectedServer is null) && (old is null || !old.Equals(connectedServer)))
+				ConfigViewModel.SelectedServer = connectedServer;
 		}
 
 		private void OnConfigViewModelOnErrorsChanged([CanBeNull] object sender, DataErrorsChangedEventArgs args)
@@ -232,6 +253,10 @@ namespace TimeClient.ViewModels
 			_client = new TimeProjectServices.Services.TimeClient(ConfigViewModel.MulticastAddress,
 				ConfigViewModel.MulticastPort, ConfigViewModel.LocalPort);
 			RegisterClient(_client);
+			var log = InternalMessageModel.Builder().WithType(InternalMessageType.Info).AttachTimeStamp(true)
+			   .AttachTextMessage("Configuration has changed").BuildMessage();
+			AddLog(log, true);
+			ShowNotification(new StatusEvent(StatusCode.Info, $"Configuration has changed"));
 		}
 
 		private void RegisterClient(TimeProjectServices.Services.TimeClient client)
@@ -256,9 +281,15 @@ namespace TimeClient.ViewModels
 				var protocol = ProtocolFactory.FromBytes(message.Message);
 				if (protocol == null || protocol.Header != HeaderType.Discover ||
 					protocol.Action != ActionType.Response) return;
-				if (AccessibleServers.Any(serverModel => serverModel.Ip.Equals(((DiscoverProtocol) protocol).Data))
-				) return;
-				var model = (((DiscoverProtocol) protocol).Data, $"server_{LocalIdSupplier.CreateId()}");
+				var ep = ((DiscoverProtocol) protocol).Data;
+				if (AccessibleServers.Any(serverModel => serverModel.Ip.Equals(ep))) return;
+
+				var id = ConfigViewModel.SelectedServer != null && ConfigViewModel.SelectedServer.Ip.Equals(ep)
+					? ConfigViewModel.SelectedServer.Name
+					: $"server_{LocalIdSupplier.CreateId()}";
+
+
+				var model = (((DiscoverProtocol) protocol).Data, id);
 				AddServer(model);
 				var log = InternalMessageModel.Builder().WithType(InternalMessageType.Info).AttachTimeStamp(true)
 				   .AttachTextMessage($"Discovered server: {model}").BuildMessage();
@@ -271,8 +302,16 @@ namespace TimeClient.ViewModels
 		{
 			if (o1 is ClientEvent)
 			{
+				var log = InternalMessageModel.Builder().WithType(InternalMessageType.Success).AttachTimeStamp(true)
+				   .AttachTextMessage($"Disconnected from server: {ConnectedServer}").BuildMessage();
+				ShowNotification(new StatusEvent(StatusCode.Success, $"Disconnected from server: {ConnectedServer}"));
+
+				AddLog(log, true);
 				ConnectedServer = null;
 				_disabledDiscovery = false;
+				CurrentTime = null;
+				PreviousTime = null;
+
 				PrepareDiscoveryTask();
 				Dispatcher.UIThread.InvokeAsync(() =>
 				{
@@ -298,6 +337,14 @@ namespace TimeClient.ViewModels
 				});
 
 				PrepareTimeMessageTask();
+				var log = InternalMessageModel.Builder().WithType(InternalMessageType.Info).AttachTimeStamp(true)
+				   .AttachTextMessage(
+						$"Connected to server: {AccessibleServers.First(model => model.Ip.Equals(endpoint))}")
+				   .BuildMessage();
+				ShowNotification(new StatusEvent(StatusCode.Success,
+					$"Connected to server: {AccessibleServers.First(model => model.Ip.Equals(endpoint))}"));
+
+				AddLog(log, true);
 			}
 		}
 
@@ -358,15 +405,6 @@ namespace TimeClient.ViewModels
 			}
 		}
 
-		private void SetTimeMessage(string message, long delta) =>
-			Dispatcher.UIThread.InvokeAsync(() =>
-			{
-				PreviousDelta = CurrentDelta;
-				PreviousTime = CurrentTime;
-				CurrentTime = message;
-				CurrentDelta = delta;
-			});
-
 		private void OnNewStatus(object o, object o1)
 		{
 			if (o1 is StatusEvent statusEvent)
@@ -387,26 +425,14 @@ namespace TimeClient.ViewModels
 			}
 		}
 
-		[UsedImplicitly]
-		public void ConnectToSelectedServer()
-		{
-			if (SelectedServer != null)
+		private void SetTimeMessage(string message, long delta) =>
+			Dispatcher.UIThread.InvokeAsync(() =>
 			{
-				_client?.StartTimeCommunication(SelectedServer.Ip);
-				_disabledDiscovery = true;
-				this.RaisePropertyChanged(nameof(CanDiscover));
-			}
-		}
-
-		[UsedImplicitly]
-		public void DisconnectFromServer()
-		{
-			if (ConnectedServer != null)
-			{
-				_cancelTimeCommunicationSource.Cancel(false);
-				_client?.StopTimeCommunication();
-			}
-		}
+				PreviousDelta = CurrentDelta;
+				PreviousTime = CurrentTime;
+				CurrentTime = message;
+				CurrentDelta = delta;
+			});
 
 		private void ShowNotification(StatusEvent @event) => Dispatcher.UIThread.InvokeAsync(() =>
 			ManagedNotificationManager.Show(

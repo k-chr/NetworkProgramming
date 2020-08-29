@@ -33,6 +33,7 @@ namespace TimeClient.ViewModels
 		};
 
 		private readonly Dictionary<string, string> _propertiesErrors = new Dictionary<string, string>();
+		private ServerModel _selectedServer;
 
 
 		public ConfigViewModel(string multicastAddress = "", int multicastPort = 0, int localPort = 0,
@@ -60,7 +61,8 @@ namespace TimeClient.ViewModels
 		{
 			PropertyChanging += (sender, args) =>
 			{
-				if (!BackedUp && !args.PropertyName.Equals(nameof(BackedUp)))
+				if (!BackedUp && !args.PropertyName.Equals(nameof(BackedUp)) &&
+					!args.PropertyName.Equals(nameof(SelectedServer)))
 				{
 					_backup.DiscoveryQueryPeriod = DiscoveryQueryPeriod;
 					_backup.LocalPort = LocalPort;
@@ -112,7 +114,11 @@ namespace TimeClient.ViewModels
 			set => this.RaiseAndSetIfChanged(ref _backedUp, value);
 		}
 
-		public ServerModel SelectedServer { get; set; }
+		public ServerModel SelectedServer
+		{
+			get => _selectedServer;
+			set => this.RaiseAndSetIfChanged(ref _selectedServer, value);
+		}
 
 		public string MulticastAddress
 		{

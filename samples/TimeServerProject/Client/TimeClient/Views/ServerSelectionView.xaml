@@ -29,6 +29,8 @@
 			  IsEnabled="{Binding SelectedServer, Converter={x:Static ObjectConverters.IsNotNull}}"
 			  IsVisible="{Binding ConnectedServer, Converter={x:Static ObjectConverters.IsNull}}"
 			  Command="{Binding ConnectToSelectedServer}"/>
+	  <TextBlock Classes="header" Text="Previously Connected Server:"/>
+	  <TextBlock Classes="PrevTime" Text="{Binding ConfigViewModel.SelectedServer}"/>
    </StackPanel>
 	
 </UserControl>
