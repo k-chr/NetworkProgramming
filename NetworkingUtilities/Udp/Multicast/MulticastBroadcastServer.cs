@@ -31,10 +31,20 @@ namespace NetworkingUtilities.Udp.Multicast
 				? (Action) (() => { })
 				: () =>
 				{
-					if (!_acceptBroadcast)
-						ServerSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DropMembership,
-							new MulticastOption(IPAddress.Parse(_multicastAddress)));
-					ServerSocket.Close();
+					try
+					{
+						if (!_acceptBroadcast)
+							ServerSocket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.DropMembership,
+								new MulticastOption(IPAddress.Parse(_multicastAddress)));
+						ServerSocket.Close();
+					}
+					catch (ObjectDisposedException)
+					{
+					}
+					catch (Exception socketException)
+					{
+						OnCaughtException(socketException, EventCode.Other);
+					}
 				})();
 
 

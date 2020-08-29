@@ -12,7 +12,7 @@ namespace TimeProjectServices.Services
 		public LogDumper(string path) : this(ref path) => _path = path;
 
 		private LogDumper(ref string path) =>
-			File.WriteAllTextAsync(path, $"[Info] {DateTime.Now} Started logging session");
+			File.WriteAllTextAsync(path, $"[Info] [{DateTime.Now}] Started logging session\n");
 
 		public async void DumpLog(InternalMessageModel log)
 		{
@@ -40,6 +40,6 @@ namespace TimeProjectServices.Services
 		}
 
 		public async void End() =>
-			await File.AppendAllTextAsync(_path, $"[Info] {DateTime.Now} Disposed logging session");
+			await File.AppendAllTextAsync(_path, $"[Info] [{DateTime.Now}] Disposed logging session");
 	}
 }

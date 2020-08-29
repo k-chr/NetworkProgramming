@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using JetBrains.Annotations;
 using ReactiveUI;
 
 namespace TimeServer.Models
@@ -20,18 +21,21 @@ namespace TimeServer.Models
 
 		public IPEndPoint Ip { get; private set; }
 
-		public string IpString => Ip.ToString();
+		[UsedImplicitly] public string IpString => Ip.ToString();
 
+		[UsedImplicitly]
 		public string Name { get; private set; }
 
 		public override string ToString() => $"{Name}|{Ip}";
 
+		[UsedImplicitly]
 		public int NumberOfClients
 		{
 			get => _numberOfClients;
 			private set => this.RaiseAndSetIfChanged(ref _numberOfClients, value);
 		}
 
+		[UsedImplicitly]
 		public int MaxClientsCount => int.MaxValue;
 
 		public void NewClient() =>

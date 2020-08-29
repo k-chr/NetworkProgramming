@@ -27,9 +27,11 @@ namespace TimeClient.Services
 				var localPort = bytes[8..12];
 				var multicastPort = bytes[12..16];
 				var multicastAddress = bytes[16..20];
-				var selectedServerAddress = bytes[20..24];
-				var selectedServerPort = bytes[24..28];
-				var selectedServerName = bytes[28..];
+				var selectedServerAddressLen = bytes[20..21][0];
+				var selectedServerAddress = bytes[21..(21 + selectedServerAddressLen)];
+				var start = (21 + selectedServerAddressLen);
+				var selectedServerPort = bytes[start..(start + 4)];
+				var selectedServerName = bytes[(start + 4)..];
 				var server = ServerModel.Create(
 					new IPEndPoint(new IPAddress(selectedServerAddress),
 						BitConverter.ToInt32(selectedServerPort)), Encoding.ASCII.GetString(selectedServerName));
@@ -72,8 +74,10 @@ namespace TimeClient.Services
 				stream.Write(BitConverter.GetBytes(model.LocalPort), 0, 4);
 				stream.Write(BitConverter.GetBytes(model.MulticastPort), 0, 4);
 				stream.Write(IPAddress.Parse(model.MulticastAddress).GetAddressBytes(), 0, 4);
-				stream.Write(model.SelectedServer?.Ip.Address.GetAddressBytes() ??
-							 IPAddress.None.GetAddressBytes(), 0, 4);
+				var addressBytes = model.SelectedServer?.Ip.Address.GetAddressBytes() ??
+							  IPAddress.None.GetAddressBytes();
+				stream.Write(BitConverter.GetBytes((byte)addressBytes.Length), 0, 1);
+				stream.Write(addressBytes, 0, addressBytes.Length);
 				stream.Write(BitConverter.GetBytes(model.SelectedServer?.Ip.Port ?? 0), 0, 4);
 				var name = Encoding.ASCII.GetBytes(model.SelectedServer?.Name ?? "");
 				stream.Write(name, 0, name.Length);
